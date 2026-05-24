@@ -5,3 +5,4 @@ python-dotenv>=1.0.1
 openai>=1.0.0
 sajupy>=0.2.0
 geopy>=2.4.0
+korean-lunar-calendar>=0.3.1
