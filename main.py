@@ -63,6 +63,8 @@ def health_check():
 # 정적 파일 서빙 (프론트엔드)
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
+    # /static/ 경로로 정적 파일 직접 서빙 (이미지, CSS 등)
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
     icons_dir = os.path.join(static_dir, "icons")
     if os.path.exists(icons_dir):
         app.mount("/icons", StaticFiles(directory=icons_dir), name="icons")
@@ -87,7 +89,7 @@ def root():
 @app.get("/{full_path:path}")
 def serve_spa(full_path: str):
     # API/시스템 경로는 제외
-    skip = ("api/", "docs", "redoc", "health", "openapi.json")
+    skip = ("api/", "docs", "redoc", "health", "openapi.json", "static/")
     if any(full_path.startswith(s) for s in skip):
         return JSONResponse({"error": "Not found"}, status_code=404)
     index = os.path.join(os.path.dirname(__file__), "static", "index.html")
