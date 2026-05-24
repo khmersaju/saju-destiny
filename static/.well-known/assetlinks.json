@@ -3,6 +3,6 @@
   "target": {
     "namespace": "android_app",
     "package_name": "com.sajudestiny.cambodia",
-    "sha256_cert_fingerprints": ["PLACEHOLDER_SHA256_FINGERPRINT"]
+    "sha256_cert_fingerprints": ["8B:F1:68:E8:A2:EA:C3:50:D4:BF:7C:3C:0C:10:10:6F:C1:C6:75:62:77:6E:3C:4F:88:41:8B:09:31:03:44:6B"]
   }
 }]
