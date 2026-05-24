@@ -1830,14 +1830,28 @@ function buildChart(chart) {
     : `Year of ${chart.animal_sign || ''}`;
   const lunarObj = chart.lunar; let lunarStr = ''; if (lunarObj && typeof lunarObj === 'object') { lunarStr = lunarObj.gapja_chinese || lunarObj.lunar_iso || ''; } else if (lunarObj) { lunarStr = String(lunarObj); } const lunarText = lunarStr ? (lang==='km' ? `ប្រតិទិនច័ន្ទ: ${lunarStr}` : `Lunar: ${lunarStr}`) : '';
 
-  // 정가네식당 광고 배너 HTML
-  const jungganeAdHtml = `
+  // 모드별 광고 배너 HTML
+  // Lifetime  = 정가네식당
+  // Yearly    = Hebron Academy 60% OFF
+  // Monthly   = Silla Korean Restaurant
+  // Daily     = EduKonnect Seoul
+  const adConfig = {
+    lifetime: { img: '/static/ad_banner_junggane.jpg',   href: 'https://www.facebook.com/profile.php?id=61576323567135', alt: '정가네식당 - Korean Restaurant' },
+    yearly:   { img: '/static/ad_banner_hebron60.jpg',   href: 'https://www.facebook.com/photo?fbid=1753908259325181&set=a.748748813174469', alt: 'Hebron Academy - 60% OFF' },
+    monthly:  { img: '/static/ad_banner_silla.jpg',      href: 'https://www.facebook.com/SillaCambodia/', alt: 'Silla Korean Restaurant Cambodia' },
+    daily:    { img: '/static/ad_banner_edukonnect.jpg', href: 'https://www.facebook.com/EduKonnectSeoul', alt: 'EduKonnect Seoul - Study in Korea' }
+  };
+  const adInfo = adConfig[currentMode];
+  let chartAdHtml = '';
+  if (adInfo) {
+    chartAdHtml = `
     <div style="margin-top:16px;padding-top:14px;border-top:1px solid #eee">
       <div style="font-size:10px;color:#aaa;text-align:right;margin-bottom:4px">AD</div>
-      <a href="https://www.facebook.com/profile.php?id=61576323567135" target="_blank" rel="noopener noreferrer" style="display:block;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.12);text-decoration:none">
-        <img src="/static/ad_banner_junggane.jpg" alt="정가네식당 - Korean Restaurant" style="width:100%;height:auto;display:block;object-fit:cover">
+      <a href="${adInfo.href}" target="_blank" rel="noopener noreferrer" style="display:block;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.12);text-decoration:none">
+        <img src="${adInfo.img}" alt="${adInfo.alt}" style="width:100%;height:auto;display:block;object-fit:cover">
       </a>
     </div>`;
+  }
 
   return `<div class="saju-chart">
     <div class="chart-title">${lang==='km'?'ផែនតីសាជូ':'Saju Chart'}</div>
@@ -1845,7 +1859,7 @@ function buildChart(chart) {
     <div style="font-size:12px;color:#444;margin-bottom:8px">${dmText} | ${zodiacText}</div>
     ${lunarText ? `<div style="font-size:11px;color:#818c9a;margin-bottom:8px">${lunarText}</div>` : ''}
     <div class="five-elem-bar">${feHtml}</div>
-    ${jungganeAdHtml}
+    ${chartAdHtml}
   </div>`;
 }
 

@@ -15,8 +15,14 @@ router = APIRouter(prefix="/api/v2/auth", tags=["auth"])
 security = HTTPBearer(auto_error=False)
 
 # ── DB 경로 ──
-DB_PATH = Path(__file__).parent.parent.parent / "data" / "users.db"
-DB_PATH.parent.mkdir(exist_ok=True)
+# 환경변수 DB_PATH가 설정되어 있으면 해당 경로 사용 (Railway Volume: /data/users.db)
+# 미설정 시 기본값: 프로젝트 루트/data/users.db
+_db_env = os.getenv("DB_PATH")
+if _db_env:
+    DB_PATH = Path(_db_env)
+else:
+    DB_PATH = Path(__file__).parent.parent.parent / "data" / "users.db"
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 SECRET_KEY = os.getenv("JWT_SECRET", "khmer-destiny-secret-2025-change-in-prod")
 TOKEN_EXPIRE_DAYS = 30
