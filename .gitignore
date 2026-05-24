@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# 환경변수 (Railway에서 직접 설정)
+.env
+.env.local
+.env.*.local
+
+# 데이터베이스 (Railway Volume에서 관리)
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# 로그
+*.log
+logs/
+
+# 가상환경
+venv/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 백업 파일
+*_backup.html

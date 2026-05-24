@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Saju Destiny - ជោគជតា</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Battambang','Noto Sans KR',sans-serif;background:#f4f7fe;color:#1f2024;min-height:100vh;max-width:480px;margin:0 auto;position:relative}
+a{cursor:pointer;color:#e8720c;text-decoration:none}
+
+/* TOP BAR */
+.topbar{background:#01092b;color:#fff;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-logo{font-size:18px;font-weight:700;color:#fade4a;letter-spacing:1px}
+.topbar-logo span{color:#fff;font-size:12px;font-weight:400;display:block;margin-top:-2px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.lang-btn{background:transparent;border:none;border-radius:50%;padding:2px;font-size:26px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;width:34px;height:34px;transition:transform 0.15s ease;}
+.lang-btn:active{transform:scale(0.88)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:#fade4a;color:#01092b;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.login-btn{background:transparent;border:1px solid #fade4a;color:#fade4a;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
+
+/* SCREENS */
+.screen{display:none;padding-bottom:80px}
+.screen.active{display:block}
+
+/* HOME */
+.home-hero{background:linear-gradient(135deg,#01092b 0%,#0a1a4a 60%,#1a0a3a 100%);padding:24px 20px 20px;text-align:center;color:#fff}
+.hero-badge{display:inline-block;background:rgba(250,222,74,0.15);border:1px solid rgba(250,222,74,0.4);border-radius:20px;padding:4px 14px;font-size:10px;color:#fade4a;letter-spacing:1px;font-weight:700;margin-bottom:8px}
+.hero-title{font-size:22px;font-weight:700;color:#fade4a;margin-bottom:4px}
+.hero-sub{font-size:12px;color:#aab4c8;margin-bottom:10px}
+.hero-desc{font-size:11px;color:#8a9ab8;line-height:1.6;margin-bottom:14px;padding:0 4px}
+.hero-stats{display:flex;justify-content:space-around;margin-bottom:14px;padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08)}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:16px;font-weight:700;color:#fade4a}
+.hero-stat-label{font-size:9px;color:#8a9ab8;margin-top:2px}
+.today-box{background:rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.today-label{font-size:11px;color:#aab4c8}
+.today-val{font-size:15px;font-weight:700;color:#fade4a}
+.today-lunar{font-size:11px;color:#ccc;margin-top:2px}
+
+.section-title{font-size:13px;font-weight:700;color:#818c9a;padding:16px 16px 8px;text-transform:uppercase;letter-spacing:1px}
+
+/* MENU GRID */
+.menu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 12px}
+.menu-item{background:#fff;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:transform 0.15s,box-shadow 0.15s;position:relative}
+.menu-item:active{transform:scale(0.96)}
+.menu-icon{font-size:26px;margin-bottom:6px}
+.menu-label{font-size:10px;color:#1f2024;font-weight:600;line-height:1.3}
+.menu-badge{position:absolute;top:6px;right:6px;background:#e8720c;color:#fff;font-size:8px;font-weight:700;padding:2px 5px;border-radius:8px}
+.menu-badge.free{background:#2ecc71}
+
+/* BANNER */
+.promo-banner{margin:12px;background:linear-gradient(135deg,#fade4a,#f5a623);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.promo-text{font-size:13px;font-weight:700;color:#01092b}
+.promo-sub{font-size:11px;color:#333;margin-top:2px}
+.promo-btn{background:#01092b;color:#fade4a;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* INPUT SCREEN */
+.input-header{background:#01092b;padding:16px;color:#fff;display:flex;align-items:center;gap:12px}
+.back-btn{background:none;border:none;color:#fade4a;font-size:20px;cursor:pointer;padding:4px}
+.input-title{font-size:17px;font-weight:700;color:#fade4a}
+.input-sub{font-size:11px;color:#aab4c8;margin-top:2px}
+.input-body{padding:16px}
+.fg{margin-bottom:14px}
+.fl{font-size:12px;color:#818c9a;font-weight:600;margin-bottom:5px;display:block}
+.fl-opt{font-weight:400;color:#b0b8c4}
+.fi{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px 13px;font-size:14px;font-family:inherit;background:#fff;color:#1f2024;outline:none;transition:border-color 0.2s}
+.fi:focus{border-color:#fade4a}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gender-row{display:flex;gap:10px}
+.gender-btn{flex:1;padding:10px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.2s}
+.gender-btn.active{border-color:#fade4a;background:#fffde7;font-weight:700}
+.lunar-display{background:#fffde7;border:1px solid #fade4a;border-radius:8px;padding:8px 12px;font-size:12px;color:#7a6000;margin-top:6px;display:none}
+.submit-btn{width:100%;background:linear-gradient(135deg,#fade4a,#f5a623);color:#01092b;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px;box-shadow:0 4px 15px rgba(250,222,74,0.4)}
+.submit-btn:active{transform:scale(0.98)}
+.time-note{font-size:11px;color:#818c9a;text-align:center;margin-top:8px}
+
+/* RESULT SCREEN */
+.result-header{background:#01092b;padding:16px;color:#fff;display:flex;align-items:center;gap:12px}
+.result-header-info{flex:1;min-width:0}
+.result-name{font-size:16px;font-weight:700;color:#fade4a}
+.result-meta{font-size:11px;color:#aab4c8;margin-top:2px}
+.pdf-btn{background:rgba(250,222,74,0.15);border:1px solid rgba(250,222,74,0.5);color:#fade4a;border-radius:10px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:4px}
+.pdf-btn:active{background:rgba(250,222,74,0.3)}
+.pdf-btn.loading{opacity:0.6;pointer-events:none}
+/* PDF 전용 스타일 */
+@media print{.topbar,.nav-bar,.tabs,.back-btn,.pdf-btn,.push-banner,.toast{display:none!important}.screen{display:block!important}.tab-content{display:block!important}}
+
+/* TABS */
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e2e8f0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:12px 16px;font-size:12px;font-weight:600;color:#818c9a;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-family:inherit}
+.tab.active{color:#01092b;border-bottom-color:#fade4a}
+
+.tab-content{display:none;padding:16px}
+.tab-content.active{display:block}
+
+/* SAJU CHART */
+.saju-chart{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.chart-title{font-size:13px;font-weight:700;color:#818c9a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.pillar{text-align:center;background:#f8faff;border-radius:10px;padding:10px 6px}
+.pillar-label{font-size:9px;color:#818c9a;font-weight:600;margin-bottom:6px;text-transform:uppercase}
+.pillar-stem{font-size:22px;font-weight:700;margin-bottom:2px}
+.pillar-branch{font-size:18px;font-weight:600;margin-bottom:4px}
+.pillar-elem{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:600}
+.elem-wood{color:#2d7a2d;background:#e8f5e9}
+.elem-fire{color:#c62828;background:#ffebee}
+.elem-earth{color:#7a5c00;background:#fff8e1}
+.elem-metal{color:#546e7a;background:#eceff1}
+.elem-water{color:#1565c0;background:#e3f2fd}
+
+.five-elem-bar{margin-top:8px}
+.fe-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.fe-name{font-size:11px;font-weight:600;width:28px;color:#444}
+.fe-bar-wrap{flex:1;background:#f0f0f0;border-radius:4px;height:8px;overflow:hidden}
+.fe-bar{height:100%;border-radius:4px;transition:width 0.8s ease}
+.fe-count{font-size:11px;color:#666;width:16px;text-align:right}
+
+/* INFO CARDS */
+.info-card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.info-card-title{font-size:13px;font-weight:700;color:#01092b;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.info-card-body{font-size:13px;color:#444;line-height:1.7}
+.score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.score-label{font-size:13px;color:#444}
+.score-val{font-size:20px;font-weight:700;color:#fade4a}
+.score-bar-wrap{background:#f0f0f0;border-radius:6px;height:10px;overflow:hidden;margin-top:4px}
+.score-bar{height:100%;border-radius:6px;background:linear-gradient(90deg,#fade4a,#f5a623)}
+
+/* DAEUN TIMELINE */
+.daeun-list{display:flex;flex-direction:column;gap:8px}
+.daeun-item{background:#f8faff;border-radius:10px;padding:12px;border-left:4px solid #e2e8f0;display:flex;align-items:center;gap:12px}
+.daeun-item.current{border-left-color:#fade4a;background:#fffde7}
+.daeun-chars{font-size:20px;font-weight:700;color:#01092b}
+.daeun-info{flex:1}
+.daeun-period{font-size:11px;color:#818c9a;font-weight:600}
+.daeun-elem{font-size:11px;margin-top:2px}
+.daeun-now{background:#fade4a;color:#01092b;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px}
+
+/* MONTHLY GRID */
+.month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.month-card{background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.month-num{font-size:11px;color:#818c9a;font-weight:600;margin-bottom:4px}
+.month-stem{font-size:16px;font-weight:700;color:#01092b}
+.month-score{font-size:18px;font-weight:700;margin-top:4px}
+.month-stars{font-size:13px;margin-top:3px;letter-spacing:1px}
+.month-label{font-size:10px;color:#818c9a;margin-top:2px}
+
+/* LUCKY PROFILE */
+.lucky-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lucky-item{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+.lucky-icon{font-size:24px;margin-bottom:6px}
+.lucky-label{font-size:10px;color:#818c9a;font-weight:600;margin-bottom:4px}
+.lucky-val{font-size:14px;font-weight:700;color:#01092b}
+.color-swatch{width:32px;height:32px;border-radius:50%;margin:6px auto 4px;border:2px solid #e2e8f0}
+
+/* COMPAT */
+.compat-score-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#fade4a,#f5a623);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 4px 15px rgba(250,222,74,0.4)}
+.compat-score-num{font-size:32px;font-weight:700;color:#01092b}
+.compat-score-label{font-size:10px;color:#333;font-weight:600}
+
+/* LUCKY DAYS */
+.lucky-days-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lucky-day-item{background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.lucky-day-date{font-size:14px;font-weight:700;color:#01092b}
+.lucky-day-stem{font-size:12px;color:#e8720c;margin-top:2px}
+.lucky-day-label{font-size:10px;color:#818c9a;margin-top:2px}
+.lucky-day-level{font-size:13px;color:#fade4a;margin-top:3px}
+
+/* AUTH */
+.auth-wrap{padding:20px 16px}
+.auth-tabs{display:flex;background:#f0f4ff;border-radius:12px;padding:4px;margin-bottom:20px}
+.auth-tab{flex:1;padding:9px;text-align:center;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;color:#818c9a;font-family:inherit}
+.auth-tab.active{background:#fff;color:#01092b;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+.auth-form{display:none}
+.auth-form.active{display:block}
+.auth-sec-title{font-size:12px;font-weight:700;color:#01092b;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid #e2e8f0}
+.auth-submit{width:100%;background:linear-gradient(135deg,#fade4a,#f5a623);color:#01092b;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:16px;box-shadow:0 4px 15px rgba(250,222,74,0.4)}
+.auth-note{text-align:center;font-size:12px;color:#818c9a;margin-top:12px}
+.auth-note a{color:#e8720c;font-weight:600}
+.interests-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.interest-btn{padding:9px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:12px;font-family:inherit;cursor:pointer;text-align:center;transition:all 0.2s}
+.interest-btn.active{border-color:#fade4a;background:#fffde7;font-weight:700}
+
+/* PROFILE */
+.profile-wrap{padding:20px 16px}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#fade4a,#f5a623);color:#01092b;font-size:28px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.profile-name{font-size:18px;font-weight:700;text-align:center;color:#01092b}
+.profile-email{font-size:12px;color:#818c9a;text-align:center;margin-top:4px}
+.profile-tier{display:inline-block;background:#e2e8f0;color:#546e7a;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin:8px auto;display:block;width:fit-content;text-align:center}
+.profile-tier.premium{background:linear-gradient(135deg,#fade4a,#f5a623);color:#01092b}
+.profile-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.profile-info-item{background:#fff;border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.profile-info-label{font-size:10px;color:#818c9a;font-weight:600;margin-bottom:4px}
+.profile-info-val{font-size:13px;font-weight:700;color:#01092b}
+.profile-actions{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.profile-action-btn{background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:13px 16px;font-size:14px;font-family:inherit;cursor:pointer;text-align:left;color:#1f2024;display:flex;align-items:center;gap:10px}
+.profile-action-btn.danger{color:#e53935;border-color:#ffcdd2}
+.logout-btn{width:100%;background:#f44336;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:16px}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #e2e8f0;display:flex;z-index:100}
+.nav-item{flex:1;padding:10px 4px 8px;text-align:center;cursor:pointer;color:#818c9a;font-size:9px;font-weight:600;font-family:inherit;border:none;background:none}
+.nav-item.active{color:#01092b}
+.nav-icon{font-size:22px;margin-bottom:2px}
+.nav-item.active .nav-icon{filter:drop-shadow(0 0 4px rgba(250,222,74,0.8))}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#1f2024;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* PUSH BANNER */
+.push-banner{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;background:#01092b;color:#fff;border-radius:14px;padding:14px 16px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.3);display:none}
+.push-banner-title{font-size:14px;font-weight:700;color:#fade4a;margin-bottom:4px}
+.push-banner-sub{font-size:12px;color:#aab4c8;margin-bottom:12px}
+.push-banner-btns{display:flex;gap:8px}
+.push-allow-btn{flex:1;background:#fade4a;color:#01092b;border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.push-deny-btn{background:transparent;border:1px solid #444;color:#aab4c8;border-radius:8px;padding:9px 14px;font-size:13px;font-family:inherit;cursor:pointer}
+
+/* AD GATE */
+.ad-gate{background:#fff;border-radius:14px;padding:20px;text-align:center;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.ad-gate-title{font-size:15px;font-weight:700;color:#01092b;margin-bottom:8px}
+.ad-gate-sub{font-size:12px;color:#818c9a;margin-bottom:16px}
+.ad-watch-btn{background:linear-gradient(135deg,#fade4a,#f5a623);color:#01092b;border:none;border-radius:12px;padding:13px 24px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+
+/* LOADING */
+.loading-wrap{text-align:center;padding:40px 20px}
+.loading-spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#fade4a;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:#818c9a}
+/* SKELETON UI */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skeleton{background:linear-gradient(90deg,#1e2a3a 25%,#253347 50%,#1e2a3a 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px}
+.skeleton-card{background:#16213a;border-radius:14px;padding:16px;margin-bottom:12px}
+.skeleton-line{height:14px;margin-bottom:10px}
+.skeleton-line.wide{width:80%}
+.skeleton-line.medium{width:60%}
+.skeleton-line.short{width:40%}
+.skeleton-title{height:20px;width:50%;margin-bottom:16px}
+.skeleton-chart{display:flex;gap:12px;margin-bottom:16px}
+.skeleton-pillar{flex:1;height:80px;border-radius:10px}
+.loading-progress{width:100%;height:3px;background:#1e2a3a;border-radius:2px;overflow:hidden;margin-top:12px}
+.loading-progress-bar{height:100%;background:linear-gradient(90deg,#fade4a,#f5a623);border-radius:2px;animation:progress-anim 2s ease-in-out infinite}
+@keyframes progress-anim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+
+/* COMPAT INPUT */
+.compat-section{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.compat-section-title{font-size:13px;font-weight:700;color:#818c9a;margin-bottom:12px;text-transform:uppercase}
+
+/* AD BANNER */
+.ad-banner-wrap{padding:12px 16px 0}
+.ad-banner{display:block;width:100%;border-radius:14px;overflow:hidden;text-decoration:none;position:relative;box-shadow:0 4px 16px rgba(0,0,0,0.18);transition:transform 0.15s ease,box-shadow 0.15s ease}
+.ad-banner:active{transform:scale(0.98);box-shadow:0 2px 8px rgba(0,0,0,0.12)}
+.ad-banner img{width:100%;height:auto;display:block;border-radius:14px;object-fit:cover}
+.ad-banner-label{position:absolute;top:8px;right:10px;background:rgba(0,0,0,0.5);color:#fff;font-size:9px;padding:2px 7px;border-radius:6px;letter-spacing:0.6px;font-weight:600}
+.ad-banner-caption{background:linear-gradient(0deg,rgba(0,0,0,0.55) 0%,transparent 100%);position:absolute;bottom:0;left:0;right:0;padding:12px 14px 10px;border-radius:0 0 14px 14px}
+.ad-banner-caption-text{color:#fff;font-size:11px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.6)}
+
+/* SNS SHARE MODAL */
+.share-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.share-modal-overlay.open{display:flex}
+.share-modal{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-width:480px}
+.share-modal-title{font-size:15px;font-weight:700;color:#01092b;text-align:center;margin-bottom:16px}
+.share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.share-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:12px;border:none;background:none;font-family:inherit}
+.share-item:active{background:#f4f7fe}
+.share-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.share-icon.fb{background:#1877f2}
+.share-icon.tiktok{background:#000}
+.share-icon.whatsapp{background:#25d366}
+.share-icon.telegram{background:#0088cc}
+.share-icon.copy{background:#6c757d}
+.share-label{font-size:11px;color:#1f2024;font-weight:600}
+.share-cancel{width:100%;background:#f4f7fe;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;color:#818c9a;font-family:inherit;cursor:pointer}
+
+/* PRIVACY POLICY SCREEN */
+.privacy-screen{padding:16px 16px 80px}
+.privacy-header{background:#01092b;padding:16px;color:#fff;display:flex;align-items:center;gap:12px;margin:-16px -16px 16px}
+.privacy-title{font-size:16px;font-weight:700;color:#fade4a}
+.privacy-body h2{font-size:14px;font-weight:700;color:#01092b;margin:16px 0 6px}
+.privacy-body p{font-size:13px;color:#444;line-height:1.7;margin-bottom:8px}
+.privacy-body ul{font-size:13px;color:#444;line-height:1.7;padding-left:16px;margin-bottom:8px}
+
+/* FOOTER LINKS */
+.footer-links{text-align:center;padding:12px 16px 4px;display:flex;justify-content:center;gap:16px}
+.footer-link{font-size:11px;color:#818c9a;cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    Saju Destiny
+    <span id="topbar-sub">ជោគជតា ប្រពៃណី</span>
+  </div>
+  <div class="topbar-right">
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn" title="Switch Language">🇰🇭</button>
+    <div id="topUserBtn"></div>
+  </div>
+</div>
+
+<!-- HOME SCREEN -->
+<div class="screen active" id="screen-home">
+  <div class="home-hero">
+    <div class="hero-badge" id="hero-badge">✦ Saju Destiny × Cambodia ✦</div>
+    <div class="hero-title" id="hero-title">ជោគជតា ប្រពៃណី</div>
+    <div class="hero-sub" id="hero-sub">ការវិភាគ Four Pillars ត្រឹមត្រូវ</div>
+    <div class="hero-desc" id="hero-desc">Saju គឺជាប្រព័ន្ធទស្សន៍ទាយបុរាណ ដែលវិភាគជោគជតាតាមឆ្នាំ ខែ ថ្ងៃ និងម៉ោងកំណើត — ជា "សសរទាំង ៤" នៃជីវិត។ ធាតុទាំង ៥ (ឈើ ភ្លើង ដី លោហៈ ទឹក) និងតុល្យភាព Yin-Yang បង្ហាញផ្លូវជីវិតរបស់អ្នក។</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num" id="stat-visits">--</div>
+        <div class="hero-stat-label" id="stat-visits-label">ការចុចក្រ៉េ</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">1,900+</div>
+        <div class="hero-stat-label" id="stat-years-label">ឆ្នាំប្រពៃណី</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">★★★★★</div>
+        <div class="hero-stat-label" id="stat-ai-label">ការវិភាគច្បាស់</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">FREE</div>
+        <div class="hero-stat-label" id="stat-free-label">ឥតគិតថ្លៃ</div>
+      </div>
+    </div>
+    <div class="today-box">
+      <div>
+        <div class="today-label" id="today-label">ថ្ងៃនេះ</div>
+        <div class="today-val" id="today-pillar">--</div>
+        <div class="today-lunar" id="today-lunar">--</div>
+      </div>
+      <div style="text-align:right">
+        <div class="today-label" id="today-date-label">កាលបរិច្ឆេទ</div>
+        <div class="today-val" id="today-date">--</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" id="sec-fortune">ការទស្សន៍ទាយ</div>
+  <div class="menu-grid">
+    <div class="menu-item" onclick="openMode('lifetime')">
+      <div class="menu-icon">🌟</div>
+      <div class="menu-label" id="menu-lifetime">ជោគជតា<br>ពេញជីវិត</div>
+      <div class="menu-badge free">FREE</div>
+    </div>
+    <div class="menu-item" onclick="openMode('yearly')">
+      <div class="menu-icon">📅</div>
+      <div class="menu-label" id="menu-yearly">ឆ្នាំ<br>២០២៦</div>
+      <div class="menu-badge free">FREE</div>
+    </div>
+    <div class="menu-item" onclick="openMode('monthly')">
+      <div class="menu-icon">🌙</div>
+      <div class="menu-label" id="menu-monthly">ប្រចាំ<br>ខែ</div>
+      <div class="menu-badge free">FREE</div>
+    </div>
+    <div class="menu-item" onclick="openMode('daily')">
+      <div class="menu-icon">☀️</div>
+      <div class="menu-label" id="menu-daily">ប្រចាំ<br>ថ្ងៃ</div>
+      <div class="menu-badge free">FREE</div>
+    </div>
+  </div>
+
+  <div class="section-title" id="sec-special">ពិសេស</div>
+  <div class="menu-grid">
+    <div class="menu-item" onclick="openMode('compatibility')">
+      <div class="menu-icon">💑</div>
+      <div class="menu-label" id="menu-compat">គូស្នេហ៍<br>ភាព</div>
+    </div>
+    <div class="menu-item" onclick="openMode('lucky_days')">
+      <div class="menu-icon">📆</div>
+      <div class="menu-label" id="menu-lucky-days">ថ្ងៃ<br>មង្គល</div>
+    </div>
+    <div class="menu-item" onclick="openMode('lucky_profile')">
+      <div class="menu-icon">🎨</div>
+      <div class="menu-label" id="menu-lucky-profile">ពណ៌ &amp;<br>ទិស</div>
+    </div>
+    <div class="menu-item" onclick="openMode('lifetime')">
+      <div class="menu-icon">🔮</div>
+      <div class="menu-label" id="menu-lifestage">វ័យ<br>ជីវិត</div>
+    </div>
+  </div>
+
+  <div class="promo-banner" id="promo-banner">
+    <div>
+      <div class="promo-text" id="promo-text">Premium Membership</div>
+      <div class="promo-sub" id="promo-sub">ការវិភាគលម្អិត + ការប្រឹក្សា</div>
+    </div>
+    <button class="promo-btn" id="promo-btn" onclick="showAuth()">ចូលរួម</button>
+  </div>
+
+  <!-- AD BANNER HOME -->
+  <div class="ad-banner-wrap" id="ad-banner-home"></div>
+
+  <!-- FOOTER LINKS -->
+  <div class="footer-links">
+    <span class="footer-link" onclick="showPrivacy()" id="lnk-privacy">Privacy Policy</span>
+    <span class="footer-link" onclick="showTerms()" id="lnk-terms">Terms of Use</span>
+    <span class="footer-link" onclick="showContact()" id="lnk-contact">Contact</span>
+  </div>
+  <div style="text-align:center;padding:4px 16px 80px;font-size:10px;color:#c0c8d4">© 2025 Saju Destiny. All rights reserved.</div>
+</div>
+
+<!-- INPUT SCREEN -->
+<div class="screen" id="screen-input">
+  <div class="input-header">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div>
+      <div class="input-title" id="input-title">ជោគជតាពេញជីវិត</div>
+      <div class="input-sub" id="input-sub">បំពេញព័ត៌មានកំណើត</div>
+    </div>
+  </div>
+  <div class="input-body">
+    <div class="fg">
+      <label class="fl" id="lbl-name">ឈ្មោះ</label>
+      <input class="fi" id="iName" type="text" placeholder="ឧ. Sophea">
+    </div>
+    <div class="fg">
+      <label class="fl" id="lbl-birth">ថ្ងៃខែឆ្នាំកំណើត (ប្រតិទិនព្រះអាទិត្យ)</label>
+      <div class="fr3">
+        <select class="fi" id="iYear" onchange="updateLunar()"><option value="">ឆ្នាំ</option></select>
+        <select class="fi" id="iMonth" onchange="updateLunar()">
+          <option value="">ខែ</option>
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+          <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        </select>
+        <select class="fi" id="iDay" onchange="updateLunar()"><option value="">ថ្ងៃ</option></select>
+      </div>
+      <div class="lunar-display" id="lunarDisplay"></div>
+    </div>
+    <div class="fg" id="fg-time">
+      <label class="fl" id="lbl-time">ម៉ោងកំណើត (30 នាទី)</label>
+      <select class="fi" id="iHour">
+        <option value="">មិនដឹង</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl" id="lbl-gender">ភេទ</label>
+      <div class="gender-row">
+        <button class="gender-btn" id="gMale" onclick="setGender('male')">♂ Male</button>
+        <button class="gender-btn" id="gFemale" onclick="setGender('female')">♀ Female</button>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl" id="lbl-city">ទីក្រុង</label>
+      <select class="fi" id="iCity">
+        <option value="Phnom Penh">Phnom Penh</option>
+        <option value="Siem Reap">Siem Reap</option>
+        <option value="Battambang">Battambang</option>
+        <option value="Sihanoukville">Sihanoukville</option>
+        <option value="Kampot">Kampot</option>
+        <option value="Kampong Cham">Kampong Cham</option>
+        <option value="Kratie">Kratie</option>
+        <option value="Takeo">Takeo</option>
+        <option value="Kampong Speu">Kampong Speu</option>
+        <option value="Pursat">Pursat</option>
+        <option value="Other">Other Region</option>
+        <option value="Overseas">Overseas</option>
+      </select>
+    </div>
+
+    <!-- COMPAT EXTRA -->
+    <div id="compat-extra" style="display:none">
+      <div class="auth-sec-title" id="lbl-partner">ព័ត៌មានដៃគូ</div>
+      <div class="fg">
+        <label class="fl" id="lbl-p-name">ឈ្មោះដៃគូ</label>
+        <input class="fi" id="pName" type="text" placeholder="ឧ. Dara">
+      </div>
+      <div class="fg">
+        <label class="fl" id="lbl-p-birth">ថ្ងៃខែឆ្នាំកំណើតដៃគូ</label>
+        <div class="fr3">
+          <select class="fi" id="pYear"><option value="">ឆ្នាំ</option></select>
+          <select class="fi" id="pMonth">
+            <option value="">ខែ</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          </select>
+          <select class="fi" id="pDay"><option value="">ថ្ងៃ</option></select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl" id="lbl-p-gender">ភេទដៃគូ</label>
+        <div class="gender-row">
+          <button class="gender-btn" id="pgMale" onclick="setPGender('male')">♂ Male</button>
+          <button class="gender-btn" id="pgFemale" onclick="setPGender('female')">♀ Female</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitFortune()">🔮 មើលជោគជតា</button>
+    <div class="time-note" id="time-note">* ម៉ោងកំណើតដែលត្រឹមត្រូវ នឹងផ្តល់លទ្ធផលច្បាស់លាស់ជាង</div>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="screen" id="screen-result">
+  <div class="result-header">
+    <button class="back-btn" onclick="showInput()">←</button>
+    <div class="result-header-info">
+      <div class="result-name" id="result-name">--</div>
+      <div class="result-meta" id="result-meta">--</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="pdf-btn" id="pdfBtn" onclick="savePDF()" style="font-size:12px;padding:7px 10px">📄 PDF</button>
+      <button class="pdf-btn" onclick="openShareModal()" style="font-size:12px;padding:7px 10px;background:#1877f2;color:#fff;border-color:#1877f2">📤 Share</button>
+    </div>
+  </div>
+  <div class="tabs" id="result-tabs"></div>
+  <div id="result-panels"></div>
+</div>
+
+<!-- AUTH SCREEN -->
+<div class="screen" id="screen-auth">
+  <div class="input-header">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div>
+      <div class="input-title" id="auth-title">គណនី</div>
+      <div class="input-sub" id="auth-sub">ចូលឬបង្កើតគណនី</div>
+    </div>
+  </div>
+  <div class="auth-wrap">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="atab-login" onclick="switchAuthTab('login')" id="lbl-login">ចូល</div>
+      <div class="auth-tab" id="atab-reg" onclick="switchAuthTab('register')" id="lbl-register">ចុះឈ្មោះ</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-form active" id="aform-login">
+      <div class="fg">
+        <label class="fl" id="lbl-login-email">📧 អ៊ីម៉ែល *</label>
+        <input class="fi" id="lEmail" type="email" placeholder="your@email.com">
+      </div>
+      <div class="fg">
+        <label class="fl" id="lbl-login-pw">🔒 ពាក្យសម្ងាត់ *</label>
+        <input class="fi" id="lPassword" type="password" placeholder="••••••••">
+      </div>
+      <button class="auth-submit" onclick="doLogin()" id="lbl-login-btn">ចូល</button>
+      <div style="text-align:right;margin-top:8px">
+        <a onclick="showForgotPassword()" id="lbl-forgot-pw" style="font-size:12px;color:#e8720c">ភ្លេចពាក្យសម្ងាត់?</a>
+      </div>
+      <div class="auth-note" id="auth-note-login">មិនទាន់មានគណនី? <a onclick="switchAuthTab('register')" id="lbl-go-reg">ចុះឈ្មោះឥតគិតថ្លៃ</a></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-form" id="aform-register">
+      <div class="fg">
+        <label class="fl">📧 អ៊ីម៉ែល *</label>
+        <input class="fi" id="rEmail" type="email" placeholder="your@email.com">
+      </div>
+      <div class="fg">
+        <label class="fl">🔒 ពាក្យសម្ងាត់ * <span class="fl-opt">(យ៉ាងហោចណាស់ ៦ តួ)</span></label>
+        <input class="fi" id="rPassword" type="password" placeholder="••••••••">
+      </div>
+
+      <div class="auth-sec-title" id="lbl-personal">👤 ព័ត៌មានផ្ទាល់ខ្លួន</div>
+      <div class="fr2">
+        <div class="fg">
+          <label class="fl" id="lbl-lastname">នាមត្រកូល *</label>
+          <input class="fi" id="rLastName" type="text" placeholder="ឧ. Chan">
+        </div>
+        <div class="fg">
+          <label class="fl" id="lbl-firstname">នាមខ្លួន *</label>
+          <input class="fi" id="rFirstName" type="text" placeholder="ឧ. Sophea">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">ឈ្មោះខ្មែរ <span class="fl-opt">(optional)</span></label>
+        <input class="fi" id="rKhmerName" type="text" placeholder="ឧ. សុភា ចាន់">
+      </div>
+      <div class="fg">
+        <label class="fl" id="lbl-phone">📱 លេខទូរស័ព្ទ *</label>
+        <input class="fi" id="rPhone" type="tel" placeholder="+855 ...">
+      </div>
+
+      <div class="auth-sec-title" id="lbl-birth-info">🎂 ព័ត៌មានកំណើត</div>
+      <div class="fg">
+        <label class="fl" id="lbl-reg-birth">ថ្ងៃខែឆ្នាំកំណើត <span class="fl-opt">(ប្រតិទិនព្រះអាទិត្យ)</span></label>
+        <div class="fr3">
+          <select class="fi" id="rYear"><option value="">ឆ្នាំ</option></select>
+          <select class="fi" id="rMonth">
+            <option value="">ខែ</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          </select>
+          <select class="fi" id="rDay"><option value="">ថ្ងៃ</option></select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl" id="lbl-reg-gender">ភេទ</label>
+        <div class="gender-row">
+          <button class="gender-btn" id="rgMale" onclick="setRGender('male')">♂ Male</button>
+          <button class="gender-btn" id="rgFemale" onclick="setRGender('female')">♀ Female</button>
+        </div>
+      </div>
+
+      <div class="auth-sec-title" id="lbl-location">📍 ទីតាំង</div>
+      <div class="fg">
+        <label class="fl" id="lbl-reg-city">ទីក្រុង</label>
+        <select class="fi" id="rCity">
+          <option value="Phnom Penh">Phnom Penh</option>
+          <option value="Siem Reap">Siem Reap</option>
+          <option value="Battambang">Battambang</option>
+          <option value="Sihanoukville">Sihanoukville</option>
+          <option value="Kampot">Kampot</option>
+          <option value="Kampong Cham">Kampong Cham</option>
+          <option value="Kratie">Kratie</option>
+          <option value="Takeo">Takeo</option>
+          <option value="Kampong Speu">Kampong Speu</option>
+          <option value="Pursat">Pursat</option>
+          <option value="Other">Other Region</option>
+          <option value="Overseas">Overseas</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl" id="lbl-occupation">មុខរបរ <span class="fl-opt">(optional)</span></label>
+        <select class="fi" id="rOccupation">
+          <option value="" id="occ-select">ជ្រើសរើស...</option>
+          <option value="student" id="occ-student">និស្សិត</option>
+          <option value="business" id="occ-business">អ្នកជំនួញ</option>
+          <option value="employee" id="occ-employee">បុគ្គលិក</option>
+          <option value="government" id="occ-government">មន្ត្រីរាជការ</option>
+          <option value="freelance" id="occ-freelance">ឡករាជ្យ</option>
+          <option value="farmer" id="occ-farmer">កសិករ</option>
+          <option value="other" id="occ-other">ផ្សេងតីឡត</option>
+        </select>
+      </div>
+
+      <div class="auth-sec-title" id="lbl-interests">💫 ចំណាប់អារម្មណ៍</div>
+      <div class="interests-grid" id="interests-grid">
+        <button class="interest-btn" onclick="toggleInterest(this,'love')">❤️ ស្នេហា</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'wealth')">💰 ទ្រព្យ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'health')">🌿 សុខភាព</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'career')">💼 អាជីព</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'family')">👨‍👩‍👧 គ្រួសារ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'travel')">✈️ ដំណើរ</button>
+      </div>
+
+      <div class="fg" style="margin-top:14px;margin-bottom:0">
+        <label class="fl" id="lbl-referral">លេខកូដណែនាំ <span class="fl-opt">(optional)</span></label>
+        <input class="fi" id="rReferral" type="text" placeholder="ឧ. KDAB12CD" style="text-transform:uppercase">
+      </div>
+
+      <button class="auth-submit" onclick="doRegister()" id="lbl-reg-btn">✨ បង្កើតគណនីឥតគិតថ្លៃ</button>
+      <div class="auth-note" id="auth-note-reg">មានគណនីរួចហើយ? <a onclick="switchAuthTab('login')" id="lbl-go-login">ចូលទីនេះ</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div class="screen" id="screen-profile">
+  <div class="input-header">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div>
+      <div class="input-title" id="profile-title">គណនី</div>
+    </div>
+  </div>
+  <div id="profile-content"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="showHome()">
+    <div class="nav-icon">🏠</div>
+    <div id="nav-lbl-home">ផ្ទះ</div>
+  </button>
+  <button class="nav-item" id="nav-fortune" onclick="openMode('lifetime')">
+    <div class="nav-icon">🌟</div>
+    <div id="nav-lbl-fortune">ជោគជតា</div>
+  </button>
+  <button class="nav-item" id="nav-compat" onclick="openMode('compatibility')">
+    <div class="nav-icon">💑</div>
+    <div id="nav-lbl-compat">គូស្នេហ៍</div>
+  </button>
+  <button class="nav-item" id="nav-lucky" onclick="openMode('lucky_profile')">
+    <div class="nav-icon">🎨</div>
+    <div id="nav-lbl-lucky">ហោរា</div>
+  </button>
+  <button class="nav-item" id="nav-profile" onclick="showProfileOrAuth()">
+    <div class="nav-icon">👤</div>
+    <div id="nav-lbl-profile">គណនី</div>
+  </button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- PUSH BANNER -->
+<div class="push-banner" id="pushBanner">
+  <div class="push-banner-title" id="push-title">🔔 ត្ស័លជោគជតាប្រចាំថ្ង័</div>
+  <div class="push-banner-sub" id="push-sub">ព្រឹកព្រហ្មមានការជូនតាំនឹកជោគជតារបស់អ្នក</div>
+  <div class="push-banner-btns">
+    <button class="push-allow-btn" onclick="requestPush()" id="push-allow">✅ អនុញ្ញាត</button>
+    <button class="push-deny-btn" onclick="hidePushBanner()" id="push-deny">ក្រោយ</button>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="share-modal-overlay" id="forgotPwOverlay" onclick="closeForgotPassword(event)">
+  <div class="share-modal" style="max-width:360px">
+    <!-- Step 1: 이메일 입력 -->
+    <div id="fp-step1">
+      <div class="share-modal-title">🔑 <span id="fp-title1">ភ្លេចពាក្យសម្ងាត់</span></div>
+      <p style="font-size:12px;color:#666;margin-bottom:14px" id="fp-desc1">បញ្ចូលអ៊ីម៉ែលរបស់អ្នក ដើម្បីទទួលលេខកូដ</p>
+      <div class="fg">
+        <label class="fl">📧 <span id="fp-email-lbl">អ៊ីម៉ែល</span></label>
+        <input class="fi" id="fpEmail" type="email" placeholder="your@email.com">
+      </div>
+      <button class="auth-submit" onclick="requestResetCode()" id="fp-send-btn" style="margin-top:8px">ផ្ញើលេខកូដ</button>
+      <button class="share-cancel" onclick="closeForgotPassword()" id="fp-cancel1" style="margin-top:8px">Cancel</button>
+    </div>
+    <!-- Step 2: 코드 표시 + 입력 -->
+    <div id="fp-step2" style="display:none">
+      <div class="share-modal-title">📱 <span id="fp-title2">លេខកូដផ្ទៀងផ្ទាត់</span></div>
+      <div id="fp-code-display" style="background:#fffde7;border:2px solid #fade4a;border-radius:12px;padding:16px;text-align:center;margin-bottom:14px">
+        <div style="font-size:11px;color:#7a6000;margin-bottom:6px" id="fp-code-note">លេខកូដរបស់អ្នក (មានសុពលភាព ១០ នាទី)</div>
+        <div id="fp-code-value" style="font-size:32px;font-weight:700;color:#01092b;letter-spacing:8px">------</div>
+        <div style="font-size:10px;color:#999;margin-top:4px" id="fp-code-hint">* ក្នុងការដាក់ប្រើប្រាស់ពិតប្រាកដ លេខកូដនឹងត្រូវផ្ញើទៅអ៊ីម៉ែលរបស់អ្នក</div>
+      </div>
+      <div class="fg">
+        <label class="fl" id="fp-code-lbl">🔢 បញ្ចូលលេខកូដ ៦ ខ្ទង់</label>
+        <input class="fi" id="fpCode" type="text" maxlength="6" placeholder="123456" style="text-align:center;font-size:20px;letter-spacing:6px;font-weight:700">
+      </div>
+      <button class="auth-submit" onclick="verifyResetCode()" id="fp-verify-btn" style="margin-top:8px">ផ្ទៀងផ្ទាត់</button>
+      <button class="share-cancel" onclick="closeForgotPassword()" id="fp-cancel2" style="margin-top:8px">Cancel</button>
+    </div>
+    <!-- Step 3: 새 비밀번호 입력 -->
+    <div id="fp-step3" style="display:none">
+      <div class="share-modal-title">🔒 <span id="fp-title3">ពាក្យសម្ងាត់ថ្មី</span></div>
+      <p style="font-size:12px;color:#2ecc71;margin-bottom:14px" id="fp-verified-msg">✓ លេខកូដត្រូវបានផ្ទៀងផ្ទាត់</p>
+      <div class="fg">
+        <label class="fl" id="fp-newpw-lbl">🔒 ពាក្យសម្ងាត់ថ្មី (យ៉ាងហោចណាស់ ៦ តួ)</label>
+        <input class="fi" id="fpNewPw" type="password" placeholder="••••••••">
+      </div>
+      <div class="fg">
+        <label class="fl" id="fp-confirmpw-lbl">🔒 បញ្ជាក់ពាក្យសម្ងាត់</label>
+        <input class="fi" id="fpConfirmPw" type="password" placeholder="••••••••">
+      </div>
+      <button class="auth-submit" onclick="doResetPassword()" id="fp-reset-btn" style="margin-top:8px">ផ្លាស់ប្ដូរពាក្យសម្ងាត់</button>
+      <button class="share-cancel" onclick="closeForgotPassword()" id="fp-cancel3" style="margin-top:8px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SNS SHARE MODAL -->
+<div class="share-modal-overlay" id="shareModalOverlay" onclick="closeShareModal(event)">
+  <div class="share-modal">
+    <div class="share-modal-title" id="share-title">📤 Share Your Fortune</div>
+    <div class="share-grid">
+      <button class="share-item" onclick="shareToFacebook()">
+        <div class="share-icon fb"><span style="color:#fff;font-weight:900;font-size:22px">f</span></div>
+        <div class="share-label">Facebook</div>
+      </button>
+      <button class="share-item" onclick="shareToWhatsApp()">
+        <div class="share-icon whatsapp">💬</div>
+        <div class="share-label">WhatsApp</div>
+      </button>
+      <button class="share-item" onclick="shareToTelegram()">
+        <div class="share-icon telegram">✈️</div>
+        <div class="share-label">Telegram</div>
+      </button>
+      <button class="share-item" onclick="copyShareLink()">
+        <div class="share-icon copy">🔗</div>
+        <div class="share-label" id="share-copy-lbl">Copy Link</div>
+      </button>
+    </div>
+    <button class="share-cancel" onclick="closeShareModal()" id="share-cancel">Cancel</button>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY SCREEN -->
+<div class="screen" id="screen-privacy">
+  <div class="privacy-screen">
+    <div class="privacy-header">
+      <button class="back-btn" onclick="showHome()" style="color:#fff;background:transparent;border:none;font-size:20px;cursor:pointer">←</button>
+      <div class="privacy-title">Privacy Policy</div>
+    </div>
+    <div class="privacy-body">
+      <p><strong>Saju Destiny</strong> (operated by <strong>HEBRON ACADEMY</strong>) respects your privacy. This Privacy Policy explains how we collect, use, and protect your personal information when you use our app.</p>
+      <p style="font-size:11px;color:#aaa">Effective Date: May 22, 2025 | Last Updated: May 22, 2026</p>
+
+      <h2>1. Information We Collect</h2>
+      <p><strong>Information you provide:</strong></p>
+      <ul>
+        <li>Account registration: name, email address, phone number, date of birth, gender, city</li>
+        <li>Fortune reading inputs: birth year, month, day, hour, and gender used for Saju calculations</li>
+      </ul>
+      <p><strong>Information collected automatically:</strong></p>
+      <ul>
+        <li>App usage data: features accessed, fortune reading history, session duration</li>
+        <li>Device information: device type, operating system version (used for crash reporting and compatibility only)</li>
+        <li>App click/visit counters (anonymous, not linked to personal identity)</li>
+      </ul>
+
+      <h2>2. How We Use Your Information</h2>
+      <ul>
+        <li>To provide personalized Saju (Four Pillars) fortune readings based on your birth data</li>
+        <li>To maintain your account and remember your preferences</li>
+        <li>To improve app features, fix bugs, and enhance user experience</li>
+        <li>To send optional notifications (only if you explicitly opt in)</li>
+        <li>To display aggregate usage statistics (e.g., total app clicks — no personal data shown)</li>
+      </ul>
+
+      <h2>3. Data Sharing &amp; Third Parties</h2>
+      <p>We do <strong>not</strong> sell, rent, or trade your personal data. We do not share your data with third parties except:</p>
+      <ul>
+        <li>As required by applicable law or legal process</li>
+        <li>To protect the rights and safety of our users</li>
+        <li>With AI service providers (OpenAI) solely to generate fortune reading text — only anonymized birth data (year, month, day, hour, gender) is sent; no name or contact information is transmitted</li>
+      </ul>
+
+      <h2>4. Data Storage &amp; Retention</h2>
+      <p>Your data is stored securely on our servers. We retain your account data for as long as your account is active. Fortune reading history is retained for up to 12 months. You may request deletion at any time.</p>
+
+      <h2>5. Children's Privacy</h2>
+      <p>This app is intended for users aged <strong>13 and older</strong>. We do not knowingly collect personal information from children under 13. If we discover that a child under 13 has provided personal information, we will delete it immediately.</p>
+
+      <h2>6. Your Rights &amp; Data Deletion</h2>
+      <p>You have the right to:</p>
+      <ul>
+        <li>Access the personal data we hold about you</li>
+        <li>Request correction of inaccurate data</li>
+        <li>Request deletion of your account and all associated data</li>
+        <li>Withdraw consent for optional features (e.g., notifications)</li>
+      </ul>
+      <p>To exercise these rights, contact us at: <strong>hebronacademy.kh@gmail.com</strong> or call <strong>+855 16 581 245</strong></p>
+
+      <h2>7. Fortune Reading Disclaimer</h2>
+      <p>All fortune readings are provided for <strong>entertainment and self-reflection purposes only</strong>. They are based on the traditional Saju (Four Pillars of Destiny) system and do not constitute legal, medical, financial, psychological, or relationship advice. Always consult qualified professionals for important life decisions.</p>
+
+      <h2>8. Contact Information</h2>
+      <p><strong>HEBRON ACADEMY</strong><br>
+      2F, #240, Booyoung Town Mall, Phnom Penh, Cambodia 120802<br>
+      Phone: +855 16 581 245<br>
+      Email: hebronacademy.kh@gmail.com</p>
+      <p style="margin-top:16px;font-size:11px;color:#aaa">Last updated: May 22, 2026</p>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS OF USE SCREEN -->
+<div class="screen" id="screen-terms">
+  <div class="privacy-screen">
+    <div class="privacy-header">
+      <button class="back-btn" onclick="showHome()" style="color:#fff;background:transparent;border:none;font-size:20px;cursor:pointer">←</button>
+      <div class="privacy-title">Terms of Use</div>
+    </div>
+    <div class="privacy-body">
+      <p>By using <strong>Saju Destiny</strong>, you agree to the following terms.</p>
+      <h2>1. Entertainment Purpose</h2>
+      <p>All fortune readings are for entertainment and self-reflection only. We make no guarantees about accuracy or outcomes.</p>
+      <h2>2. User Accounts</h2>
+      <p>You are responsible for maintaining the confidentiality of your account credentials. You must be 13 years or older to use this app.</p>
+      <h2>3. Prohibited Use</h2>
+      <ul>
+        <li>Do not use the app for any illegal purpose</li>
+        <li>Do not attempt to reverse-engineer or copy the app</li>
+        <li>Do not create multiple accounts to abuse free features</li>
+      </ul>
+      <h2>4. Limitation of Liability</h2>
+      <p>Saju Destiny is not liable for any decisions made based on fortune readings. Always consult qualified professionals for important life decisions.</p>
+      <h2>5. Changes to Terms</h2>
+      <p>We may update these terms at any time. Continued use of the app constitutes acceptance of the updated terms.</p>
+      <p style="margin-top:16px;font-size:11px;color:#aaa">Last updated: May 2025</p>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT SCREEN -->
+<div class="screen" id="screen-contact">
+  <div class="privacy-screen">
+    <div class="privacy-header">
+      <button class="back-btn" onclick="showHome()" style="color:#fff;background:transparent;border:none;font-size:20px;cursor:pointer">←</button>
+      <div class="privacy-title" id="contact-title">Contact Us</div>
+    </div>
+    <div class="privacy-body">
+      <div style="text-align:center;padding:24px 0 16px">
+        <img src="/icons/icon-192.png" alt="Hebron Academy" style="width:72px;height:72px;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.15)" onerror="this.style.display='none'">
+      </div>
+      <h2 style="text-align:center;font-size:20px;color:#01092b;margin-bottom:4px">HEBRON ACADEMY</h2>
+      <p style="text-align:center;font-size:12px;color:#888;margin-bottom:24px">Saju Destiny — Official Partner</p>
+
+      <div style="background:#f7f9fc;border-radius:14px;padding:18px 16px;margin-bottom:12px">
+        <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px">
+          <span style="font-size:22px">📍</span>
+          <div>
+            <div style="font-size:12px;color:#888;margin-bottom:2px" id="contact-lbl-address">Address</div>
+            <div style="font-size:14px;font-weight:600;color:#01092b;line-height:1.5">2F, #240, Booyoung Town Mall<br>Phnom Penh, Cambodia 120802</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <span style="font-size:22px">📞</span>
+          <div>
+            <div style="font-size:12px;color:#888;margin-bottom:2px" id="contact-lbl-phone">Phone</div>
+            <a href="tel:+85516581245" style="font-size:15px;font-weight:700;color:#e8720c;text-decoration:none">+855 16 581 245</a>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:22px">✉️</span>
+          <div>
+            <div style="font-size:12px;color:#888;margin-bottom:2px" id="contact-lbl-email">Email</div>
+            <a href="mailto:support@sajudestiny.app" style="font-size:14px;font-weight:600;color:#e8720c;text-decoration:none">support@sajudestiny.app</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#fff8e1;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #ffe082">
+        <div style="font-size:13px;font-weight:700;color:#e8720c;margin-bottom:6px">🕐 <span id="contact-lbl-hours">Business Hours</span></div>
+        <div style="font-size:13px;color:#555;line-height:1.7">
+          <span id="contact-hours-weekday">Mon – Fri: 9:00 AM – 6:00 PM</span><br>
+          <span id="contact-hours-sat">Sat: 9:00 AM – 1:00 PM</span><br>
+          <span id="contact-hours-sun">Sun: Closed</span>
+        </div>
+      </div>
+
+      <a href="https://www.facebook.com/share/p/17uZph8DES/" target="_blank" rel="noopener noreferrer"
+         style="display:flex;align-items:center;justify-content:center;gap:10px;background:#1877f2;color:#fff;border-radius:12px;padding:14px;text-decoration:none;font-weight:700;font-size:14px;margin-bottom:8px">
+        <span style="font-size:20px">👍</span> <span id="contact-fb-btn">Visit us on Facebook</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;  // 같은 서버에서 API 서빙
+let lang = localStorage.getItem('lang') || 'km';
+let currentMode = '';
+let selectedGender = 'male';
+let selectedPGender = 'male';
+let selectedRGender = '';
+let selectedInterests = [];
+let authToken = localStorage.getItem('authToken') || '';
+let currentUser = null;
+
+// ===== TRANSLATIONS =====
+const TR = {
+  km: {
+    topbar_sub: 'Four Pillars ជោគជតា',
+    hero_badge: '✦ Saju Destiny × Cambodia ✦',
+    hero_title: 'Saju Destiny',
+    hero_sub: 'Four Pillars (សសរទាំង ៤) — ឆ្នាំ · ខែ · ថ្ងៃ · ម៉ោង',
+    hero_desc: 'Saju គឺជាប្រព័ន្ធទស្សន៍ទាយបុរាណ ដែលវិភាគជោគជតាតាមឆ្នាំ ខែ ថ្ងៃ និងម៉ោងកំណើត — ជា "សសរទាំង ៤" នៃជីវិត។ ធាតុទាំង ៥ (ឈើ ភ្លើង ដី លោហៈ ទឹក) និងតុល្យភាព Yin-Yang បង្ហាញផ្លូវជីវិតរបស់អ្នក។',
+    stat_visits_label: 'ការចុចសរុប',
+    stat_years_label: 'ឆ្នាំប្រពៃណី',
+    stat_ai_label: 'ការវិភាគច្បាស់',
+    stat_free_label: 'ឥតគិតថ្លៃ',
+    today_label: 'ថ្ងៃនេះ',
+    today_date_label: 'កាលបរិច្ឆេទ',
+    sec_fortune: 'ការទស្សន៍ទាយ',
+    sec_special: 'ពិសេស',
+    menu_lifetime: 'ជោគជតា\nពេញជីវិត',
+    menu_yearly: 'ឆ្នាំ\n២០២៦',
+    menu_monthly: 'ប្រចាំ\nខែ',
+    menu_daily: 'ប្រចាំ\nថ្ងៃ',
+    menu_compat: 'គូស្នេហ៍\nភាព',
+    menu_lucky_days: 'ថ្ងៃ\nមង្គល',
+    menu_lucky_profile: 'ពណ៌ &\nទិស',
+    menu_lifestage: 'វ័យ\nជីវិត',
+    promo_text: 'Premium Membership',
+    promo_sub: 'ការវិភាគលម្អិត + ការប្រឹក្សា',
+    promo_btn: 'ចូលរួម',
+    lbl_name: 'ឈ្មោះ',
+    lbl_birth: 'ថ្ងៃខែឆ្នាំកំណើត (ប្រតិទិនព្រះអាទិត្យ)',
+    lbl_time: 'ម៉ោងកំណើត (30 នាទី)',
+    lbl_gender: 'ភេទ',
+    lbl_city: 'ទីក្រុង',
+    lbl_partner: 'ព័ត៌មានដៃគូ',
+    lbl_p_name: 'ឈ្មោះដៃគូ',
+    lbl_p_birth: 'ថ្ងៃខែឆ្នាំកំណើតដៃគូ',
+    lbl_p_gender: 'ភេទដៃគូ',
+    submit_btn: '🔮 មើលជោគជតា',
+    time_note: '* ម៉ោងកំណើតដែលត្រឹមត្រូវ នឹងផ្តល់លទ្ធផលច្បាស់លាស់ជាង',
+    nav_home: 'ផ្ទះ', nav_fortune: 'ជោគជតា', nav_compat: 'គូស្នេហ៍', nav_lucky: 'ហោរា', nav_profile: 'គណនី',
+    auth_title: 'គណនី', auth_sub: 'ចូលឬបង្កើតគណនី',
+    lbl_login: 'ចូល', lbl_register: 'ចុះឈ្មោះ',
+    lbl_login_btn: 'ចូល',
+    lbl_reg_btn: '✨ បង្កើតគណនីឥតគិតថ្លៃ',
+    auth_note_login: 'មិនទាន់មានគណនី?',
+    go_reg: 'ចុះឈ្មោះឥតគិតថ្លៃ',
+    go_login: 'ចូលទីនេះ',
+    lbl_personal: '👤 ព័ត៌មានផ្ទាល់ខ្លួន',
+    lbl_lastname: 'នាមត្រកូល *',
+    lbl_firstname: 'នាមខ្លួន *',
+    lbl_phone: '📱 លេខទូរស័ព្ទ *',
+    lbl_birth_info: '🎂 ព័ត៌មានកំណើត',
+    lbl_reg_birth: 'ថ្ងៃខែឆ្នាំកំណើត',
+    lbl_reg_gender: 'ភេទ',
+    lbl_location: '📍 ទីតាំង',
+    lbl_reg_city: 'ទីក្រុង',
+    lbl_occupation: 'មុខរបរ',
+    lbl_interests: '💫 ចំណាប់អារម្មណ៍',
+    lbl_referral: 'លេខកូដណែនាំ',
+    profile_title: 'គណនី',
+    push_title: '🔔 ទទួលជោគជតាប្រចាំថ្ងៃ',
+    push_sub: 'ព្រឹកព្រហ្មមានការជូនដំណឹងជោគជតារបស់អ្នក',
+    push_allow: '✅ អនុញ្ញាត',
+    push_deny: 'ក្រោយ',
+    tab_chart: '📊 ផែនទី',
+    tab_reading: '🔮 ការទស្សន៍ទាយ',
+    tab_lifestage: '🌱 វ័យជីវិត',
+    tab_daeun: '🔄 វដ្ត',
+    tab_monthly: '📅 ប្រចាំខែ',
+    tab_compat: '💑 គូស្នេហ៍',
+    tab_lucky_days: '📆 ថ្ងៃមង្គល',
+    tab_lucky_profile: '🎨 ហោរា',
+    loading: 'កំពុងគណនា...',
+    err_login: 'សូមចូលគណនីជាមុន',
+    err_fill: 'សូមបំពេញព័ត៌មានចាំបាច់',
+    err_conn: 'បញ្ហាការតភ្ជាប់',
+    reg_ok: 'ចុះឈ្មោះបានជោគជ័យ!',
+    login_ok: 'ចូលបានជោគជ័យ!',
+    logout_ok: 'ចាកចេញបានជោគជ័យ',
+    lbl_login_email: '📧 អ៊ីម៉ែល *',
+    lbl_login_pw: '🔒 ពាក្យសម្ងាត់ *',
+    err_email_pw: 'អ៊ីម៉ែល និង ពាក្យសម្ងាត់ ត្រូវការ',
+    err_firstname: 'សូមបំពេញនាមខ្លួន',
+    err_lastname: 'សូមបំពេញនាមត្រកូល',
+    err_phone: 'សូមបំពេញលេខទូរស័ព្ទ',
+    tier_free: 'FREE Member',
+    tier_premium: 'PREMIUM Member',
+    logout: 'ចាកចេញ',
+    ad_title: 'មើលការផ្សាយពាណិជ្ជកម្ម',
+    ad_sub: 'មើលការផ្សាយ 1 ដើម្បីបើកជោគជតាប្រចាំថ្ងៃ',
+    ad_watch: '▶ មើលការផ្សាយ (30s)',
+    mode_lifetime: 'ជោគជតាពេញជីវិត',
+    mode_yearly: 'ជោគជតាឆ្នាំ ២០២៦',
+    mode_monthly: 'ជោគជតាប្រចាំខែ',
+    mode_daily: 'ជោគជតាប្រចាំថ្ងៃ',
+    mode_compat: 'ភាពស្ទួនគូស្នេហ៍',
+    mode_lucky_days: 'ថ្ងៃមង្គល',
+    mode_lucky_profile: 'ហោរាផ្ទាល់ខ្លួន',
+    input_sub: 'បំពេញព័ត៌មានកំណើត',
+    share_title: '📤 ចែករំលែកជោគជតា',
+    share_cancel: 'បោះបង់',
+    share_copy_lbl: 'ចម្លងតំណ',
+    lnk_privacy: 'គោលការណ៍ឯកជនភាព',
+    lnk_terms: 'លក្ខខណ្ឌប្រើប្រាស់',
+    lnk_contact: 'ទំនាក់ទំនង',
+    lbl_forgot_pw: 'ភ្លេចពាក្យសម្ងាត់?',
+    fp_title1: 'ភ្លេចពាក្យសម្ងាត់',
+    fp_desc1: 'បញ្ចូលអ៊ីម៉ែលរបស់អ្នក ដើម្បីទទួលលេខកូដ',
+    fp_email_lbl: 'អ៊ីម៉ែល',
+    fp_send_btn: 'ផ្ញើលេខកូដ',
+    fp_title2: 'លេខកូដផ្ទៀងផ្ទាត់',
+    fp_code_note: 'លេខកូដរបស់អ្នក (មានសុពលភាព ១០ នាទី)',
+    fp_code_hint: '* ក្នុងការដាក់ប្រើប្រាស់ពិតប្រាកដ លេខកូដនឹងត្រូវផ្ញើទៅអ៊ីម៉ែលរបស់អ្នក',
+    fp_code_lbl: '🔢 បញ្ចូលលេខកូដ ៦ ខ្ទង់',
+    fp_verify_btn: 'ផ្ទៀងផ្ទាត់',
+    fp_title3: 'ពាក្យសម្ងាត់ថ្មី',
+    fp_verified_msg: '✓ លេខកូដត្រូវបានផ្ទៀងផ្ទាត់',
+    fp_newpw_lbl: '🔒 ពាក្យសម្ងាត់ថ្មី (យ៉ាងហោចណាស់ ៦ តួ)',
+    fp_confirmpw_lbl: '🔒 បញ្ជាក់ពាក្យសម្ងាត់',
+    fp_reset_btn: 'ផ្លាស់ប្ដូរពាក្យសម្ងាត់',
+    fp_reset_ok: 'ពាក្យសម្ងាត់ត្រូវបានផ្លាស់ប្ដូរជោគជ័យ!',
+    fp_err_notfound: 'លេខអ៊ីម៉ែលនេះក្នុងប្រព័ន្ធ',
+    fp_err_code: 'លេខកូដមិនត្រូវ មិននឹងហើយ ឬបំណងនឹងសុពលភាព',
+    fp_err_pwmatch: 'ពាក្យសម្ងាត់មិនត្រូវគ្នា',
+    fp_err_pwshort: 'ពាក្យសម្ងាត់ត្រូវការយ៉ាងហោចណាស់ ៦ តួ',
+  },
+  en: {
+    topbar_sub: 'Four Pillars Destiny Reading',
+    hero_badge: '✦ Saju Destiny × Cambodia ✦',
+    hero_title: 'Saju Destiny',
+    hero_sub: 'Four Pillars Analysis — Year · Month · Day · Hour',
+    hero_desc: 'Saju is an ancient destiny system that reads your fate from Year, Month, Day & Hour of birth — the "Four Pillars" of life. Five Elements (Wood, Fire, Earth, Metal, Water) and Yin-Yang balance reveal your unique life path.',
+    stat_visits_label: 'Total Clicks',
+    stat_years_label: 'Years of Tradition',
+    stat_ai_label: 'Precise Analysis',
+    stat_free_label: 'Free to Use',
+    today_label: 'Today',
+    today_date_label: 'Date',
+    sec_fortune: 'Fortune Reading',
+    sec_special: 'Special',
+    menu_lifetime: 'Lifetime\nFortune',
+    menu_yearly: 'Year\n2026',
+    menu_monthly: 'Monthly\nFortune',
+    menu_daily: 'Daily\nFortune',
+    menu_compat: 'Love\nCompat',
+    menu_lucky_days: 'Lucky\nDays',
+    menu_lucky_profile: 'Color &\nDirection',
+    menu_lifestage: 'Life\nStages',
+    promo_text: 'Premium Membership',
+    promo_sub: 'Detailed analysis + Consultation',
+    promo_btn: 'Join',
+    lbl_name: 'Name',
+    lbl_birth: 'Date of Birth (Solar Calendar)',
+    lbl_time: 'Birth Time (30 min intervals)',
+    lbl_gender: 'Gender',
+    lbl_city: 'City',
+    lbl_partner: 'Partner Information',
+    lbl_p_name: "Partner's Name",
+    lbl_p_birth: "Partner's Date of Birth",
+    lbl_p_gender: "Partner's Gender",
+    submit_btn: '🔮 Read My Destiny',
+    time_note: '* Accurate birth time provides more precise results',
+    nav_home: 'Home', nav_fortune: 'Fortune', nav_compat: 'Compat', nav_lucky: 'Lucky', nav_profile: 'Account',
+    auth_title: 'Account', auth_sub: 'Login or Create Account',
+    lbl_login: 'Login', lbl_register: 'Register',
+    lbl_login_btn: 'Login',
+    lbl_reg_btn: '✨ Create Free Account',
+    auth_note_login: "Don't have an account?",
+    go_reg: 'Register for free',
+    go_login: 'Login here',
+    lbl_personal: '👤 Personal Information',
+    lbl_lastname: 'Family Name *',
+    lbl_firstname: 'First Name *',
+    lbl_phone: '📱 Phone Number *',
+    lbl_birth_info: '🎂 Birth Information',
+    lbl_reg_birth: 'Date of Birth',
+    lbl_reg_gender: 'Gender',
+    lbl_location: '📍 Location',
+    lbl_reg_city: 'City',
+    lbl_occupation: 'Occupation',
+    lbl_interests: '💫 Interests',
+    lbl_referral: 'Referral Code',
+    profile_title: 'My Account',
+    push_title: '🔔 Daily Fortune Notification',
+    push_sub: 'Receive your daily fortune every morning',
+    push_allow: '✅ Allow',
+    push_deny: 'Later',
+    tab_chart: '📊 Chart',
+    tab_reading: '🔮 Reading',
+    tab_lifestage: '🌱 Life Stages',
+    tab_daeun: '🔄 Cycles',
+    tab_monthly: '📅 Monthly',
+    tab_compat: '💑 Compatibility',
+    tab_lucky_days: '📆 Lucky Days',
+    tab_lucky_profile: '🎨 Lucky Profile',
+    loading: 'Analyzing...',
+    err_login: 'Please login first',
+    err_fill: 'Please fill in required fields',
+    err_conn: 'Connection error',
+    reg_ok: 'Registration successful!',
+    login_ok: 'Login successful!',
+    logout_ok: 'Logged out successfully',
+    lbl_login_email: '📧 Email *',
+    lbl_login_pw: '🔒 Password *',
+    err_email_pw: 'Email and password are required',
+    err_firstname: 'First name is required',
+    err_lastname: 'Family name is required',
+    err_phone: 'Phone number is required',
+    tier_free: 'FREE Member',
+    tier_premium: 'PREMIUM Member',
+    logout: 'Logout',
+    ad_title: 'Watch an Advertisement',
+    ad_sub: 'Watch 1 ad to unlock daily fortune',
+    ad_watch: '▶ Watch Ad (30s)',
+    mode_lifetime: 'Lifetime Fortune',
+    mode_yearly: 'Fortune 2026',
+    mode_monthly: 'Monthly Fortune',
+    mode_daily: 'Daily Fortune',
+    mode_compat: 'Love Compatibility',
+    mode_lucky_days: 'Lucky Days',
+    mode_lucky_profile: 'Personal Lucky Profile',
+    input_sub: 'Enter birth information',
+    share_title: '📤 Share Your Fortune',
+    share_cancel: 'Cancel',
+    share_copy_lbl: 'Copy Link',
+    lnk_privacy: 'Privacy Policy',
+    lnk_terms: 'Terms of Use',
+    lnk_contact: 'Contact',
+    lbl_forgot_pw: 'Forgot Password?',
+    fp_title1: 'Forgot Password',
+    fp_desc1: 'Enter your email to receive a reset code',
+    fp_email_lbl: 'Email',
+    fp_send_btn: 'Send Code',
+    fp_title2: 'Verification Code',
+    fp_code_note: 'Your code (valid for 10 minutes)',
+    fp_code_hint: '* In production, the code will be sent to your email',
+    fp_code_lbl: '🔢 Enter 6-digit code',
+    fp_verify_btn: 'Verify',
+    fp_title3: 'New Password',
+    fp_verified_msg: '✓ Code verified successfully',
+    fp_newpw_lbl: '🔒 New Password (min 6 characters)',
+    fp_confirmpw_lbl: '🔒 Confirm Password',
+    fp_reset_btn: 'Reset Password',
+    fp_reset_ok: 'Password reset successfully!',
+    fp_err_notfound: 'Email not found in our system',
+    fp_err_code: 'Invalid or expired code',
+    fp_err_pwmatch: 'Passwords do not match',
+    fp_err_pwshort: 'Password must be at least 6 characters',
+  }
+};
+
+function t(k) { return (TR[lang] || TR.km)[k] || k; }
+
+// ===== LANGUAGE =====
+function toggleLang() {
+  lang = lang === 'km' ? 'en' : 'km';
+  localStorage.setItem('lang', lang);
+  // 현재 언어가 km이면 영어(🇺🇸)로 전환할 수 있다는 표시, en이면 크메르어(🇰🇭) 표시
+  document.getElementById('langBtn').textContent = lang === 'km' ? '🇺🇸' : '🇰🇭';
+  applyLang();
+}
+
+function applyLang() {
+  const L = TR[lang];
+  document.getElementById('topbar-sub').textContent = L.topbar_sub;
+  document.getElementById('hero-badge').textContent = L.hero_badge;
+  document.getElementById('hero-title').textContent = L.hero_title;
+  document.getElementById('hero-sub').textContent = L.hero_sub;
+  document.getElementById('hero-desc').textContent = L.hero_desc;
+  document.getElementById('stat-visits-label').textContent = L.stat_visits_label;
+  document.getElementById('stat-years-label').textContent = L.stat_years_label;
+  document.getElementById('stat-ai-label').textContent = L.stat_ai_label;
+  document.getElementById('stat-free-label').textContent = L.stat_free_label;
+  document.getElementById('today-label').textContent = L.today_label;
+  document.getElementById('today-date-label').textContent = L.today_date_label;
+  document.getElementById('sec-fortune').textContent = L.sec_fortune;
+  document.getElementById('sec-special').textContent = L.sec_special;
+  document.getElementById('menu-lifetime').innerHTML = L.menu_lifetime.replace('\n','<br>');
+  document.getElementById('menu-yearly').innerHTML = L.menu_yearly.replace('\n','<br>');
+  document.getElementById('menu-monthly').innerHTML = L.menu_monthly.replace('\n','<br>');
+  document.getElementById('menu-daily').innerHTML = L.menu_daily.replace('\n','<br>');
+  document.getElementById('menu-compat').innerHTML = L.menu_compat.replace('\n','<br>');
+  document.getElementById('menu-lucky-days').innerHTML = L.menu_lucky_days.replace('\n','<br>');
+  document.getElementById('menu-lucky-profile').innerHTML = L.menu_lucky_profile.replace('\n','<br>');
+  document.getElementById('menu-lifestage').innerHTML = L.menu_lifestage.replace('\n','<br>');
+  document.getElementById('promo-text').textContent = L.promo_text;
+  document.getElementById('promo-sub').textContent = L.promo_sub;
+  document.getElementById('promo-btn').textContent = L.promo_btn;
+  document.getElementById('lbl-name').textContent = L.lbl_name;
+  document.getElementById('lbl-birth').textContent = L.lbl_birth;
+  document.getElementById('lbl-time').textContent = L.lbl_time;
+  document.getElementById('lbl-gender').textContent = L.lbl_gender;
+  document.getElementById('lbl-city').textContent = L.lbl_city;
+  document.getElementById('lbl-partner').textContent = L.lbl_partner;
+  document.getElementById('lbl-p-name').textContent = L.lbl_p_name;
+  document.getElementById('lbl-p-birth').textContent = L.lbl_p_birth;
+  document.getElementById('lbl-p-gender').textContent = L.lbl_p_gender;
+  document.getElementById('submitBtn').textContent = L.submit_btn;
+  document.getElementById('time-note').textContent = L.time_note;
+  document.getElementById('nav-lbl-home').textContent = L.nav_home;
+  document.getElementById('nav-lbl-fortune').textContent = L.nav_fortune;
+  document.getElementById('nav-lbl-compat').textContent = L.nav_compat;
+  document.getElementById('nav-lbl-lucky').textContent = L.nav_lucky;
+  document.getElementById('nav-lbl-profile').textContent = L.nav_profile;
+  document.getElementById('auth-title').textContent = L.auth_title;
+  document.getElementById('auth-sub').textContent = L.auth_sub;
+  document.getElementById('atab-login').textContent = L.lbl_login;
+  document.getElementById('atab-reg').textContent = L.lbl_register;
+  document.getElementById('lbl-login-btn').textContent = L.lbl_login_btn;
+  document.getElementById('lbl-login-email').textContent = L.lbl_login_email;
+  document.getElementById('lbl-login-pw').textContent = L.lbl_login_pw;
+  document.getElementById('lbl-reg-btn').textContent = L.lbl_reg_btn;
+  document.getElementById('auth-note-login').innerHTML = L.auth_note_login + ' <a onclick="switchAuthTab(\'register\')">' + L.go_reg + '</a>';
+  document.getElementById('auth-note-reg').innerHTML = L.auth_note_login.replace("Don't have an account?","Already have an account?").replace("មិនទាន់មានគណនី?","មានគណនីរួចហើយ?") + ' <a onclick="switchAuthTab(\'login\')">' + L.go_login + '</a>';
+  document.getElementById('lbl-personal').textContent = L.lbl_personal;
+  document.getElementById('lbl-lastname').textContent = L.lbl_lastname;
+  document.getElementById('lbl-firstname').textContent = L.lbl_firstname;
+  document.getElementById('lbl-phone').textContent = L.lbl_phone;
+  document.getElementById('lbl-birth-info').textContent = L.lbl_birth_info;
+  document.getElementById('lbl-reg-birth').textContent = L.lbl_reg_birth;
+  document.getElementById('lbl-reg-gender').textContent = L.lbl_reg_gender;
+  document.getElementById('lbl-location').textContent = L.lbl_location;
+  document.getElementById('lbl-reg-city').textContent = L.lbl_reg_city;
+  document.getElementById('lbl-occupation').textContent = L.lbl_occupation;
+  document.getElementById('lbl-interests').textContent = L.lbl_interests;
+  document.getElementById('lbl-referral').textContent = L.lbl_referral;
+  document.getElementById('profile-title').textContent = L.profile_title;
+  document.getElementById('push-title').textContent = L.push_title;
+  document.getElementById('push-sub').textContent = L.push_sub;
+  document.getElementById('push-allow').textContent = L.push_allow;
+  document.getElementById('push-deny').textContent = L.push_deny;
+  // SNS 공유 모달
+  document.getElementById('share-title').textContent = L.share_title;
+  document.getElementById('share-cancel').textContent = L.share_cancel;
+  document.getElementById('share-copy-lbl').textContent = L.share_copy_lbl;
+  // 푸터 링크
+  document.getElementById('lnk-privacy').textContent = L.lnk_privacy;
+  document.getElementById('lnk-terms').textContent = L.lnk_terms;
+  document.getElementById('lnk-contact').textContent = L.lnk_contact;
+  // Contact 화면 번역
+  const ctTitle = document.getElementById('contact-title'); if(ctTitle) ctTitle.textContent = lang==='km'?'ទំនាក់ទំនង':'Contact Us';
+  const ctAddr = document.getElementById('contact-lbl-address'); if(ctAddr) ctAddr.textContent = lang==='km'?'អាសយដ្ឋាន':'Address';
+  const ctPhone = document.getElementById('contact-lbl-phone'); if(ctPhone) ctPhone.textContent = lang==='km'?'លេខទូរស័ព្ទ':'Phone';
+  const ctEmail = document.getElementById('contact-lbl-email'); if(ctEmail) ctEmail.textContent = lang==='km'?'អ៊ីម៉ែល':'Email';
+  const ctHours = document.getElementById('contact-lbl-hours'); if(ctHours) ctHours.textContent = lang==='km'?'ម៉ោងធ្វើការ':'Business Hours';
+  const ctWd = document.getElementById('contact-hours-weekday'); if(ctWd) ctWd.textContent = lang==='km'?'ច័ន្ទ – សុក្រ: ម៉ោង ៩:០០ – ១៨:០០':'Mon – Fri: 9:00 AM – 6:00 PM';
+  const ctSat = document.getElementById('contact-hours-sat'); if(ctSat) ctSat.textContent = lang==='km'?'សៅរ៍: ម៉ោង ៩:០០ – ១៣:០០':'Sat: 9:00 AM – 1:00 PM';
+  const ctSun = document.getElementById('contact-hours-sun'); if(ctSun) ctSun.textContent = lang==='km'?'អាទិត្យ: បិទ':'Sun: Closed';
+  const ctFb = document.getElementById('contact-fb-btn'); if(ctFb) ctFb.textContent = lang==='km'?'ចូលទៅកាន់ Facebook របស់យើង':'Visit us on Facebook';
+  // 비밀번호 찾기 링크
+  const fpLink = document.getElementById('lbl-forgot-pw');
+  if (fpLink) fpLink.textContent = L.lbl_forgot_pw || (lang==='km'?'ភ្លេចពាក្យសម្ងាត់?':'Forgot Password?');
+  // 비밀번호 찾기 모달 텍스트
+  const fpT1 = document.getElementById('fp-title1'); if(fpT1) fpT1.textContent = L.fp_title1||'';
+  const fpD1 = document.getElementById('fp-desc1'); if(fpD1) fpD1.textContent = L.fp_desc1||'';
+  const fpEl = document.getElementById('fp-email-lbl'); if(fpEl) fpEl.textContent = L.fp_email_lbl||'';
+  const fpSb = document.getElementById('fp-send-btn'); if(fpSb) fpSb.textContent = L.fp_send_btn||'';
+  const fpT2 = document.getElementById('fp-title2'); if(fpT2) fpT2.textContent = L.fp_title2||'';
+  const fpCn = document.getElementById('fp-code-note'); if(fpCn) fpCn.textContent = L.fp_code_note||'';
+  const fpCh = document.getElementById('fp-code-hint'); if(fpCh) fpCh.textContent = L.fp_code_hint||'';
+  const fpCl = document.getElementById('fp-code-lbl'); if(fpCl) fpCl.textContent = L.fp_code_lbl||'';
+  const fpVb = document.getElementById('fp-verify-btn'); if(fpVb) fpVb.textContent = L.fp_verify_btn||'';
+  const fpT3 = document.getElementById('fp-title3'); if(fpT3) fpT3.textContent = L.fp_title3||'';
+  const fpVm = document.getElementById('fp-verified-msg'); if(fpVm) fpVm.textContent = L.fp_verified_msg||'';
+  const fpNl = document.getElementById('fp-newpw-lbl'); if(fpNl) fpNl.textContent = L.fp_newpw_lbl||'';
+  const fpCfl = document.getElementById('fp-confirmpw-lbl'); if(fpCfl) fpCfl.textContent = L.fp_confirmpw_lbl||'';
+  const fpRb = document.getElementById('fp-reset-btn'); if(fpRb) fpRb.textContent = L.fp_reset_btn||'';
+  // Gender 버튼 텍스트 언어 전환 (3곳: 메인, 파트너, 회원가입)
+  const maleText = lang === 'km' ? '♂ បុរស' : '♂ Male';
+  const femaleText = lang === 'km' ? '♀ ស្ត្រី' : '♀ Female';
+  // Occupation 드롭다운 언어 전환
+  const occTexts = lang === 'km'
+    ? {select:'ជ្រើសរើស...',student:'និស្សិត',business:'អ្នកជំនួញ',employee:'បុគ្គលិក',government:'មន្ត្រីរាជការ',freelance:'ឯករាជ្យ',farmer:'កសិករ',other:'ផ្សេងទៀត'}
+    : {select:'Select...',student:'Student',business:'Business Owner',employee:'Employee',government:'Government Officer',freelance:'Freelancer',farmer:'Farmer',other:'Other'};
+  Object.entries(occTexts).forEach(([k,v]) => {
+    const el = document.getElementById('occ-'+k);
+    if (el) el.textContent = v;
+  });
+  // Interests 버튼 언어 전환
+  const interestMap = lang === 'km'
+    ? {love:'❤️ ស្នេហា',wealth:'💰 ទ្រព្យ',health:'🌿 សុខភាព',career:'💼 អាជីព',family:'👨‍👩‍👧 គ្រួសារ',travel:'✈️ ដំណើរ'}
+    : {love:'❤️ Love',wealth:'💰 Wealth',health:'🌿 Health',career:'💼 Career',family:'👨‍👩‍👧 Family',travel:'✈️ Travel'};
+  const interestBtns = document.querySelectorAll('.interest-btn');
+  const interestKeys = ['love','wealth','health','career','family','travel'];
+  interestBtns.forEach((btn,i) => {
+    const key = interestKeys[i];
+    if (key && interestMap[key]) btn.textContent = interestMap[key];
+  });
+  ['gMale','pgMale','rgMale'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = maleText;
+  });
+  ['gFemale','pgFemale','rgFemale'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = femaleText;
+  });
+  // 프로필 화면이 열려있으면 재렌더링
+  if (document.getElementById('screen-profile').classList.contains('active') && currentUser) {
+    renderProfile();
+  }
+}
+
+// ===== SCREEN NAVIGATION =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = {home:'nav-home',input:'nav-fortune',result:'nav-fortune',auth:'nav-profile',profile:'nav-profile'};
+  const navEl = document.getElementById(navMap[id]);
+  if (navEl) navEl.classList.add('active');
+}
+function showHome() { showScreen('home'); }
+function showInput() { showScreen('input'); }
+function showAuth() { showScreen('auth'); }
+function showPrivacy() { showScreen('privacy'); }
+function showTerms() { showScreen('terms'); }
+function showContact() { showScreen('contact'); }
+function showProfileOrAuth() {
+  if (currentUser) { renderProfile(); showScreen('profile'); }
+  else showAuth();
+}
+
+// ===== FORGOT PASSWORD =====
+let fpEmail = ''; // 비밀번호 찾기 이메일 저장
+
+function showForgotPassword() {
+  // 단계 초기화
+  document.getElementById('fp-step1').style.display = 'block';
+  document.getElementById('fp-step2').style.display = 'none';
+  document.getElementById('fp-step3').style.display = 'none';
+  document.getElementById('fpEmail').value = '';
+  document.getElementById('fpCode').value = '';
+  document.getElementById('fpNewPw').value = '';
+  document.getElementById('fpConfirmPw').value = '';
+  document.getElementById('fp-code-value').textContent = '------';
+  document.getElementById('forgotPwOverlay').style.display = 'flex';
+}
+
+function closeForgotPassword(e) {
+  if (e && e.target !== document.getElementById('forgotPwOverlay')) return;
+  document.getElementById('forgotPwOverlay').style.display = 'none';
+}
+
+async function requestResetCode() {
+  const email = document.getElementById('fpEmail').value.trim();
+  if (!email) { showToast(t('fp_email_lbl') + ' required'); return; }
+  const btn = document.getElementById('fp-send-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const res = await fetch(API + '/api/v2/auth/forgot-password', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email})
+    });
+    const d = await res.json();
+    if (!res.ok) {
+      showToast(t('fp_err_notfound'));
+      return;
+    }
+    fpEmail = email;
+    // 코드를 화면에 표시 (개발/테스트 환경)
+    document.getElementById('fp-code-value').textContent = d.code || '------';
+    // Step 2로 전환
+    document.getElementById('fp-step1').style.display = 'none';
+    document.getElementById('fp-step2').style.display = 'block';
+  } catch(err) {
+    showToast(t('err_conn'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = t('fp_send_btn');
+  }
+}
+
+async function verifyResetCode() {
+  const code = document.getElementById('fpCode').value.trim();
+  if (!code || code.length !== 6) { showToast(t('fp_code_lbl')); return; }
+  const btn = document.getElementById('fp-verify-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const res = await fetch(API + '/api/v2/auth/verify-reset-code', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email: fpEmail, code})
+    });
+    const d = await res.json();
+    if (!res.ok) {
+      showToast(t('fp_err_code'));
+      return;
+    }
+    // Step 3으로 전환
+    document.getElementById('fp-step2').style.display = 'none';
+    document.getElementById('fp-step3').style.display = 'block';
+  } catch(err) {
+    showToast(t('err_conn'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = t('fp_verify_btn');
+  }
+}
+
+async function doResetPassword() {
+  const newPw = document.getElementById('fpNewPw').value;
+  const confirmPw = document.getElementById('fpConfirmPw').value;
+  const code = document.getElementById('fpCode').value.trim();
+  if (newPw.length < 6) { showToast(t('fp_err_pwshort')); return; }
+  if (newPw !== confirmPw) { showToast(t('fp_err_pwmatch')); return; }
+  const btn = document.getElementById('fp-reset-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const res = await fetch(API + '/api/v2/auth/reset-password', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email: fpEmail, code, new_password: newPw})
+    });
+    const d = await res.json();
+    if (!res.ok) {
+      showToast(t('fp_err_code'));
+      return;
+    }
+    document.getElementById('forgotPwOverlay').style.display = 'none';
+    showToast(t('fp_reset_ok'));
+    // 로그인 탭으로 이동
+    setTimeout(() => {
+      switchAuthTab('login');
+      document.getElementById('lEmail').value = fpEmail;
+    }, 500);
+  } catch(err) {
+    showToast(t('err_conn'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = t('fp_reset_btn');
+  }
+}
+
+// ===== OPEN MODE =====
+function openMode(mode) {
+  if (!currentUser) {
+    showToast(t('err_login'));
+    setTimeout(() => showAuth(), 800);
+    return;
+  }
+  currentMode = mode;
+  const L = TR[lang];
+  const modeLabels = {
+    lifetime: L.mode_lifetime, yearly: L.mode_yearly,
+    monthly: L.mode_monthly, daily: L.mode_daily,
+    compatibility: L.mode_compat, lucky_days: L.mode_lucky_days,
+    lucky_profile: L.mode_lucky_profile
+  };
+  document.getElementById('input-title').textContent = modeLabels[mode] || mode;
+  document.getElementById('input-sub').textContent = L.input_sub;
+  document.getElementById('compat-extra').style.display = mode === 'compatibility' ? 'block' : 'none';
+  document.getElementById('fg-time').style.display = ['compatibility','lucky_days','lucky_profile'].includes(mode) ? 'none' : 'block';
+  autoFillFromUser();
+  showScreen('input');
+}
+
+// ===== AUTO FILL FROM USER =====
+function autoFillFromUser() {
+  if (!currentUser) return;
+  const nameEl = document.getElementById('iName');
+  if (nameEl) {
+    const fn = currentUser.first_name || '';
+    const ln = currentUser.last_name || '';
+    const full = currentUser.full_name || '';
+    nameEl.value = fn ? (ln ? ln + ' ' + fn : fn) : full;
+  }
+  if (currentUser.birth_year) {
+    const yEl = document.getElementById('iYear');
+    if (yEl) yEl.value = currentUser.birth_year;
+  }
+  if (currentUser.birth_month) {
+    const mEl = document.getElementById('iMonth');
+    if (mEl) mEl.value = currentUser.birth_month;
+  }
+  if (currentUser.birth_day) {
+    const dEl = document.getElementById('iDay');
+    if (dEl) dEl.value = currentUser.birth_day;
+    setTimeout(updateLunar, 100);
+  }
+  if (currentUser.gender) setGender(currentUser.gender);
+  if (currentUser.city) {
+    const cEl = document.getElementById('iCity');
+    if (cEl) cEl.value = currentUser.city;
+  }
+}
+
+// ===== GENDER =====
+function setGender(g) {
+  selectedGender = g;
+  document.getElementById('gMale').classList.toggle('active', g === 'male');
+  document.getElementById('gFemale').classList.toggle('active', g === 'female');
+}
+function setPGender(g) {
+  selectedPGender = g;
+  document.getElementById('pgMale').classList.toggle('active', g === 'male');
+  document.getElementById('pgFemale').classList.toggle('active', g === 'female');
+}
+function setRGender(g) {
+  selectedRGender = g;
+  document.getElementById('rgMale').classList.toggle('active', g === 'male');
+  document.getElementById('rgFemale').classList.toggle('active', g === 'female');
+}
+
+// ===== INTERESTS =====
+function toggleInterest(btn, val) {
+  btn.classList.toggle('active');
+  if (btn.classList.contains('active')) selectedInterests.push(val);
+  else selectedInterests = selectedInterests.filter(i => i !== val);
+}
+
+// ===== LUNAR DISPLAY =====
+async function updateLunar() {
+  const y = document.getElementById('iYear').value;
+  const m = document.getElementById('iMonth').value;
+  const d = document.getElementById('iDay').value;
+  const disp = document.getElementById('lunarDisplay');
+  if (!y || !m || !d) { disp.style.display = 'none'; return; }
+  try {
+    const r = await fetch(`${API}/api/v2/lunar-convert?year=${y}&month=${m}&day=${d}`);
+    const data = await r.json();
+    if (data.lunar_date) {
+      disp.textContent = lang === 'km'
+        ? `ប្រតិទិនច័ន្ទ: ${data.lunar_date} | ឆ្នាំ${data.zodiac_km || data.zodiac || ''}`
+        : `Lunar: ${data.lunar_date} | Year of ${data.zodiac || ''}`;
+      disp.style.display = 'block';
+    }
+  } catch(e) {}
+}
+
+// ===== SUBMIT FORTUNE =====
+async function submitFortune() {
+  if (!currentUser) {
+    showToast(t('err_login'));
+    setTimeout(() => showAuth(), 800);
+    return;
+  }
+  const name = document.getElementById('iName').value.trim();
+  const year = +document.getElementById('iYear').value;
+  const month = +document.getElementById('iMonth').value;
+  const day = +document.getElementById('iDay').value;
+  const hourVal = document.getElementById('iHour').value;
+  const city = document.getElementById('iCity').value;
+  if (!name || !year || !month || !day) {
+    showToast(t('err_fill'));
+    return;
+  }
+  let hour = null, minute = 0;
+  if (hourVal) {
+    const parts = hourVal.split(':');
+    hour = +parts[0];
+    minute = parts[1] ? +parts[1] : 0;
+  }
+  const baseBody = {
+    name,
+    birth_year: year,
+    birth_month: month,
+    birth_day: day,
+    birth_hour: hour !== null ? hour : 12,
+    birth_minute: minute || 0,
+    gender: selectedGender, city, language: lang
+  };
+  showScreen('result');
+  document.getElementById('result-name').textContent = name;
+  document.getElementById('result-meta').textContent = `${year}.${month}.${day} | ${selectedGender === 'male' ? (lang==='km'?'ប្រុស':'Male') : (lang==='km'?'ស្រី':'Female')}`;
+  document.getElementById('result-tabs').innerHTML = '';
+  // 스켈레튼 UI 로딩 화면
+  const loadingMsg = lang === 'km'
+    ? 'កំពុងគណនា...សូមជ្រើជាក ៣–៥វិនាទី'
+    : 'Analyzing your Four Pillars... (3–10 sec)';
+  document.getElementById('result-panels').innerHTML = `
+    <div class="loading-wrap">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">${loadingMsg}</div>
+      <div class="loading-progress"><div class="loading-progress-bar"></div></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton skeleton-title"></div>
+      <div class="skeleton-chart">
+        <div class="skeleton skeleton-pillar"></div>
+        <div class="skeleton skeleton-pillar"></div>
+        <div class="skeleton skeleton-pillar"></div>
+        <div class="skeleton skeleton-pillar"></div>
+      </div>
+      <div class="skeleton skeleton-line wide"></div>
+      <div class="skeleton skeleton-line medium"></div>
+      <div class="skeleton skeleton-line short"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton skeleton-title"></div>
+      <div class="skeleton skeleton-line wide"></div>
+      <div class="skeleton skeleton-line wide"></div>
+      <div class="skeleton skeleton-line medium"></div>
+    </div>
+  `;
+
+  try {
+    let endpoint = '', body = baseBody;
+    if (currentMode === 'lifetime') endpoint = '/api/v2/lifetime';
+    else if (currentMode === 'yearly') endpoint = '/api/v2/yearly';
+    else if (currentMode === 'monthly') endpoint = '/api/v2/monthly';
+    else if (currentMode === 'daily') endpoint = '/api/v2/daily';
+    else if (currentMode === 'compatibility') {
+      endpoint = '/api/v2/compatibility';
+      body = {
+        person_a: {
+          name, birth_year: year, birth_month: month, birth_day: day,
+          birth_hour: hour !== null ? hour : 12, birth_minute: minute || 0,
+          gender: selectedGender, city, language: lang
+        },
+        person_b: {
+          name: document.getElementById('pName').value.trim() || 'Partner',
+          birth_year: +document.getElementById('pYear').value,
+          birth_month: +document.getElementById('pMonth').value,
+          birth_day: +document.getElementById('pDay').value,
+          birth_hour: 12, birth_minute: 0,
+          gender: selectedPGender, city, language: lang
+        },
+        language: lang
+      };
+    } else if (currentMode === 'lucky_days') {
+      endpoint = '/api/v2/lucky-days';
+    } else if (currentMode === 'lucky_profile') {
+      endpoint = '/api/v2/lucky-profile';
+    }
+
+    const r = await fetch(API + endpoint, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'Authorization': `Bearer ${authToken}`},
+      body: JSON.stringify(body)
+    });
+    const data = await r.json();
+    renderResult(data);
+  } catch(e) {
+    document.getElementById('result-panels').innerHTML = `<div class="loading-wrap"><div class="loading-text">${t('err_conn')}</div></div>`;
+  }
+}
+
+// ===== RENDER RESULT =====
+function renderResult(data) {
+  const tabs = [];
+  const panels = [];
+  if (currentMode === 'lifetime') {
+    tabs.push({id:'chart', label: t('tab_chart')});
+    tabs.push({id:'reading', label: t('tab_reading')});
+    tabs.push({id:'lifestage', label: t('tab_lifestage')});
+    tabs.push({id:'daeun', label: t('tab_daeun')});
+    panels.push({id:'chart', html: buildChart(data.chart)});
+    panels.push({id:'reading', html: buildReading(data.ai_reading || data.fortune_text || data.reading || '')});
+    panels.push({id:'lifestage', html: buildLifeStages(data.life_stages)});
+    panels.push({id:'daeun', html: buildDaeun(data.daeun || data.major_cycles)});
+  } else if (currentMode === 'yearly') {
+    tabs.push({id:'chart', label: t('tab_chart')});
+    tabs.push({id:'reading', label: t('tab_reading')});
+    panels.push({id:'chart', html: buildChart(data.chart)});
+    panels.push({id:'reading', html: buildReading(data.ai_reading || data.fortune_text || data.reading || '')});
+  } else if (currentMode === 'monthly') {
+    tabs.push({id:'chart', label: t('tab_chart')});
+    tabs.push({id:'reading', label: t('tab_reading')});
+    tabs.push({id:'monthly', label: t('tab_monthly')});
+    panels.push({id:'chart', html: buildChart(data.chart)});
+    panels.push({id:'reading', html: buildReading(data.ai_reading || data.fortune_text || data.reading || '')});
+    panels.push({id:'monthly', html: buildMonthly(data.monthly_pillars || data.monthly_fortunes || data.months)});
+  } else if (currentMode === 'daily') {
+    tabs.push({id:'chart', label: t('tab_chart')});
+    tabs.push({id:'reading', label: t('tab_reading')});
+    panels.push({id:'chart', html: buildChart(data.chart)});
+    panels.push({id:'reading', html: buildReading(data.ai_reading || data.fortune_text || data.reading || data.daily_fortune || '')});
+  } else if (currentMode === 'compatibility') {
+    tabs.push({id:'compat', label: t('tab_compat')});
+    panels.push({id:'compat', html: buildCompat(data)});
+  } else if (currentMode === 'lucky_days') {
+    tabs.push({id:'lucky_days', label: t('tab_lucky_days')});
+    panels.push({id:'lucky_days', html: buildLuckyDays(data)});
+  } else if (currentMode === 'lucky_profile') {
+    tabs.push({id:'chart', label: t('tab_chart')});
+    tabs.push({id:'lucky_profile', label: t('tab_lucky_profile')});
+    panels.push({id:'chart', html: buildChart(data.chart)});
+    panels.push({id:'lucky_profile', html: buildLuckyProfile(data)});
+  }
+
+  const tabsHtml = tabs.map((tab,i) =>
+    `<div class="tab${i===0?' active':''}" onclick="switchTab('${tab.id}')">${tab.label}</div>`
+  ).join('');
+  const panelsHtml = panels.map((p,i) =>
+    `<div class="tab-content${i===0?' active':''}" id="panel-${p.id}">${p.html}</div>`
+  ).join('');
+
+  document.getElementById('result-tabs').innerHTML = tabsHtml;
+  document.getElementById('result-panels').innerHTML = panelsHtml;
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+}
+
+// ===== BUILD CHART =====
+function buildChart(chart) {
+  if (!chart) return '<div class="info-card"><div class="info-card-body">No chart data</div></div>';
+  // pillars는 {year:{...}, month:{...}, day:{...}, hour:{...}} 객체 형태
+  const pillarsObj = chart.pillars || {};
+  const pillarsArr = Array.isArray(pillarsObj)
+    ? pillarsObj
+    : ['year','month','day','hour'].map(k => pillarsObj[k]).filter(Boolean);
+  const pillarLabels = lang === 'km'
+    ? ['ឆ្នាំ','ខែ','ថ្ងៃ','ម៉ោង']
+    : ['Year','Month','Day','Hour'];
+  // 오행 한국어→영어 매핑
+  const elemKrToEn = {'목':'Wood','화':'Fire','토':'Earth','금':'Metal','수':'Water'};
+  const elemColors = {Wood:'elem-wood',Fire:'elem-fire',Earth:'elem-earth',Metal:'elem-metal',Water:'elem-water'};
+  const elemKm = {Wood:'ឈើ',Fire:'ភ្លើង',Earth:'ដី',Metal:'លោហ',Water:'ទឹក'};
+
+  let pillarsHtml = pillarsArr.map((p,i) => {
+    const elemRaw = p.element || p.stem_element || '';
+    const elem = elemKrToEn[elemRaw] || elemRaw;
+    const cls = elemColors[elem] || '';
+    const elemLabel = lang === 'km' ? (elemKm[elem] || elem) : elem;
+    // 크메르어 발음/의미 병기 (km 모드일 때만 표시)
+    const stemKmHtml = (lang === 'km' && p.stem_km_phonetic)
+      ? `<div style="font-size:9px;color:#a0aab4;line-height:1.2;margin-top:1px">${p.stem_km_phonetic}<br><span style="color:#7ecfb3;font-size:8px">${p.stem_km_element||''}</span></div>`
+      : '';
+    const branchKmHtml = (lang === 'km' && p.branch_km_animal)
+      ? `<div style="font-size:9px;color:#a0aab4;line-height:1.2;margin-top:1px">${p.branch_km_animal}<br><span style="color:#7ecfb3;font-size:8px">${p.branch_km_element||''}</span></div>`
+      : '';
+    return `<div class="pillar">
+      <div class="pillar-label">${pillarLabels[i] || ''}</div>
+      <div class="pillar-stem ${cls}" style="font-size:22px;font-weight:700">${p.stem || ''}</div>
+      ${stemKmHtml}
+      <div class="pillar-branch" style="font-size:18px">${p.branch || ''}</div>
+      ${branchKmHtml}
+      <div class="pillar-elem ${cls}">${elemLabel}</div>
+    </div>`;
+  }).join('');
+
+  // five_elements 한국어 키를 영어로 변환
+  const feRaw = chart.five_elements || {};
+  const fe = {};
+  Object.entries(feRaw).forEach(([k,v]) => {
+    const enKey = elemKrToEn[k] || k;
+    fe[enKey] = (fe[enKey] || 0) + v;
+  });
+  const feColors = {Wood:'#2d7a2d',Fire:'#c62828',Earth:'#7a5c00',Metal:'#546e7a',Water:'#1565c0'};
+  const feNames = lang === 'km'
+    ? {Wood:'ឈើ',Fire:'ភ្លើង',Earth:'ដី',Metal:'លោហ',Water:'ទឹក'}
+    : {Wood:'Wood',Fire:'Fire',Earth:'Earth',Metal:'Metal',Water:'Water'};
+  const total = Object.values(fe).reduce((a,b) => a+b, 0) || 1;
+  let feHtml = Object.entries(fe).map(([k,v]) => `
+    <div class="fe-row">
+      <div class="fe-name">${feNames[k]||k}</div>
+      <div class="fe-bar-wrap"><div class="fe-bar" style="width:${Math.round(v/total*100)}%;background:${feColors[k]||'#ccc'}"></div></div>
+      <div class="fe-count">${v}</div>
+    </div>`).join('');
+
+  const dm = chart.day_master || {};
+  const dmElemEn = elemKrToEn[dm.element||''] || dm.element || '';
+  const dmText = lang === 'km'
+    ? `ម្ចាស់ថ្ងៃ: ${dm.stem||''} (${elemKm[dmElemEn]||dmElemEn})`
+    : `Day Master: ${dm.stem||''} (${dmElemEn})`;
+  const zodiacText = lang === 'km'
+    ? `ឆ្នាំ${chart.animal_sign_km || chart.animal_sign || ''}`
+    : `Year of ${chart.animal_sign || ''}`;
+  const lunarObj = chart.lunar; let lunarStr = ''; if (lunarObj && typeof lunarObj === 'object') { lunarStr = lunarObj.gapja_chinese || lunarObj.lunar_iso || ''; } else if (lunarObj) { lunarStr = String(lunarObj); } const lunarText = lunarStr ? (lang==='km' ? `ប្រតិទិនច័ន្ទ: ${lunarStr}` : `Lunar: ${lunarStr}`) : '';
+
+  return `<div class="saju-chart">
+    <div class="chart-title">${lang==='km'?'ផែនទីសាជូ':'Saju Chart'}</div>
+    <div class="pillars">${pillarsHtml}</div>
+    <div style="font-size:12px;color:#444;margin-bottom:8px">${dmText} | ${zodiacText}</div>
+    ${lunarText ? `<div style="font-size:11px;color:#818c9a;margin-bottom:8px">${lunarText}</div>` : ''}
+    <div class="five-elem-bar">${feHtml}</div>
+  </div>`;
+}
+
+// ===== BUILD READING =====
+function buildReading(text) {
+  if (!text) return '<div class="info-card"><div class="info-card-body">--</div></div>';
+  const paras = text.split('\n').filter(p => p.trim());
+  return paras.map(p => `<div class="info-card"><div class="info-card-body">${p}</div></div>`).join('');
+}
+
+// ===== BUILD LIFE STAGES =====
+function buildLifeStages(stages) {
+  if (!stages) return '<div class="info-card"><div class="info-card-body">--</div></div>';
+  // early_life/mid_life/late_life 또는 early/middle/late 키 모두 지원
+  const keyMap = {early_life:'early', mid_life:'middle', late_life:'late'};
+  const stageLabels = lang === 'km'
+    ? {early:'វ័យក្មេង (0-30)',middle:'វ័យកណ្តាល (31-60)',late:'វ័យចំណាស់ (61+)'}
+    : {early:'Early Life (0-30)',middle:'Prime Life (31-60)',late:'Wisdom (61+)'};
+  // 별점 5개 세분화
+  function starsHtml5(score) {
+    const n = score >= 81 ? 5 : score >= 61 ? 4 : score >= 41 ? 3 : score >= 21 ? 2 : 1;
+    let h = '';
+    for (let j=0;j<5;j++) h += `<span style="color:${j<n?'#f5a623':'#ccc'}">${j<n?'★':'☆'}</span>`;
+    return h;
+  }
+  function scoreColor5(score) {
+    if (score >= 81) return '#2ecc71';
+    if (score >= 61) return '#27ae60';
+    if (score >= 41) return '#fade4a';
+    if (score >= 21) return '#e67e22';
+    return '#e74c3c';
+  }
+  return Object.entries(stages).map(([k,v]) => {
+    const normalKey = keyMap[k] || k;
+    const score = v.score || 0;
+    const label = stageLabels[normalKey] || (lang==='km' ? (v.period_km||k) : (v.period||k));
+    // 언어에 따라 설명 선택
+    const desc = lang === 'km'
+      ? (v.description_km || v.description || v.text || '')
+      : (v.description || v.text || '');
+    const quality = lang === 'km'
+      ? (v.quality_km || v.quality || '')
+      : (v.quality || '');
+    const elemLabel = lang === 'km'
+      ? (v.element_km || v.element_en || v.element || '')
+      : (v.element_en || v.element || '');
+    const color = scoreColor5(score);
+    return `<div class="info-card">
+      <div class="info-card-title">${label}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0">
+        <div style="font-size:22px;font-weight:700;color:${color}">${score}</div>
+        <div style="font-size:14px">${starsHtml5(score)}</div>
+        <div style="font-size:12px;color:#e8720c;font-weight:600">${quality}${elemLabel ? ' · '+elemLabel : ''}</div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:${score}%;background:${color}"></div></div>
+      <div class="info-card-body" style="margin-top:10px">${desc}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== BUILD DAEUN =====
+function buildDaeun(daeun) {
+  if (!daeun || !daeun.length) return '<div class="info-card"><div class="info-card-body">--</div></div>';
+  const nowYear = new Date().getFullYear();
+  const daeunKrToEn = {'목':'Wood','화':'Fire','토':'Earth','금':'Metal','수':'Water'};
+  return `<div class="daeun-list">${daeun.map(d => {
+    const isCurrent = d.start_year <= nowYear && (d.end_year || 9999) >= nowYear;
+    const elemRaw = d.element || '';
+    const elem = daeunKrToEn[elemRaw] || elemRaw;
+    const elemKm = {Wood:'ឈើ',Fire:'ភ្លើង',Earth:'ដី',Metal:'លោហ',Water:'ទឹក'};
+    const elemLabel = lang === 'km' ? (elemKm[elem]||elem) : elem;
+    return `<div class="daeun-item${isCurrent?' current':''}">
+      <div class="daeun-chars">${d.stem||''}${d.branch||''}</div>
+      <div class="daeun-info">
+        <div class="daeun-period">${d.start_year||''}–${d.end_year||''}</div>
+        <div class="daeun-elem">${elemLabel}</div>
+      </div>
+      ${isCurrent ? `<div class="daeun-now">${lang==='km'?'បច្ចុប្បន្ន':'NOW'}</div>` : ''}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ===== BUILD MONTHLY =====
+function buildMonthly(months) {
+  if (!months || !months.length) return '<div class="info-card"><div class="info-card-body">--</div></div>';
+  const monthNames = lang === 'km'
+    ? ['មករា','កុម្ភៈ','មីនា','មេសា','ឧសភា','មិថុនា','កក្កដា','សីហា','កញ្ញា','តុលា','វិច្ឆិកា','ធ្នូ']
+    : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthKrToEn = {'목':'Wood','화':'Fire','토':'Earth','금':'Metal','수':'Water'};
+  const elemKmM = {Wood:'ឈើ',Fire:'ភ្លើង',Earth:'ដី',Metal:'លោហ',Water:'ទឹក'};
+  // 별점 5개 세분화 함수 (점수 0~100 → 별 1~5개)
+  function scoreToStars(score) {
+    if (score >= 81) return '★★★★★';
+    if (score >= 61) return '★★★★☆';
+    if (score >= 41) return '★★★☆☆';
+    if (score >= 21) return '★★☆☆☆';
+    return '★☆☆☆☆';
+  }
+  // 점수 색상 5단계
+  function scoreToColor(score) {
+    if (score >= 81) return '#2ecc71';
+    if (score >= 61) return '#27ae60';
+    if (score >= 41) return '#fade4a';
+    if (score >= 21) return '#e67e22';
+    return '#e74c3c';
+  }
+  // 별점 색상 (채운 별=금색, 빈 별=회색)
+  function starsHtml(score) {
+    const n = score >= 81 ? 5 : score >= 61 ? 4 : score >= 41 ? 3 : score >= 21 ? 2 : 1;
+    let h = '';
+    for (let j=0;j<5;j++) h += `<span style="color:${j<n?'#f5a623':'#ccc'}">${j<n?'★':'☆'}</span>`;
+    return h;
+  }
+  return `<div class="month-grid">${months.map((m,i) => {
+    const score = m.score || 65;
+    const color = scoreToColor(score);
+    const elemRaw = m.element || '';
+    const elem = monthKrToEn[elemRaw] || elemRaw;
+    const elemLabel = lang === 'km' ? (elemKmM[elem]||elem) : elem;
+    const mLabel = lang === 'km' ? (monthNames[i] || m.month_name || '') : (m.month_name || monthNames[i] || '');
+    return `<div class="month-card">
+      <div class="month-num">${mLabel}</div>
+      <div class="month-stem">${m.stem||''}${m.branch||''}</div>
+      <div class="month-score" style="color:${color}">${score}</div>
+      <div class="month-stars">${starsHtml(score)}</div>
+      <div class="month-label">${elemLabel || m.label || (lang==='km'?'ពិន្តុ':'Score')}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ===== BUILD COMPAT =====
+function buildCompat(data) {
+  const compat = data.compatibility || {};
+  const score = compat.score || data.compatibility_score || data.score || 0;
+  const desc = data.ai_reading || compat.description || data.description || data.reading || data.fortune_text || '';
+  const color = score >= 80 ? '#2ecc71' : score >= 60 ? '#fade4a' : '#e74c3c';
+  const loveScore = compat.love_score || 0;
+  const marriageScore = compat.marriage_score || 0;
+  const businessScore = compat.business_score || 0;
+  const friendshipScore = compat.friendship_score || 0;
+  const relation = lang==='km' ? (compat.relation_km || compat.relation || '') : (compat.relation || '');
+  const advice = compat.advice || '';
+  const subScores = (loveScore || marriageScore) ? `
+    <div style="margin:12px 0">
+      ${[[lang==='km'?'ស\u17d2\u1793\u17c1\u17a0\u17b6':'Love', loveScore],[lang==='km'?'\u17a2\u17b6\u1796\u17b6\u17a0\u17cd':'Marriage', marriageScore],[lang==='km'?'\u17a2\u17b6\u1787\u17b8\u1796':'Business', businessScore],[lang==='km'?'\u1798\u17b7\u178f\u17d2\u178f':'Friendship', friendshipScore]].map(([l,s])=>`
+      <div class="score-row"><span class="score-label">${l}</span><span class="score-val">${s}</span></div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:${s}%"></div></div>`).join('')}
+    </div>` : '';
+  return `<div class="info-card">
+    <div class="compat-score-circle" style="background:linear-gradient(135deg,${color},${color}aa)">
+      <div class="compat-score-num">${score}</div>
+      <div class="compat-score-label">${lang==='km'?'\u1796\u17b7\u1793\u17d2\u178f\u17bb':'Score'}</div>
+    </div>
+    ${relation ? `<div style="text-align:center;font-size:14px;color:#fade4a;margin-bottom:8px">${relation}</div>` : ''}
+    ${subScores}
+    <div class="info-card-body">${desc}</div>
+    ${advice ? `<div style="margin-top:12px;padding:10px;background:rgba(250,222,74,0.1);border-radius:8px;font-size:13px">${advice}</div>` : ''}
+  </div>`;
+}
+
+// ===== BUILD LUCKY DAYS =====
+function buildLuckyDays(data) {
+  const days = data.lucky_days || data.days || [];
+  if (!days.length) return '<div class="info-card"><div class="info-card-body">--</div></div>';
+  const tip = data.tip || '';
+  return `${tip ? `<div class="info-card"><div class="info-card-body">${tip}</div></div>` : ''}
+    <div class="lucky-days-grid">${days.map(d => `
+    <div class="lucky-day-item">
+      <div class="lucky-day-date">${d.date_display || d.date || d.day || ''}</div>
+      <div class="lucky-day-stem">${d.stem||''}${d.branch||''}</div>
+      <div class="lucky-day-level">${d.luck_level || ''}</div>
+      <div class="lucky-day-label">${d.reason || d.label || (lang==='km'?'ថ្ងៃមង្គល':'Lucky Day')}</div>
+    </div>`).join('')}</div>`;
+}
+
+// ===== BUILD LUCKY PROFILE =====
+function buildLuckyProfile(data) {
+  const lp = data.lucky_profile || data;
+  const ai = data.ai_reading || '';
+  const colorHex = lp.lucky_colors ? lp.lucky_colors.hex : [];
+  const colorText = lp.lucky_colors ? (lang==='km' ? lp.lucky_colors.km : lp.lucky_colors.en) : (lp.lucky_color || '--');
+  const dirText = lp.lucky_direction ? (lang==='km' ? lp.lucky_direction.km : lp.lucky_direction.en) : '--';
+  const numText = Array.isArray(lp.lucky_numbers) ? lp.lucky_numbers.join(', ') : (lp.lucky_number || '--');
+  const careerText = Array.isArray(lp.lucky_careers) ? lp.lucky_careers.join(', ') : (lp.suitable_career || '--');
+  const elemText = lang==='km' ? (lp.dominant_element || lp.dominant_element_en || '--') : (lp.dominant_element_en || lp.dominant_element || '--');
+  const items = [
+    {icon: lp.dominant_element_icon || '🌿', label: lang==='km'?'ធាតុស្ត្រង':'Dominant Element', val: elemText, colors: colorHex},
+    {icon:'🎨', label: lang==='km'?'ពណ្ឌល្អ':'Lucky Colors', val: colorText},
+    {icon:'🧭', label: lang==='km'?'តិសល្អ':'Lucky Direction', val: dirText},
+    {icon:'🔢', label: lang==='km'?'លើខល្អ':'Lucky Numbers', val: numText},
+    {icon:'💼', label: lang==='km'?'អាជីពសមស្រប':'Suitable Careers', val: careerText},
+  ];
+  return `${ai ? `<div class="info-card"><div class="info-card-body">${ai}</div></div>` : ''}
+    <div class="lucky-grid">${items.map(item => `
+    <div class="lucky-item">
+      <div class="lucky-icon">${item.icon}</div>
+      ${item.colors && item.colors.length ? item.colors.map(c => `<div class="color-swatch" style="background:${c};width:20px;height:20px;border-radius:50%;display:inline-block;margin:2px"></div>`).join('') : ''}
+      <div class="lucky-label">${item.label}</div>
+      <div class="lucky-val">${item.val}</div>
+    </div>`).join('')}</div>`;
+}
+
+// ===== AUTH =====
+function switchAuthTab(tab) {
+  document.getElementById('aform-login').classList.toggle('active', tab === 'login');
+  document.getElementById('aform-register').classList.toggle('active', tab === 'register');
+  document.getElementById('atab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('atab-reg').classList.toggle('active', tab === 'register');
+}
+
+async function doLogin() {
+  const email = document.getElementById('lEmail').value.trim();
+  const pw = document.getElementById('lPassword').value;
+  if (!email || !pw) { showToast(t('err_email_pw')); return; }
+  try {
+    const r = await fetch(`${API}/api/v2/auth/login`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, password: pw})
+    });
+    const d = await r.json();
+    if (d.success) {
+      authToken = d.token; localStorage.setItem('authToken', authToken);
+      currentUser = d.user;
+      updateTopBtn(); showHome();
+      showToast(t('login_ok'));
+    } else { showToast(d.detail || 'Error'); }
+  } catch(e) { showToast(t('err_conn')); }
+}
+
+async function doRegister() {
+  const email = document.getElementById('rEmail').value.trim();
+  const pw = document.getElementById('rPassword').value;
+  const firstName = document.getElementById('rFirstName').value.trim();
+  const lastName = document.getElementById('rLastName').value.trim();
+  const phone = document.getElementById('rPhone').value.trim();
+  if (!email || !pw) { showToast(t('err_email_pw')); return; }
+  if (!firstName) { showToast(t('err_firstname')); return; }
+  if (!lastName) { showToast(t('err_lastname')); return; }
+  if (!phone) { showToast(t('err_phone')); return; }
+  const fullName = lastName + ' ' + firstName;
+  const body = {
+    email, password: pw,
+    full_name: fullName, first_name: firstName, last_name: lastName,
+    khmer_name: document.getElementById('rKhmerName').value || undefined,
+    phone, gender: selectedRGender || 'male',
+    birth_year: +document.getElementById('rYear').value || undefined,
+    birth_month: +document.getElementById('rMonth').value || undefined,
+    birth_day: +document.getElementById('rDay').value || undefined,
+    city: document.getElementById('rCity').value,
+    occupation: document.getElementById('rOccupation').value || undefined,
+    interests: selectedInterests,
+    language_pref: lang,
+    referred_by: document.getElementById('rReferral').value.toUpperCase() || undefined,
+  };
+  try {
+    const r = await fetch(`${API}/api/v2/auth/register`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+    if (d.success) {
+      authToken = d.token; localStorage.setItem('authToken', authToken);
+      currentUser = d.user;
+      updateTopBtn(); showHome();
+      showToast(t('reg_ok'));
+      setTimeout(showPushBanner, 1500);
+    } else { showToast(d.detail || 'Error'); }
+  } catch(e) { showToast(t('err_conn')); }
+}
+
+// ===== PROFILE =====
+function renderProfile() {
+  if (!currentUser) return;
+  const L = TR[lang];
+  const ln = currentUser.last_name || '';
+  const fn = currentUser.first_name || '';
+  const displayName = (ln && fn) ? `${ln} ${fn}` : (currentUser.full_name || currentUser.khmer_name || 'User');
+  const init = displayName[0].toUpperCase();
+  const isPremium = currentUser.tier === 'premium';
+  const tierLabel = isPremium ? L.tier_premium : L.tier_free;
+
+  const infoItems = [
+    {label: lang==='km'?'ឈ្មោះ':'Name', val: displayName},
+    {label: lang==='km'?'អ៊ីម៉ែល':'Email', val: currentUser.email},
+    {label: lang==='km'?'ទូរស័ព្ទ':'Phone', val: currentUser.phone || '--'},
+    {label: lang==='km'?'ទីក្រុង':'City', val: currentUser.city || '--'},
+    {label: lang==='km'?'ថ្ងៃកំណើត':'Birthday',
+     val: currentUser.birth_year ? `${currentUser.birth_year}.${currentUser.birth_month||'?'}.${currentUser.birth_day||'?'}` : '--'},
+    {label: lang==='km'?'ភេទ':'Gender',
+     val: currentUser.gender === 'male' ? (lang==='km'?'ប្រុស':'Male') : (lang==='km'?'ស្រី':'Female')},
+  ];
+
+  document.getElementById('profile-content').innerHTML = `
+    <div class="profile-wrap">
+      <div class="profile-avatar">${init}</div>
+      <div class="profile-name">${displayName}</div>
+      <div class="profile-email">${currentUser.email}</div>
+      <div class="profile-tier${isPremium?' premium':''}">${tierLabel}</div>
+      <div class="profile-info-grid">
+        ${infoItems.map(i => `<div class="profile-info-item">
+          <div class="profile-info-label">${i.label}</div>
+          <div class="profile-info-val">${i.val}</div>
+        </div>`).join('')}
+      </div>
+      <div class="profile-actions">
+        <button class="profile-action-btn" onclick="openMode('lifetime')">🌟 ${lang==='km'?'ជោគជតាពេញជីវិត':'Lifetime Fortune'}</button>
+        <button class="profile-action-btn" onclick="openMode('daily')">☀️ ${lang==='km'?'ជោគជតាប្រចាំថ្ងៃ':'Daily Fortune'}</button>
+        ${!isPremium ? `<button class="profile-action-btn" style="border-color:#fade4a;color:#7a6000" onclick="showToast('Coming soon!')">⭐ ${lang==='km'?'ធ្វើឱ្យជា Premium':'Upgrade to Premium'}</button>` : ''}
+      </div>
+      <button class="logout-btn" onclick="doLogout()">${L.logout}</button>
+    </div>`;
+}
+
+function doLogout() {
+  authToken = ''; currentUser = null;
+  localStorage.removeItem('authToken');
+  updateTopBtn();
+  showHome();
+  showToast(t('logout_ok'));
+}
+
+// ===== TOP BUTTON =====
+function updateTopBtn() {
+  const btn = document.getElementById('topUserBtn');
+  if (currentUser) {
+    const ln = currentUser.last_name || '';
+    const fn = currentUser.first_name || '';
+    const displayName = (ln && fn) ? `${ln} ${fn}` : (currentUser.full_name || currentUser.email || '?');
+    const init = displayName[0].toUpperCase();
+    btn.innerHTML = `<div class="user-avatar" onclick="showProfileOrAuth()">${init}</div>`;
+  } else {
+    btn.innerHTML = `<button class="login-btn" onclick="showAuth()">${lang==='km'?'ចូល':'Login'}</button>`;
+  }
+}
+
+// ===== PUSH =====
+function showPushBanner() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    document.getElementById('pushBanner').style.display = 'block';
+  }
+}
+function hidePushBanner() {
+  document.getElementById('pushBanner').style.display = 'none';
+}
+async function requestPush() {
+  hidePushBanner();
+  if ('Notification' in window) {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      showToast(lang==='km'?'ការជូនដំណឹងបានបើក!':'Notifications enabled!');
+      if ('serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.ready;
+        // Store subscription for push
+      }
+    }
+  }
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ===== TODAY INFO =====
+async function loadToday() {
+  try {
+    const now = new Date();
+    const y = now.getFullYear(), m = now.getMonth()+1, d = now.getDate();
+    document.getElementById('today-date').textContent = `${y}.${String(m).padStart(2,'0')}.${String(d).padStart(2,'0')}`;
+    const r = await fetch(`${API}/api/v2/today`);
+    const data = await r.json();
+    if (data.day_pillar) {
+      // 한자 + 크메르어 동물 병기
+      const detail = data.day_pillar_detail || {};
+      const branchEn = detail.branch_en || '';
+      const animalKm = {
+        Rat:'កណ្ដុរ',Ox:'គោ',Tiger:'ខ្លា',Rabbit:'ទន្សាយ',
+        Dragon:'នាគ',Snake:'ពស់',Horse:'សេះ',Goat:'ពពែ',
+        Monkey:'ស្វា',Rooster:'មាន់',Dog:'ឆ្កែ',Pig:'ជ្រូក'
+      };
+      const animalLabel = lang === 'km' && animalKm[branchEn]
+        ? `${data.day_pillar} (${animalKm[branchEn]})`
+        : data.day_pillar;
+      document.getElementById('today-pillar').textContent = animalLabel;
+    }
+    // lunar 응답 필드 다양하게 지원
+    const lunarObj = data.lunar || data.lunar_date;
+    let lunarStr = '';
+    if (lunarObj && typeof lunarObj === 'object') {
+      lunarStr = lunarObj.gapja_chinese || lunarObj.lunar_iso || '';
+    } else if (typeof lunarObj === 'string') {
+      lunarStr = lunarObj;
+    }
+    if (lunarStr) {
+      document.getElementById('today-lunar').textContent = lang==='km'
+        ? `ប្រតិតិនច័ន្ត: ${lunarStr}`
+        : `Lunar: ${lunarStr}`;
+    }
+  } catch(e) {
+    const now = new Date();
+    document.getElementById('today-date').textContent = now.toLocaleDateString();
+  }
+}
+
+// ===== POPULATE SELECTS =====
+function populateYears(selectId, from, to) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  for (let y = to; y >= from; y--) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    sel.appendChild(opt);
+  }
+}
+function populateDays(selectId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  for (let d = 1; d <= 31; d++) {
+    const opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    sel.appendChild(opt);
+  }
+}
+function populateHours(selectId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  const timeSlots = [
+    '23:00','23:30','0:00','0:30','1:00','1:30','2:00','2:30',
+    '3:00','3:30','4:00','4:30','5:00','5:30','6:00','6:30',
+    '7:00','7:30','8:00','8:30','9:00','9:30','10:00','10:30',
+    '11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30',
+    '15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30',
+    '19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'
+  ];
+  timeSlots.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t; opt.textContent = t;
+    sel.appendChild(opt);
+  });
+}
+
+// ===== LOAD USER =====
+async function loadUser() {
+  if (!authToken) return;
+  try {
+    const r = await fetch(`${API}/api/v2/auth/me`, {
+      headers: {'Authorization': `Bearer ${authToken}`}
+    });
+    const d = await r.json();
+    if (d.id) { currentUser = d; updateTopBtn(); }
+    else { authToken = ''; localStorage.removeItem('authToken'); }
+  } catch(e) {}
+}
+
+// ===== VISIT COUNTER =====
+async function loadAndRecordVisit() {
+  try {
+    // 앱 클릭 카운터 증가 (POST 시마다 카운터 +1)
+    const r = await fetch(`${API}/api/v2/auth/visit`, { method: 'POST' });
+    const d = await r.json();
+    const count = d.total_clicks || d.total_visits || 0;
+    if (count) {
+      // 숫자 애니메이션으로 표시
+      animateCounter('stat-visits', count);
+    }
+  } catch(e) {
+    // 오류 시 조회만 시도
+    try {
+      const r2 = await fetch(`${API}/api/v2/auth/visit/count`);
+      const d2 = await r2.json();
+      const count2 = d2.total_clicks || d2.total_visits || 0;
+      if (count2) {
+        document.getElementById('stat-visits').textContent = formatVisitCount(count2);
+      }
+    } catch(e2) {
+      document.getElementById('stat-visits').textContent = '5,000+';
+    }
+  }
+}
+
+function formatVisitCount(n) {
+  if (n >= 10000) return Math.floor(n/1000) + 'K+';
+  if (n >= 1000) return n.toLocaleString();
+  return n.toString();
+}
+
+function animateCounter(elemId, target) {
+  const el = document.getElementById(elemId);
+  if (!el) return;
+  const start = Math.max(0, target - 50);
+  let current = start;
+  const step = Math.ceil((target - start) / 30);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = formatVisitCount(current);
+    if (current >= target) clearInterval(timer);
+  }, 40);
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', async () => {
+  // Set language button (국기 이모지: km=크메르어 사용 중→🇺🇸로 전환 가능, en=영어 사용 중→🇰🇭로 전환 가능)
+  document.getElementById('langBtn').textContent = lang === 'km' ? '🇺🇸' : '🇰🇭';
+  // Populate selects
+  populateYears('iYear', 1930, 2010);
+  populateDays('iDay');
+  populateHours('iHour');
+  populateYears('rYear', 1930, 2010);
+  populateDays('rDay');
+  populateYears('pYear', 1930, 2010);
+  populateDays('pDay');
+  // Apply language
+  applyLang();
+  // Load user
+  await loadUser();
+  // Load today
+  loadToday();
+  // Load & record visit count
+  loadAndRecordVisit();
+  // Load ad banners
+  loadAdBanners();
+  // PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+});
+
+// ===== AD BANNERS =====
+async function loadAdBanners() {
+  try {
+    const r = await fetch(`${API}/api/v2/auth/banners?position=home`);
+    const d = await r.json();
+    if (!d.banners || d.banners.length === 0) return;
+    const wrap = document.getElementById('ad-banner-home');
+    wrap.innerHTML = '';
+    d.banners.forEach(b => {
+      const a = document.createElement('a');
+      a.href = b.link_url || '#';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.className = 'ad-banner';
+      // 이미지 URL이 상대경로면 프론트엔드 기준으로 처리
+      const imgSrc = b.image_url.startsWith('http') ? b.image_url : b.image_url;
+      a.innerHTML = `
+        <img src="${imgSrc}" alt="${b.title||'Advertisement'}" loading="lazy" onerror="this.style.display='none'">
+        <span class="ad-banner-label">AD</span>
+        ${b.title ? `<div class="ad-banner-caption"><div class="ad-banner-caption-text">${b.title}</div></div>` : ''}
+      `;
+      wrap.appendChild(a);
+    });
+  } catch(e) { console.warn('Ad banner load failed:', e); }
+}
+
+// ===== PDF SAVE =====
+async function savePDF() {
+  const btn = document.getElementById('pdfBtn');
+  if (!btn) return;
+  const origText = btn.textContent;
+  btn.textContent = lang==='km'?'⏳ រង់ចាំ...':'⏳ Saving...';
+  btn.disabled = true;
+  try {
+    const { jsPDF } = window.jspdf;
+    const resultEl = document.getElementById('screen-result');
+    // Capture the visible result panel
+    const canvas = await html2canvas(resultEl, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#f4f7fe',
+      logging: false,
+      width: resultEl.scrollWidth,
+      height: resultEl.scrollHeight,
+      windowWidth: 480,
+    });
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgW = pageW;
+    const imgH = (canvas.height * pageW) / canvas.width;
+    let posY = 0;
+    let remaining = imgH;
+    while (remaining > 0) {
+      pdf.addImage(imgData, 'JPEG', 0, posY, imgW, imgH);
+      remaining -= pageH;
+      posY -= pageH;
+      if (remaining > 0) pdf.addPage();
+    }
+    const name = document.getElementById('result-name')?.textContent || 'fortune';
+    const date = new Date().toISOString().slice(0,10);
+    pdf.save(`SajuDestiny_${name}_${date}.pdf`);
+    showToast(lang==='km'?'PDF បានរក័សាជោគជ័យ!':'PDF saved successfully!');
+  } catch(e) {
+    showToast(lang==='km'?'បញ្ហាការរក័សា PDF':'PDF save failed');
+    console.error('PDF error:', e);
+  } finally {
+    btn.textContent = origText;
+    btn.disabled = false;
+  }
+}
+
+// ===== SNS SHARE =====
+let _shareText = '';
+function openShareModal() {
+  const name = document.getElementById('result-name')?.textContent || '';
+  const mode = currentMode || 'fortune';
+  _shareText = lang==='km'
+    ? `ជោគជតារបស់ខ្ញុមតាមសាជូ ${name} បានចែករំលែ។ មក្កែលេងតែ។ sajudestiny.app`
+    : `I just checked my ${mode} fortune on Saju Destiny! Try yours at sajudestiny.app`;
+  document.getElementById('shareModalOverlay').classList.add('open');
+}
+function closeShareModal(e) {
+  if (!e || e.target === document.getElementById('shareModalOverlay')) {
+    document.getElementById('shareModalOverlay').classList.remove('open');
+  }
+}
+function shareToFacebook() {
+  const url = encodeURIComponent('https://sajudestiny.app');
+  const quote = encodeURIComponent(_shareText);
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank', 'width=600,height=400');
+  closeShareModal();
+}
+function shareToWhatsApp() {
+  const text = encodeURIComponent(_shareText + ' https://sajudestiny.app');
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+  closeShareModal();
+}
+function shareToTelegram() {
+  const text = encodeURIComponent(_shareText);
+  const url = encodeURIComponent('https://sajudestiny.app');
+  window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+  closeShareModal();
+}
+async function copyShareLink() {
+  try {
+    await navigator.clipboard.writeText('https://sajudestiny.app\n' + _shareText);
+    showToast(lang==='km'?'ចម្លងតំណបានជោគជ័យ!':'Link copied!');
+  } catch(e) {
+    showToast('sajudestiny.app');
+  }
+  closeShareModal();
+}
+</script>
+</body>
+</html>
