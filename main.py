@@ -8,12 +8,30 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 import os
+import logging
+from pathlib import Path
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from app.routers.fortune import router as fortune_router
 from app.routers.fortune_v2 import router as fortune_v2_router
 from app.routers.auth import router as auth_router
 
 load_dotenv()
+
+# /data 디렉토리 강제 생성 (Railway Volume 마운트 경로)
+data_dir = Path("/data")
+try:
+    data_dir.mkdir(parents=True, exist_ok=True)
+    logger.info(f"[STARTUP] /data directory ready: {data_dir.exists()}")
+except Exception as e:
+    logger.warning(f"[STARTUP] Could not create /data: {e}")
+
+# DB_PATH 확인 로그
+db_path = os.getenv("DB_PATH", "/data/users.db")
+logger.info(f"[STARTUP] DB_PATH = {db_path}")
+logger.info(f"[STARTUP] DB file exists = {Path(db_path).exists()}")
 
 app = FastAPI(
     title="AI Khmer Destiny API",
@@ -46,10 +64,13 @@ app.include_router(auth_router)         # auth: /api/v2/auth/...
 
 @app.get("/health", tags=["System"])
 def health_check():
+    db_path_val = os.getenv("DB_PATH", "/data/users.db")
     return {
         "status": "ok",
         "service": "ai-khmer-destiny-api",
         "version": "2.0.0",
+        "db_path": db_path_val,
+        "db_exists": Path(db_path_val).exists(),
         "features": [
             "Accurate Manseryeok calculation via sajupy",
             "Cambodia timezone (UTC+7) + longitude correction",

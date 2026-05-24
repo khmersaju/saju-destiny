@@ -551,6 +551,10 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
         <label class="fl" id="lbl-login-pw">🔒 ពាក្យសម្ងាត់ *</label>
         <input class="fi" id="lPassword" type="password" placeholder="••••••••">
       </div>
+      <div style="display:flex;align-items:center;margin:10px 0 4px 0;gap:8px">
+        <input type="checkbox" id="saveEmailChk" style="width:16px;height:16px;cursor:pointer;accent-color:#e8720c;flex-shrink:0">
+        <label for="saveEmailChk" id="lbl-save-email" style="font-size:12px;color:#818c9a;cursor:pointer">Remember Email / រក្សាទុកអ៊ីម៉ែល</label>
+      </div>
       <button class="auth-submit" onclick="doLogin()" id="lbl-login-btn">ចូល</button>
       <div style="text-align:right;margin-top:8px">
         <a onclick="showForgotPassword()" id="lbl-forgot-pw" style="font-size:12px;color:#e8720c">ភ្លេចពាក្យសម្ងាត់?</a>
@@ -2074,6 +2078,15 @@ async function doLogin() {
   const email = document.getElementById('lEmail').value.trim();
   const pw = document.getElementById('lPassword').value;
   if (!email || !pw) { showToast(t('err_email_pw')); return; }
+  // 아이디 저장 처리
+  const saveChk = document.getElementById('saveEmailChk');
+  if (saveChk && saveChk.checked) {
+    localStorage.setItem('savedEmail', email);
+    localStorage.setItem('saveEmailEnabled', '1');
+  } else {
+    localStorage.removeItem('savedEmail');
+    localStorage.setItem('saveEmailEnabled', '0');
+  }
   try {
     const r = await fetch(`${API}/api/v2/auth/login`, {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -2366,6 +2379,15 @@ function animateCounter(elemId, target) {
 window.addEventListener('DOMContentLoaded', async () => {
   // Set language button: 현재 사용 중인 언어의 국기를 표시 (km=캄보디아 국기, en=미국 국기)
   document.getElementById('langBtn').textContent = lang === 'km' ? '🇰🇭' : '🇺🇸';
+  // 저장된 이메일 자동 입력
+  const savedEmail = localStorage.getItem('savedEmail');
+  const saveEnabled = localStorage.getItem('saveEmailEnabled');
+  if (savedEmail && saveEnabled === '1') {
+    const lEmailEl = document.getElementById('lEmail');
+    const saveChkEl = document.getElementById('saveEmailChk');
+    if (lEmailEl) lEmailEl.value = savedEmail;
+    if (saveChkEl) saveChkEl.checked = true;
+  }
   // Populate selects
   populateYears('iYear', 1930, 2010);
   populateDays('iDay');
