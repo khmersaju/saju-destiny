@@ -90,6 +90,21 @@ if os.path.exists(static_dir):
     if os.path.exists(icons_dir):
         app.mount("/icons", StaticFiles(directory=icons_dir), name="icons")
 
+@app.get("/privacy")
+def privacy_policy():
+    f = os.path.join(os.path.dirname(__file__), "static", "privacy.html")
+    return FileResponse(f, media_type="text/html") if os.path.exists(f) else JSONResponse({}, status_code=404)
+
+@app.get("/terms")
+def terms_of_use():
+    f = os.path.join(os.path.dirname(__file__), "static", "terms.html")
+    return FileResponse(f, media_type="text/html") if os.path.exists(f) else JSONResponse({}, status_code=404)
+
+@app.get("/.well-known/assetlinks.json")
+def assetlinks():
+    f = os.path.join(os.path.dirname(__file__), "static", ".well-known", "assetlinks.json")
+    return FileResponse(f, media_type="application/json") if os.path.exists(f) else JSONResponse([], status_code=404)
+
 @app.get("/manifest.json")
 def manifest():
     f = os.path.join(os.path.dirname(__file__), "static", "manifest.json")
@@ -110,7 +125,7 @@ def root():
 @app.get("/{full_path:path}")
 def serve_spa(full_path: str):
     # API/시스템 경로는 제외
-    skip = ("api/", "docs", "redoc", "health", "openapi.json", "static/")
+    skip = ("api/", "docs", "redoc", "health", "openapi.json", "static/", ".well-known", "privacy", "terms")
     if any(full_path.startswith(s) for s in skip):
         return JSONResponse({"error": "Not found"}, status_code=404)
     index = os.path.join(os.path.dirname(__file__), "static", "index.html")
