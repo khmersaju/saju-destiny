@@ -108,9 +108,8 @@ def init_db():
         sort_order INTEGER DEFAULT 0,
         created_at TEXT    DEFAULT (datetime('now'))
     );
-    INSERT OR IGNORE INTO ad_banners (id, title, image_url, link_url, position, is_active, sort_order)
+    INSERT OR REPLACE INTO ad_banners (id, title, image_url, link_url, position, is_active, sort_order)
     VALUES (1, 'Hebron Academy', '/static/ad_banner_hebron.jpg', 'https://www.facebook.com/share/p/17hKVMGE9D/', 'home', 1, 0);
-    UPDATE ad_banners SET title='Hebron Academy', image_url='/static/ad_banner_hebron.jpg', link_url='https://www.facebook.com/share/p/17hKVMGE9D/' WHERE id=1;
 
     CREATE TABLE IF NOT EXISTS password_reset_codes (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
