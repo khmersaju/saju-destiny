@@ -2557,7 +2557,8 @@ async function loadToday() {
   try {
     const now = new Date();
     const y = now.getFullYear(), m = now.getMonth()+1, d = now.getDate();
-    document.getElementById('today-date').textContent = `${y}.${String(m).padStart(2,'0')}.${String(d).padStart(2,'0')}`;
+    const todayDateEl = document.getElementById('today-date');
+    if (todayDateEl) todayDateEl.textContent = `${y}.${String(m).padStart(2,'0')}.${String(d).padStart(2,'0')}`;
     const r = await fetch(`${API}/api/v2/today`);
     const data = await r.json();
     if (data.day_pillar) {
@@ -2572,7 +2573,8 @@ async function loadToday() {
       const animalLabel = lang === 'km' && animalKm[branchEn]
         ? `${data.day_pillar} (${animalKm[branchEn]})`
         : data.day_pillar;
-      document.getElementById('today-pillar').textContent = data.day_pillar;
+      const todayPillarEl = document.getElementById('today-pillar');
+      if (todayPillarEl) todayPillarEl.textContent = data.day_pillar;
       // 동물 이름 별도 표시
       const animalEl = document.getElementById('today-animal');
       if (animalEl) {
@@ -2589,13 +2591,15 @@ async function loadToday() {
       lunarStr = lunarObj;
     }
     if (lunarStr) {
-      document.getElementById('today-lunar').textContent = lang==='km'
+      const todayLunarEl = document.getElementById('today-lunar');
+      if (todayLunarEl) todayLunarEl.textContent = lang==='km'
         ? `ប្រតិតិនច័ន្ត: ${lunarStr}`
         : `Lunar: ${lunarStr}`;
     }
   } catch(e) {
     const now = new Date();
-    document.getElementById('today-date').textContent = now.toLocaleDateString();
+    const todayDateEl2 = document.getElementById('today-date');
+    if (todayDateEl2) todayDateEl2.textContent = now.toLocaleDateString();
   }
 }
 
