@@ -2021,6 +2021,9 @@ function _renderResultFinal(data) {
     ];
     window._lastResultFiveEl = ch.five_elements || {};
   }
+  // 풀이 텍스트 저장 (공유 페이지에 표시용)
+  window._lastReadingText = data.ai_reading || data.fortune_text || data.reading || data.daily_fortune || '';
+  window._lastResultMode = currentMode;
 
   const tabs = [];
   const panels = [];
@@ -2918,33 +2921,37 @@ let _shareCardBlobUrl = null;  // 생성된 이미지 blob URL
 let _shareCardBlob = null;     // 이미지 Blob 객체
 let _sharePageUrl = null;      // 점신 스타일 공유 페이지 URL
 
-// 점신 스타일 공유 링크 생성 (base64url 인코딩)
-function _buildSharePageUrl() {
+// 짧은 공유 URL 생성 (DB 저장 방식)
+async function _buildSharePageUrl() {
   if (!_lastShareData) return _shareUrl;
   try {
-    // 필러 정보 추출 (renderResult에서 저장된 데이터 활용)
-    const payload = {
-      name: _lastShareData.name || '',
-      birth: `${_lastShareData.birth_year}.${_lastShareData.birth_month}.${_lastShareData.birth_day}`,
-      gender: _lastShareData.gender || 'male',
-      dominant: window._lastResultDominant || '',
-      pillars: window._lastResultPillars || [],
-      five_elements: window._lastResultFiveEl || {}
-    };
-    const json = JSON.stringify(payload);
-    const b64 = btoa(unescape(encodeURIComponent(json)))
-      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    return `${_shareUrl}/s/${b64}`;
-  } catch(e) {
-    return _shareUrl;
-  }
+    const resp = await fetch('/api/v2/auth/share/save', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name: _lastShareData.name || '',
+        birth: `${_lastShareData.birth_year}.${_lastShareData.birth_month}.${_lastShareData.birth_day}`,
+        gender: _lastShareData.gender || 'male',
+        mode: window._lastResultMode || currentMode || 'lifetime',
+        dominant: window._lastResultDominant || '',
+        pillars: window._lastResultPillars || [],
+        five_elements: window._lastResultFiveEl || {},
+        reading_text: window._lastReadingText || ''
+      })
+    });
+    const d = await resp.json();
+    if (d.success && d.code) {
+      return `${_shareUrl}/s/${d.code}`;
+    }
+  } catch(e) {}
+  return _shareUrl;
 }
 let _lastShareData = null;     // 마지막 공유 데이터 (재사용)
 
 // 공유 모달 열기 + 이미지 카드 자동 생성
 async function openShareModal() {
-  // 점신 스타일 개인화 공유 링크 생성
-  _sharePageUrl = _buildSharePageUrl();
+  // 짧은 공유 URL 생성 (DB 저장)
+  _sharePageUrl = await _buildSharePageUrl();
 
   // 모달 열기
   document.getElementById('shareModalOverlay').classList.add('open');

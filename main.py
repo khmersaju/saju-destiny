@@ -124,14 +124,24 @@ def root():
 
 @app.get("/s/{share_id}")
 def share_page(share_id: str):
-    """SNS 공유 링크 페이지 - 점신 스타일 OG 메타 + 동적 HTML"""
-    import base64, json as _json
+    """SNS 공유 링크 페이지 - DB에서 데이터 조회 + 풀이 텍스트 표시"""
+    import json as _json, sqlite3 as _sqlite3
     from fastapi.responses import HTMLResponse
+    DB_PATH_LOCAL = os.environ.get('DB_PATH', '/data/users.db')
+    sdata = {}
     try:
-        # share_id = base64url 인코딩된 JSON
-        padded = share_id + '=' * (4 - len(share_id) % 4)
-        decoded = base64.urlsafe_b64decode(padded).decode('utf-8')
-        sdata = _json.loads(decoded)
+        conn = _sqlite3.connect(DB_PATH_LOCAL)
+        conn.row_factory = _sqlite3.Row
+        c = conn.cursor()
+        c.execute("SELECT * FROM shares WHERE code=?", (share_id,))
+        row = c.fetchone()
+        conn.close()
+        if row:
+            sdata = dict(row)
+            try: sdata['pillars'] = _json.loads(sdata.get('pillars') or '[]')
+            except: sdata['pillars'] = []
+            try: sdata['five_elements'] = _json.loads(sdata.get('five_elements') or '{}')
+            except: sdata['five_elements'] = {}
     except Exception:
         sdata = {}
 
@@ -187,6 +197,36 @@ def share_page(share_id: str):
           <div style="font-size:11px;color:#fade4a;width:14px;text-align:center">{val}</div>
         </div>'''
 
+    # 데이터 없으면 안내 페이지
+    if not sdata.get('name'):
+        not_found_html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Saju Destiny</title></head><body style="font-family:sans-serif;background:#01092b;color:#fff;text-align:center;padding:60px 20px">
+        <div style="font-size:40px;margin-bottom:16px">✨</div>
+        <div style="font-size:20px;font-weight:700;color:#fade4a;margin-bottom:8px">Saju Destiny</div>
+        <div style="font-size:14px;color:#8a9ab8;margin-bottom:32px">이 공유 링크는 만료되었거나 존재하지 않습니다.</div>
+        <a href="{app_url}" style="background:#fade4a;color:#01092b;padding:14px 32px;border-radius:14px;font-weight:700;text-decoration:none;font-size:14px">나도 운세 확인하기</a>
+        </body></html>"""
+        return HTMLResponse(content=not_found_html)
+
+    # 풀이 텍스트 섹션 HTML
+    reading_text = sdata.get('reading_text', '')
+    mode_label_map = {'lifetime': '전체운', 'yearly': '신년운세', 'monthly': '월별운세', 'daily': '일일운세', 'compatibility': '궁합', 'lucky_days': '길일', 'lucky_profile': '럭키 프로필'}
+    mode_label = mode_label_map.get(sdata.get('mode',''), '운세풀이')
+    reading_html = ''
+    if reading_text:
+        # 마크다운 스타일 텍스트 정리
+        import re as _re
+        clean = _re.sub(r'#{1,3}\s*', '', reading_text)
+        clean = _re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', clean)
+        clean = _re.sub(r'\*(.+?)\*', r'<em>\1</em>', clean)
+        paragraphs = [p.strip() for p in clean.split('\n') if p.strip()]
+        paras_html = ''.join(f'<p style="margin-bottom:10px;line-height:1.7;font-size:13px;color:#e0e6f0">{p}</p>' for p in paragraphs)
+        reading_html = f'''
+        <div style="background:#fff;border-radius:14px;padding:20px;margin:16px">
+          <div style="font-size:11px;font-weight:700;color:#fade4a;letter-spacing:1px;margin-bottom:12px">✨ {mode_label.upper()} READING</div>
+          {paras_html}
+        </div>'''
+
     html = f"""<!DOCTYPE html>
 <html lang="km">
 <head>
@@ -202,7 +242,7 @@ def share_page(share_id: str):
 <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
-body{{font-family:'Battambang',sans-serif;background:#f5f5f5;min-height:100vh}}
+body{{font-family:'Battambang',sans-serif;background:#f0f4ff;min-height:100vh}}
 .hero{{background:linear-gradient(135deg,#01092b,#1a0a3a);padding:28px 20px 24px;text-align:center;color:#fff}}
 .hero-badge{{display:inline-block;background:rgba(250,222,74,0.15);border:1px solid rgba(250,222,74,0.4);border-radius:20px;padding:4px 14px;font-size:11px;color:#fade4a;margin-bottom:12px;letter-spacing:1px}}
 .hero-name{{font-size:22px;font-weight:700;color:#fade4a;margin-bottom:4px}}
@@ -212,18 +252,18 @@ body{{font-family:'Battambang',sans-serif;background:#f5f5f5;min-height:100vh}}
 .dom-elem{{text-align:center;margin-top:12px;padding:10px;background:rgba(250,222,74,0.1);border-radius:10px;border:1px solid rgba(250,222,74,0.2)}}
 .dom-label{{font-size:10px;color:#8a9ab8;margin-bottom:4px}}
 .dom-val{{font-size:16px;font-weight:700;color:#fade4a}}
-.actions{{padding:20px 16px 0;display:flex;gap:10px}}
+.actions{{padding:16px;display:flex;gap:10px}}
 .btn{{flex:1;padding:14px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;border:none;text-align:center;text-decoration:none;display:block}}
 .btn-primary{{background:#fade4a;color:#01092b}}
 .btn-secondary{{background:#fff;color:#01092b;border:2px solid #ddd}}
-.app-banner{{background:#01092b;color:#fff;text-align:center;padding:16px;margin:16px;border-radius:14px}}
-.app-banner-title{{font-size:14px;font-weight:700;color:#fade4a;margin-bottom:4px}}
-.app-banner-sub{{font-size:11px;color:#8a9ab8}}
+.footer{{background:#01092b;color:#fff;text-align:center;padding:20px 16px;margin-top:8px}}
+.footer-title{{font-size:14px;font-weight:700;color:#fade4a;margin-bottom:4px}}
+.footer-sub{{font-size:11px;color:#8a9ab8}}
 </style>
 </head>
 <body>
 <div class="hero">
-  <div class="hero-badge">ជោគជតា​ក្នុង​ប្រព័ន្ធ​សាជូ · SAJU DESTINY</div>
+  <div class="hero-badge">ជោគជតា​សាជូ · SAJU DESTINY</div>
   <div class="hero-name">{name}</div>
   <div class="hero-meta">{birth} · {gender_disp}</div>
   <div class="card">
@@ -235,13 +275,14 @@ body{{font-family:'Battambang',sans-serif;background:#f5f5f5;min-height:100vh}}
     </div>
   </div>
 </div>
+{reading_html}
 <div class="actions">
-  <a href="{app_url}" class="btn btn-primary">មើល​លត្ថភល​ជោគជតា​ព័ញ​ខ្លួន</a>
-  <a href="{app_url}" class="btn btn-secondary">ចូល​គណនី​ក្នុង​ប្រើប្រាស់</a>
+  <a href="{app_url}" class="btn btn-primary">🔮 나도 운세 확인하기</a>
+  <a href="{app_url}" class="btn btn-secondary">🌟 앱 열기</a>
 </div>
-<div class="app-banner">
-  <div class="app-banner-title">Saju Destiny — ជោគជតា​ក្នុង​ប្រព័ន្ធ​សាជូ</div>
-  <div class="app-banner-sub">នឹង​ជោគជតា​ក្នុង​ប្រព័ន្ធ​សាជូ​ត្រម់​ការ​វិភាគ​សាជូ​ប្រព័ន្ធ​នាក់​ក្នុង​ប្រព័ន្ធ​សាជូ</div>
+<div class="footer">
+  <div class="footer-title">Saju Destiny</div>
+  <div class="footer-sub">Traditional Four Pillars Destiny Reading</div>
 </div>
 </body></html>"""
     return HTMLResponse(content=html)

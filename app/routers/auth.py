@@ -122,6 +122,20 @@ def init_db():
     INSERT OR REPLACE INTO ad_banners (id, title, image_url, link_url, position, is_active, sort_order)
     VALUES (1, 'Hebron Academy', '/static/ad_banner_hebron.jpg', 'https://www.facebook.com/share/p/17hKVMGE9D/', 'home', 1, 0);
 
+    CREATE TABLE IF NOT EXISTS shares (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        code       TEXT    UNIQUE NOT NULL,
+        name       TEXT,
+        birth      TEXT,
+        gender     TEXT,
+        mode       TEXT,
+        dominant   TEXT,
+        pillars    TEXT,
+        five_elements TEXT,
+        reading_text TEXT,
+        created_at TEXT    DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS password_reset_codes (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
         email      TEXT    NOT NULL,
@@ -543,3 +557,62 @@ async def reset_password(req: ResetPasswordRequest):
     conn.commit()
     conn.close()
     return {"success": True, "message": "Password reset successful"}
+
+
+# ===== 공유 링크 저장/조회 =====
+import string as _string
+
+def _gen_share_code(length=8):
+    """8자리 랜덤 코드 생성"""
+    import random
+    chars = _string.ascii_letters + _string.digits
+    return ''.join(random.choices(chars, k=length))
+
+@router.post("/share/save")
+async def save_share(request: Request):
+    """공유 데이터 DB 저장 → 짧은 코드 반환"""
+    import json as _json
+    body = await request.json()
+    name = body.get('name', '')
+    birth = body.get('birth', '')
+    gender = body.get('gender', 'male')
+    mode = body.get('mode', 'lifetime')
+    dominant = body.get('dominant', '')
+    pillars = _json.dumps(body.get('pillars', []), ensure_ascii=False)
+    five_elements = _json.dumps(body.get('five_elements', {}), ensure_ascii=False)
+    reading_text = body.get('reading_text', '')
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    # 중복 없는 코드 생성
+    for _ in range(10):
+        code = _gen_share_code(8)
+        c.execute("SELECT id FROM shares WHERE code=?", (code,))
+        if not c.fetchone():
+            break
+    c.execute(
+        "INSERT INTO shares (code,name,birth,gender,mode,dominant,pillars,five_elements,reading_text) VALUES (?,?,?,?,?,?,?,?,?)",
+        (code, name, birth, gender, mode, dominant, pillars, five_elements, reading_text)
+    )
+    conn.commit()
+    conn.close()
+    return {"success": True, "code": code}
+
+@router.get("/share/{code}")
+async def get_share(code: str):
+    """공유 코드로 데이터 조회"""
+    import json as _json
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM shares WHERE code=?", (code,))
+    row = c.fetchone()
+    conn.close()
+    if not row:
+        return {"success": False, "error": "Not found"}
+    d = dict(row)
+    try: d['pillars'] = _json.loads(d['pillars'] or '[]')
+    except: d['pillars'] = []
+    try: d['five_elements'] = _json.loads(d['five_elements'] or '{}')
+    except: d['five_elements'] = {}
+    return {"success": True, "data": d}
