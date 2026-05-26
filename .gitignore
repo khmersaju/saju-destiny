@@ -14,11 +14,10 @@ build/
 .env.local
 .env.*.local
 
-# 데이터베이스 (Railway Volume에서 관리)
-*.db
-*.sqlite
+# 데이터베이스: data/ 폴더는 Git으로 관리 (Railway Persistent Volume 미사용 시 초기 시드 데이터)
+# 주의: fortune_cache.db는 크기가 클 수 있으므로 제외
+fortune_cache.db
 *.sqlite3
-data/
 
 # 로그
 *.log

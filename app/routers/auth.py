@@ -15,12 +15,16 @@ router = APIRouter(prefix="/api/v2/auth", tags=["auth"])
 security = HTTPBearer(auto_error=False)
 
 # ── DB 경로 ──
-# 환경변수 DB_PATH가 설정되어 있으면 해당 경로 사용 (Railway Volume: /data/users.db)
-# 미설정 시 기본값: 프로젝트 루트/data/users.db
+# 우선순위: 환경변수 DB_PATH > /data/users.db (Railway Persistent Volume) > 로컬 data/
+# Railway에서는 반드시 /data 볼륨을 마운트하고 DB_PATH=/data/users.db 환경변수를 설정해야 함
 _db_env = os.getenv("DB_PATH")
 if _db_env:
     DB_PATH = Path(_db_env)
+elif Path("/data").exists():
+    # Railway Persistent Volume이 마운트된 경우
+    DB_PATH = Path("/data/users.db")
 else:
+    # 로컬 개발 환경
     DB_PATH = Path(__file__).parent.parent.parent / "data" / "users.db"
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
@@ -101,8 +105,9 @@ def init_db():
         key   TEXT PRIMARY KEY,
         value INTEGER DEFAULT 0
     );
-    INSERT OR IGNORE INTO app_counters (key, value) VALUES ('total_visits', 5000);
-    INSERT OR IGNORE INTO app_counters (key, value) VALUES ('total_clicks', 5000);
+    -- INSERT OR IGNORE: DB가 처음 생성될 때만 초기값 삽입 (이후 배포에서는 기존 값 유지)
+    INSERT OR IGNORE INTO app_counters (key, value) VALUES ('total_visits', 7700);
+    INSERT OR IGNORE INTO app_counters (key, value) VALUES ('total_clicks', 7700);
 
     CREATE TABLE IF NOT EXISTS ad_banners (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -373,7 +378,7 @@ async def record_visit():
     c.execute("UPDATE app_counters SET value = value + 1 WHERE key = 'total_clicks'")
     c.execute("SELECT value FROM app_counters WHERE key = 'total_clicks'")
     row = c.fetchone()
-    total_clicks = row[0] if row else 5000
+    total_clicks = row[0] if row else 7700
     conn.commit()
     conn.close()
     return {"success": True, "total_visits": total_clicks, "total_clicks": total_clicks}
@@ -386,7 +391,7 @@ async def get_visit_count():
     c = conn.cursor()
     c.execute("SELECT value FROM app_counters WHERE key = 'total_clicks'")
     row = c.fetchone()
-    total_clicks = row[0] if row else 5000
+    total_clicks = row[0] if row else 7700
     conn.close()
     return {"success": True, "total_visits": total_clicks, "total_clicks": total_clicks}
 

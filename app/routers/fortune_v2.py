@@ -17,8 +17,15 @@ from dotenv import load_dotenv
 
 # ─── 운세 풀이 영구 DB 캐시 (서버 재시작 후에도 동일한 결과 보장) ───
 _FORTUNE_CACHE: dict[str, str] = {}  # 인메모리 1차 캐시 (빠른 조회)
-_DB_CACHE_PATH = Path(__file__).parent.parent.parent / "data" / "fortune_cache.db"
-_DB_CACHE_PATH.parent.mkdir(exist_ok=True)
+# Persistent Volume 우선 (사용자 DB와 동일한 볼륨에 저장)
+_cache_env = os.getenv("CACHE_DB_PATH")
+if _cache_env:
+    _DB_CACHE_PATH = Path(_cache_env)
+elif Path("/data").exists():
+    _DB_CACHE_PATH = Path("/data/fortune_cache.db")
+else:
+    _DB_CACHE_PATH = Path(__file__).parent.parent.parent / "data" / "fortune_cache.db"
+_DB_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 def _init_cache_db():
     """영구 캐시 DB 초기화"""
