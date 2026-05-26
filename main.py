@@ -117,10 +117,25 @@ def service_worker():
 
 @app.get("/")
 def root():
+    import sqlite3 as _sqlite3
+    from fastapi.responses import HTMLResponse
     index = os.path.join(os.path.dirname(__file__), "static", "index.html")
-    if os.path.exists(index):
-        return FileResponse(index)
-    return JSONResponse({"message": "Welcome to AI Khmer Destiny API", "docs": "/docs"})
+    if not os.path.exists(index):
+        return JSONResponse({"message": "Welcome to AI Khmer Destiny API", "docs": "/docs"})
+    with open(index, 'r', encoding='utf-8') as f:
+        html = f.read()
+    # 누적 클릭수를 서버에서 직접 삽입
+    try:
+        db_path = os.environ.get('DB_PATH', '/data/users.db')
+        conn = _sqlite3.connect(db_path)
+        row = conn.execute("SELECT total_clicks FROM visit_counter WHERE id=1").fetchone()
+        conn.close()
+        total_clicks = row[0] if row else 0
+        clicks_str = f"{total_clicks:,}"
+    except:
+        clicks_str = "..."
+    html = html.replace('id="stat-visits">...</div>', f'id="stat-visits">{clicks_str}</div>')
+    return HTMLResponse(content=html, headers={"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"})
 
 @app.get("/s/{share_id}")
 def share_page(share_id: str):
