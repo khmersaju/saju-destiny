@@ -523,6 +523,26 @@ async def get_daily_fortune(data: DailyFortuneInput):
     )
     ai_text = _ai_fortune(prompt, max_tokens=600, language=data.language)
 
+    # 레이더 차트용 5가지 운세 점수 계산 (30~100, 오행 상생상극 기반)
+    from app.services.saju_engine_v2 import _element_score
+    day_elem = chart["day_master"]["element"]
+    today_elem = ilun["element"]
+    dominant = max(chart["five_elements"], key=chart["five_elements"].get)
+    import hashlib, json as _json
+    seed_str = f"{data.birth_year}{data.birth_month}{data.birth_day}{target.isoformat()}"
+    seed = int(hashlib.md5(seed_str.encode()).hexdigest(), 16) % 1000
+    def _radar_score(base_offset: int) -> int:
+        raw = _element_score(today_elem, day_elem, dominant)
+        varied = max(30, min(100, raw + base_offset + (seed % 21) - 10))
+        return varied
+    daily_scores = {
+        "wealth":  _radar_score(0),
+        "love":    _radar_score(-5),
+        "health":  _radar_score(3),
+        "career":  _radar_score(-8),
+        "study":   _radar_score(5),
+    }
+
     return {
         "success": True,
         "date": target.isoformat(),
@@ -532,6 +552,7 @@ async def get_daily_fortune(data: DailyFortuneInput):
         "lucky_color": chart["lucky"]["colors"],
         "lucky_direction": chart["lucky"]["direction"],
         "lucky_numbers": chart["lucky"]["numbers"],
+        "daily_scores": daily_scores,
     }
 
 

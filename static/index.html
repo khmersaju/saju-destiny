@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -290,6 +291,61 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
 /* FOOTER LINKS */
 .footer-links{text-align:center;padding:12px 16px 4px;display:flex;justify-content:center;gap:16px}
 .footer-link{font-size:11px;color:#818c9a;cursor:pointer;text-decoration:underline}
+
+/* ===== 홈 일일운세 레이더 섹션 ===== */
+.daily-radar-section{background:linear-gradient(135deg,#0d1b3e 0%,#1a0a3a 100%);margin:0 12px 16px;border-radius:18px;padding:16px 14px 14px;border:1px solid rgba(250,222,74,0.2);box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.daily-radar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.daily-radar-title-sub{font-size:10px;color:#fade4a;letter-spacing:1px;font-weight:700;opacity:0.8}
+.daily-radar-title{font-size:17px;font-weight:800;color:#fff;margin-bottom:12px;line-height:1.3}
+.daily-radar-title span{color:#fade4a}
+.radar-canvas-wrap{position:relative;width:100%;max-width:260px;margin:0 auto 12px}
+.radar-canvas-wrap canvas{width:100%!important;height:auto!important}
+.daily-radar-scores{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+.radar-score-item{text-align:center}
+.radar-score-label{font-size:9px;color:#8a9ab8;margin-bottom:2px}
+.radar-score-val{font-size:13px;font-weight:700;color:#fade4a}
+.daily-radar-lucky{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.lucky-chip{background:rgba(250,222,74,0.12);border:1px solid rgba(250,222,74,0.3);border-radius:20px;padding:4px 10px;font-size:11px;color:#fade4a;display:flex;align-items:center;gap:4px}
+.daily-radar-cta{background:linear-gradient(90deg,#fade4a,#f5a623);border:none;border-radius:12px;width:100%;padding:11px;font-size:13px;font-weight:700;color:#01092b;cursor:pointer;letter-spacing:0.5px}
+.daily-radar-login-hint{text-align:center;font-size:11px;color:#8a9ab8;padding:8px 0}
+.daily-radar-login-hint span{color:#fade4a;cursor:pointer;text-decoration:underline}
+
+/* ===== 로딩 화면 광고 스타일 ===== */
+.loading-ad-wrap{background:#fff;border-radius:14px;margin:0 0 12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+.loading-ad-badge{font-size:10px;color:#999;text-align:right;padding:4px 10px 0;font-weight:600}
+.loading-ad-img{width:100%;display:block;max-height:200px;object-fit:cover}
+.loading-ad-caption{padding:8px 12px 10px;font-size:12px;color:#333;font-weight:600}
+.loading-tip-wrap{background:#f0f4ff;border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px}
+.loading-tip-badge{background:#01092b;color:#fade4a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap;margin-top:1px}
+.loading-tip-text{font-size:12px;color:#333;line-height:1.5}
+.loading-counter{font-size:12px;color:#666;text-align:center;margin-bottom:8px}
+.loading-counter strong{color:#01092b;font-weight:700}
+.loading-progress-label{font-size:11px;color:#fade4a;text-align:center;margin-top:6px;font-weight:600}
+
+/* ===== SNS 공유 링크 페이지 ===== */
+.share-page-wrap{min-height:100vh;background:#f5f5f5;padding:0 0 40px}
+.share-page-hero{background:linear-gradient(135deg,#01092b,#1a0a3a);padding:28px 20px 24px;text-align:center;color:#fff}
+.share-page-name{font-size:22px;font-weight:800;color:#fade4a;margin-bottom:4px}
+.share-page-meta{font-size:13px;color:#8a9ab8;margin-bottom:16px}
+.share-page-card{background:rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin:0 auto;max-width:320px}
+.share-page-pillar-row{display:flex;justify-content:center;gap:10px;margin-bottom:12px}
+.share-page-pillar{background:rgba(255,255,255,0.1);border-radius:10px;padding:8px 12px;text-align:center;min-width:56px}
+.share-page-pillar-label{font-size:9px;color:#8a9ab8;margin-bottom:4px}
+.share-page-pillar-char{font-size:24px;font-weight:700;color:#fff}
+.share-page-pillar-elem{font-size:9px;margin-top:2px}
+.share-page-elem-bars{margin-top:12px}
+.share-page-elem-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.share-page-elem-label{font-size:11px;color:#ccc;width:40px;text-align:right}
+.share-page-elem-bar-bg{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+.share-page-elem-bar-fill{height:100%;border-radius:4px}
+.share-page-elem-num{font-size:11px;color:#fade4a;width:16px;text-align:center}
+.share-page-actions{padding:20px 16px 0;display:flex;gap:10px}
+.share-page-btn{flex:1;padding:14px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;border:none;text-align:center}
+.share-page-btn.primary{background:#fade4a;color:#01092b}
+.share-page-btn.secondary{background:#fff;color:#01092b;border:2px solid #01092b}
+.share-page-app-banner{background:#01092b;color:#fff;text-align:center;padding:16px;margin:16px;border-radius:14px}
+.share-page-app-banner-title{font-size:14px;font-weight:700;color:#fade4a;margin-bottom:4px}
+.share-page-app-banner-sub{font-size:11px;color:#8a9ab8}
 </style>
 </head>
 <body>
@@ -341,6 +397,54 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
         <div class="today-label" id="today-date-label">កាលបរិច្ឆេទ</div>
         <div class="today-val" id="today-date">--</div>
       </div>
+    </div>
+    </div>
+
+  <!-- ===== 일일운세 레이더 차트 섹션 ===== -->
+  <div class="daily-radar-section" id="daily-radar-section">
+    <div class="daily-radar-header">
+      <div class="daily-radar-title-sub" id="radar-sub-label">ជោគជតា​ប្រចាំ​ថ្ងៃ · TODAY'S FORTUNE</div>
+    </div>
+    <div class="daily-radar-title" id="radar-main-title">ការ​ចែក​ចាយ​ថាមពល​ថ្ងៃ​នេះ <span id="radar-date-badge"></span></div>
+    <!-- 레이더 차트 캔버스 -->
+    <div class="radar-canvas-wrap">
+      <canvas id="radarChart" width="260" height="260"></canvas>
+    </div>
+    <!-- 5가지 점수 -->
+    <div class="daily-radar-scores" id="radar-scores">
+      <div class="radar-score-item">
+        <div class="radar-score-label" id="rs-wealth-lbl">ទ្រព្យ</div>
+        <div class="radar-score-val" id="rs-wealth">--</div>
+      </div>
+      <div class="radar-score-item">
+        <div class="radar-score-label" id="rs-love-lbl">ស្នេហ៍</div>
+        <div class="radar-score-val" id="rs-love">--</div>
+      </div>
+      <div class="radar-score-item">
+        <div class="radar-score-label" id="rs-health-lbl">សុខភាព</div>
+        <div class="radar-score-val" id="rs-health">--</div>
+      </div>
+      <div class="radar-score-item">
+        <div class="radar-score-label" id="rs-career-lbl">ការងារ</div>
+        <div class="radar-score-val" id="rs-career">--</div>
+      </div>
+      <div class="radar-score-item">
+        <div class="radar-score-label" id="rs-study-lbl">ការ​សិក្សា</div>
+        <div class="radar-score-val" id="rs-study">--</div>
+      </div>
+    </div>
+    <!-- 행운 정보 칩 -->
+    <div class="daily-radar-lucky" id="radar-lucky-chips">
+      <div class="lucky-chip">🎨 <span id="radar-lucky-color">--</span></div>
+      <div class="lucky-chip">🧭 <span id="radar-lucky-dir">--</span></div>
+      <div class="lucky-chip">🔢 <span id="radar-lucky-num">--</span></div>
+    </div>
+    <!-- CTA 버튼 (로그인 시 상세 운세, 비로그인 시 가입 유도) -->
+    <button class="daily-radar-cta" id="radar-cta-btn" onclick="radarCtaClick()">
+      <span id="radar-cta-text">ពិនិត្យ​ជោគជតា​លម្អិត →</span>
+    </button>
+    <div class="daily-radar-login-hint" id="radar-login-hint" style="display:none">
+      <span onclick="showAuth()">ចូល​គណនី</span> ដើម្បី​មើល​ជោគជតា​ផ្ទាល់​ខ្លួន
     </div>
   </div>
 
@@ -1644,35 +1748,93 @@ async function submitFortune() {
   document.getElementById('result-name').textContent = name;
   document.getElementById('result-meta').textContent = `${year}.${month}.${day} | ${selectedGender === 'male' ? (lang==='km'?'ប្រុស':'Male') : (lang==='km'?'ស្រី':'Female')}`;
   document.getElementById('result-tabs').innerHTML = '';
-  // 스켈레튼 UI 로딩 화면
-  const loadingMsg = lang === 'km'
-    ? 'កំពុងគណនា...សូមជ្រើជាក ៣–៥វិនាទី'
-    : 'Analyzing your Four Pillars... (3–10 sec)';
+  // ===== 점신 스타일 로딩 화면 =====
+  const nameDisplay = currentUser ? (currentUser.first_name || currentUser.full_name || 'You') : 'You';
+  const loadingTitle = lang === 'km'
+    ? `កំពុង​វិភាគ​ជោគជតា​របស់ ${nameDisplay}!`
+    : `Analyzing ${nameDisplay}'s destiny!`;
+
+  // 광고주 5개 무작위 선택
+  const loadingAds = [
+    { img: '/static/ad_banner_junggane.jpg',   href: 'https://www.facebook.com/profile.php?id=61576323567135', name: '정가네식당', desc: lang==='km' ? 'ភោជនីយដ្ឋាន​កូរ៉េ​ក្នុង​ភ្នំពេញ' : 'Korean Restaurant in Phnom Penh' },
+    { img: '/static/ad_banner_hebron60.jpg',   href: 'https://www.facebook.com/photo?fbid=1753908259325181&set=a.748748813174469', name: 'Hebron Academy', desc: lang==='km' ? 'រៀន​ភាសា​កូរ៉េ — ៦០% OFF' : 'Korean Language — 60% OFF' },
+    { img: '/static/ad_banner_silla.jpg',      href: 'https://www.facebook.com/SillaCambodia/', name: 'Silla Restaurant', desc: lang==='km' ? 'ភោជនីយដ្ឋាន​កូរ៉េ​ស៊ីឡា' : 'Silla Korean Restaurant Cambodia' },
+    { img: '/static/ad_banner_edukonnect.jpg', href: 'https://www.facebook.com/EduKonnectSeoul', name: 'EduKonnect Seoul', desc: lang==='km' ? 'សិក្សា​នៅ​កូរ៉េ' : 'Study in Korea' },
+    { img: '/static/ad_banner_hebron.jpg',     href: 'https://www.facebook.com/photo?fbid=1753908259325181', name: 'Hebron Academy', desc: lang==='km' ? 'វគ្គ​ភាសា​កូរ៉េ' : 'Korean Language Course' },
+  ];
+  const ad = loadingAds[Math.floor(Math.random() * loadingAds.length)];
+
+  // 사주 팁 목록 (크메르어/영어)
+  const sajuTips = lang === 'km' ? [
+    'ថ្ងៃ​ចូលឆ្នាំ​ខ្មែរ​ត្រូវ​គ្នា​នឹង​ការ​ផ្លាស់ប្ដូរ​ថាមពល​ប្រចាំ​ឆ្នាំ​ក្នុង​ប្រព័ន្ធ​សាជូ',
+    'ធាតុ​ទឹក (水) តំណាង​ឱ្យ​ប្រាជ្ញា​និង​ការ​ប្រាស្រ័យ​ទាក់ទង',
+    'ធាតុ​ភ្លើង (火) ផ្ដល់​ថាមពល​ច្នៃប្រឌិត​និង​ចិត្ត​ក្លាហាន',
+    'ធាតុ​ដែក (金) តំណាង​ឱ្យ​ការ​ប្ដេជ្ញា​ចិត្ត​និង​ភាព​ម៉ឺងម៉ាត់',
+    'ធាតុ​ឈើ (木) ផ្ដល់​ថាមពល​ការ​លូតលាស់​និង​ភាព​ច្នៃប្រឌិត',
+    'ធាតុ​ដី (土) តំណាង​ឱ្យ​ស្ថិរភាព​និង​ការ​ទុក​ចិត្ត',
+  ] : [
+    'The Four Pillars system uses birth year, month, day & hour to map your destiny',
+    'Water element (水) represents wisdom and communication skills',
+    'Fire element (火) brings creative energy and courage',
+    'Metal element (金) represents determination and discipline',
+    'Wood element (木) brings growth energy and creativity',
+    'Earth element (土) represents stability and trustworthiness',
+  ];
+  const tip = sajuTips[Math.floor(Math.random() * sajuTips.length)];
+
+  const todayVisitors = (window._visitCount || 7700).toLocaleString();
+  const visitorMsg = lang === 'km'
+    ? `ថ្ងៃ​នេះ <strong>${todayVisitors}</strong> នាក់​បាន​ពិនិត្យ​ជោគជតា​ហើយ!`
+    : `Today <strong>${todayVisitors}</strong> people checked their destiny!`;
+  const analysisComplete = lang === 'km' ? 'ការ​វិភាគ​ជោគជតា​បាន​ចប់​ហើយ! 🎉' : 'Destiny analysis complete! 🎉';
+  const progressLabel = lang === 'km' ? 'កំពុង​ដោះស្រាយ​ជោគជតា...' : 'Reading your destiny...';
+
   document.getElementById('result-panels').innerHTML = `
-    <div class="loading-wrap">
-      <div class="loading-spinner"></div>
-      <div class="loading-text">${loadingMsg}</div>
-      <div class="loading-progress"><div class="loading-progress-bar"></div></div>
-    </div>
-    <div class="skeleton-card">
-      <div class="skeleton skeleton-title"></div>
-      <div class="skeleton-chart">
-        <div class="skeleton skeleton-pillar"></div>
-        <div class="skeleton skeleton-pillar"></div>
-        <div class="skeleton skeleton-pillar"></div>
-        <div class="skeleton skeleton-pillar"></div>
+    <div style="padding:16px 0 0">
+      <div style="text-align:center;font-size:14px;font-weight:700;color:#01092b;margin-bottom:14px;padding:0 16px">${loadingTitle}</div>
+
+      <!-- 광고 카드 -->
+      <div class="loading-ad-wrap" style="margin:0 16px 12px">
+        <div class="loading-ad-badge">AD</div>
+        <a href="${ad.href}" target="_blank" rel="noopener">
+          <img src="${ad.img}" alt="${ad.name}" class="loading-ad-img">
+        </a>
+        <div class="loading-ad-caption">${ad.name} — ${ad.desc}</div>
       </div>
-      <div class="skeleton skeleton-line wide"></div>
-      <div class="skeleton skeleton-line medium"></div>
-      <div class="skeleton skeleton-line short"></div>
-    </div>
-    <div class="skeleton-card">
-      <div class="skeleton skeleton-title"></div>
-      <div class="skeleton skeleton-line wide"></div>
-      <div class="skeleton skeleton-line wide"></div>
-      <div class="skeleton skeleton-line medium"></div>
+
+      <!-- 방문자 수 -->
+      <div class="loading-counter" style="padding:0 16px">${visitorMsg}</div>
+
+      <!-- 팁 -->
+      <div class="loading-tip-wrap" style="margin:0 16px 12px">
+        <div class="loading-tip-badge">Tip</div>
+        <div class="loading-tip-text">${tip}</div>
+      </div>
+
+      <!-- 완료 메시지 (처음엔 숨김) -->
+      <div id="loading-complete-msg" style="display:none;text-align:center;font-size:13px;color:#01092b;font-weight:600;padding:0 16px 8px">${analysisComplete}</div>
+
+      <!-- 진행률 바 -->
+      <div style="padding:0 16px">
+        <div class="loading-progress" style="background:#e8ecf5;border-radius:8px;height:10px;overflow:hidden">
+          <div class="loading-progress-bar" id="adv-progress-bar" style="height:100%;background:linear-gradient(90deg,#fade4a,#f5a623);border-radius:8px;width:5%;transition:width 0.3s"></div>
+        </div>
+        <div class="loading-progress-label" id="adv-progress-label" style="color:#666;font-size:11px;text-align:center;margin-top:5px">${progressLabel} 5%</div>
+      </div>
     </div>
   `;
+
+  // 진행률 바 애니메이션
+  let _prog = 5;
+  const _progInterval = setInterval(() => {
+    _prog = Math.min(95, _prog + Math.random() * 8 + 2);
+    const bar = document.getElementById('adv-progress-bar');
+    const lbl = document.getElementById('adv-progress-label');
+    if (bar) bar.style.width = _prog + '%';
+    if (lbl) lbl.textContent = progressLabel + ' ' + Math.round(_prog) + '%';
+    if (_prog >= 95) clearInterval(_progInterval);
+  }, 400);
+  window._loadingProgInterval = _progInterval;
 
   try {
     let endpoint = '', body = baseBody;
@@ -1718,6 +1880,15 @@ async function submitFortune() {
 
 // ===== RENDER RESULT =====
 function renderResult(data) {
+  // 로딩 완료 처리
+  if (window._loadingProgInterval) clearInterval(window._loadingProgInterval);
+  const bar = document.getElementById('adv-progress-bar');
+  const lbl = document.getElementById('adv-progress-label');
+  const completeMsg = document.getElementById('loading-complete-msg');
+  if (bar) bar.style.width = '100%';
+  if (lbl) lbl.textContent = (lang==='km' ? 'ការ​វិភាគ​ជោគជតា​បាន​ចប់​ហើយ! 🎉' : 'Analysis complete! 🎉');
+  if (completeMsg) completeMsg.style.display = 'block';
+
   // 공유 카드용 데이터 저장 (공유 모달에서 사용)
   _lastShareData = {
     name: document.getElementById('result-name')?.textContent || '',
@@ -1737,6 +1908,19 @@ function renderResult(data) {
     _lastShareData.birth_hour = +parts[0];
     _lastShareData.birth_minute = parts[1] ? +parts[1] : 0;
   }
+  // 점신 스타일 공유링크용 데이터 저장
+  if (data.chart) {
+    const ch = data.chart;
+    window._lastResultDominant = ch.dominant_element || ch.dominant || '';
+    window._lastResultPillars = [
+      { stem: ch.year_stem || '', branch: ch.year_branch || '', element: ch.year_element || '' },
+      { stem: ch.month_stem || '', branch: ch.month_branch || '', element: ch.month_element || '' },
+      { stem: ch.day_stem || '', branch: ch.day_branch || '', element: ch.day_element || '' },
+      { stem: ch.hour_stem || '', branch: ch.hour_branch || '', element: ch.hour_element || '' },
+    ];
+    window._lastResultFiveEl = ch.five_elements || {};
+  }
+
   const tabs = [];
   const panels = [];
   if (currentMode === 'lifetime') {
@@ -2520,10 +2704,36 @@ async function savePDF() {
 const _shareUrl = 'https://web-production-d0bd4.up.railway.app';
 let _shareCardBlobUrl = null;  // 생성된 이미지 blob URL
 let _shareCardBlob = null;     // 이미지 Blob 객체
+let _sharePageUrl = null;      // 점신 스타일 공유 페이지 URL
+
+// 점신 스타일 공유 링크 생성 (base64url 인코딩)
+function _buildSharePageUrl() {
+  if (!_lastShareData) return _shareUrl;
+  try {
+    // 필러 정보 추출 (renderResult에서 저장된 데이터 활용)
+    const payload = {
+      name: _lastShareData.name || '',
+      birth: `${_lastShareData.birth_year}.${_lastShareData.birth_month}.${_lastShareData.birth_day}`,
+      gender: _lastShareData.gender || 'male',
+      dominant: window._lastResultDominant || '',
+      pillars: window._lastResultPillars || [],
+      five_elements: window._lastResultFiveEl || {}
+    };
+    const json = JSON.stringify(payload);
+    const b64 = btoa(unescape(encodeURIComponent(json)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    return `${_shareUrl}/s/${b64}`;
+  } catch(e) {
+    return _shareUrl;
+  }
+}
 let _lastShareData = null;     // 마지막 공유 데이터 (재사용)
 
 // 공유 모달 열기 + 이미지 카드 자동 생성
 async function openShareModal() {
+  // 점신 스타일 개인화 공유 링크 생성
+  _sharePageUrl = _buildSharePageUrl();
+
   // 모달 열기
   document.getElementById('shareModalOverlay').classList.add('open');
 
@@ -2581,30 +2791,31 @@ function closeShareModal(e) {
   }
 }
 
-// 공유 텍스트 생성
+// 공유 텍스트 생성 (점신 스타일 개인화 링크 포함)
 function _buildShareText() {
   const name = _lastShareData?.name || 'Anonymous';
-  const appUrl = _shareUrl;
+  const pageUrl = _sharePageUrl || _shareUrl;
   if (lang === 'km') {
-    return `✨ ${name} បានរកឃើញជោគជតារបស់ខ្លួន!
+    return `✨ ${name} បានរកខើញជោគជតារបស់ខ្លួន!
 
-🌟 ចង់ដឹងជោគជតារបស់អ្នកដែរទេ?
-សាកល្បង Saju Destiny ឥឡូវ → ${appUrl}`;
+🌟 ចង់ដឹងជោគជតារបស់អ្នកតែរតែ?
+សាកល្បង Saju Destiny ឥលួវ → ${pageUrl}`;
   }
   return `✨ ${name} just discovered their Saju Destiny!
 
 🌟 Curious about your own destiny?
-Try Saju Destiny now → ${appUrl}`;
+Check ${name}'s chart → ${pageUrl}`;
 }
 
-// Facebook 공유 (이미지 저장 유도 + 링크)
+// Facebook 공유 (이미지 저장 유도 + 점신 스타일 개인화 링크)
 function shareCardToFacebook() {
   const shareText = _buildShareText();
-  const url = encodeURIComponent(_shareUrl);
+  const pageUrl = _sharePageUrl || _shareUrl;
+  const url = encodeURIComponent(pageUrl);
   const quote = encodeURIComponent(shareText);
   // 이미지 먼저 저장 안내
   if (_shareCardBlob) {
-    showToast(lang==='km' ? 'រក្សាទុករូបភាព ហើយបង្ហោះទៅ Facebook!' : 'Save image first, then post to Facebook!');
+    showToast(lang==='km' ? 'រក្សាតុរូបភាព ហើយបង័ះបង័ះកត្តាទៅ Facebook!' : 'Save image first, then post to Facebook!');
     downloadShareCard();
     setTimeout(() => {
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank', 'width=600,height=500');
@@ -2619,7 +2830,8 @@ function shareCardToFacebook() {
 function shareCardToTelegram() {
   const shareText = _buildShareText();
   const text = encodeURIComponent(shareText);
-  const url = encodeURIComponent(_shareUrl);
+  const pageUrl = _sharePageUrl || _shareUrl;
+  const url = encodeURIComponent(pageUrl);
   window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
   closeShareModal();
 }
