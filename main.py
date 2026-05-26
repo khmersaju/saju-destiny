@@ -128,7 +128,7 @@ def root():
     try:
         db_path = os.environ.get('DB_PATH', '/data/users.db')
         conn = _sqlite3.connect(db_path)
-        row = conn.execute("SELECT total_clicks FROM visit_counter WHERE id=1").fetchone()
+        row = conn.execute("SELECT value FROM app_counters WHERE key='total_clicks'").fetchone()
         conn.close()
         total_clicks = row[0] if row else 0
         clicks_str = f"{total_clicks:,}"
