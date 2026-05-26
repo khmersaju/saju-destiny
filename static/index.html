@@ -1871,8 +1871,7 @@ async function submitFortune() {
       <div class="loading-ad-wrap" style="margin:0 16px 12px">
         <div class="loading-ad-badge">AD</div>
         <a href="${ad.href}" target="_blank" rel="noopener">
-          <img src="${ad.img}" alt="${ad.name}" class="loading-ad-img"
-            onerror="this.style.display='none';this.parentElement.nextElementSibling&&(this.parentElement.nextElementSibling.style.padding='12px 12px 4px')">
+          <img src="${ad.img}" alt="${ad.name}" class="loading-ad-img">
         </a>
         <div class="loading-ad-caption">${ad.name} — ${ad.desc}</div>
       </div>
@@ -2730,6 +2729,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   loadAndRecordVisit();
   // Load ad banners
   loadAdBanners();
+  // 광고 이미지 미리 로드 (로딩 화면에서 즉시 표시되도록)
+  const _adImgs = ['/static/ad_banner_junggane.jpg','/static/ad_banner_hebron60.jpg','/static/ad_banner_silla.jpg','/static/ad_banner_edukonnect.jpg','/static/ad_banner_hebron.jpg'];
+  _adImgs.forEach(src => { const img = new Image(); img.src = src; });
   // Load daily radar chart (if user has birth info)
   if (currentUser && currentUser.birth_year) {
     loadDailyRadar(currentUser.birth_year, currentUser.birth_month, currentUser.birth_day, currentUser.gender || 'male');
