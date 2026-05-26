@@ -5,7 +5,7 @@ SQLite-backed, JWT token, free/premium tiers
 import sqlite3, hashlib, secrets, os, time
 from datetime import datetime, timedelta
 from pathlib import Path
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr, validator
 from typing import Optional
