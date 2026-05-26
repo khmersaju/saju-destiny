@@ -120,7 +120,7 @@ def init_db():
         created_at TEXT    DEFAULT (datetime('now'))
     );
     INSERT OR REPLACE INTO ad_banners (id, title, image_url, link_url, position, is_active, sort_order)
-    VALUES (1, 'Hebron Academy', '/static/ad_banner_hebron.jpg', 'https://www.facebook.com/share/p/17hKVMGE9D/', 'home', 1, 0);
+    VALUES (1, 'The K Ground & G-mart', '/static/ad_banner_kground.jpg', 'https://www.facebook.com/share/p/1CkVgw1TJD/', 'home', 1, 0);
 
     CREATE TABLE IF NOT EXISTS shares (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
