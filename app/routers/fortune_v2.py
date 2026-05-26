@@ -723,3 +723,49 @@ async def lunar_convert(year: int, month: int, day: int):
     """양력 → 음력 변환"""
     lunar = solar_to_lunar(year, month, day)
     return {"success": True, "solar": f"{year}-{month:02d}-{day:02d}", "lunar": lunar}
+
+# ─── 사주 공유 카드 이미지 생성 ───────────────────────────────────
+from fastapi.responses import Response as FastAPIResponse
+
+@router.post("/share-card")
+async def generate_share_card_api(data: BirthInput):
+    """
+    사주 차트 SNS 공유 카드 이미지 생성 (1080x1350 PNG)
+    Facebook, Instagram, Telegram 공유 최적화
+    """
+    try:
+        from app.services.share_card import generate_share_card
+
+        chart = calculate_full_chart(
+            data.birth_year, data.birth_month, data.birth_day,
+            data.birth_hour, data.birth_minute,
+            data.gender, data.city or "Phnom Penh"
+        )
+
+        gender_label = "Male" if data.gender == "male" else "Female"
+        birth_info = f"{data.birth_year}.{data.birth_month}.{data.birth_day}  |  {gender_label}"
+
+        img_bytes = generate_share_card(
+            name=data.name or "Anonymous",
+            birth_info=birth_info,
+            pillars=chart["pillars"],
+            five_elements=chart["five_elements"],
+            day_master=chart["day_master"],
+            animal_sign=chart.get("animal_sign", ""),
+            animal_sign_km=chart.get("animal_sign_km", ""),
+            dominant_element=chart.get("dominant_element", "목"),
+            app_url="https://web-production-d0bd4.up.railway.app",
+            lang=getattr(data, "language", "en"),
+        )
+
+        return FastAPIResponse(
+            content=img_bytes,
+            media_type="image/png",
+            headers={
+                "Content-Disposition": "inline; filename=saju-destiny-card.png",
+                "Cache-Control": "public, max-age=3600",
+            }
+        )
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=str(e))

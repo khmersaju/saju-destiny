@@ -766,30 +766,41 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
 
 <!-- SNS SHARE MODAL -->
 <div class="share-modal-overlay" id="shareModalOverlay" onclick="closeShareModal(event)">
-  <div class="share-modal">
-    <div class="share-modal-title" id="share-title">📤 Share Your Fortune</div>
-    <!-- 공유 텍스트 미리보기 -->
-    <div id="share-preview-text" style="background:#f4f7fe;border-radius:10px;padding:10px 12px;font-size:12px;color:#444;margin-bottom:14px;line-height:1.5;max-height:60px;overflow:hidden"></div>
-    <!-- Native Share (모바일 기기에서 최적) -->
-    <button id="share-native-btn" class="auth-submit" style="margin-bottom:12px;background:linear-gradient(135deg,#1877f2,#0d5bbf);display:none" onclick="shareNative()">📱 Share via Apps</button>
-    <div class="share-grid">
-      <button class="share-item" onclick="shareToFacebook()">
+  <div class="share-modal" style="padding:18px 16px 20px">
+    <div class="share-modal-title" id="share-title" style="font-size:15px;margin-bottom:12px">🌟 Share Your Saju Chart</div>
+
+    <!-- 이미지 카드 프리븷 -->
+    <div id="share-card-preview" style="width:100%;border-radius:14px;overflow:hidden;margin-bottom:14px;background:#01092b;min-height:90px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(212,175,55,0.3)">
+      <div id="share-card-loading" style="color:#D4AF37;font-size:13px;padding:22px;text-align:center">
+        <div style="font-size:26px;margin-bottom:6px">✨</div>
+        <div id="share-card-load-txt">Generating your card...</div>
+      </div>
+      <img id="share-card-img" src="" alt="Saju Share Card" style="width:100%;display:none;border-radius:14px" />
+    </div>
+
+    <!-- 공유 버튼 그리드 -->
+    <div class="share-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px">
+      <button class="share-item" onclick="shareCardToFacebook()">
         <div class="share-icon fb"><span style="color:#fff;font-weight:900;font-size:22px">f</span></div>
         <div class="share-label">Facebook</div>
       </button>
-      <button class="share-item" onclick="shareToWhatsApp()">
-        <div class="share-icon whatsapp">💬</div>
-        <div class="share-label">WhatsApp</div>
-      </button>
-      <button class="share-item" onclick="shareToTelegram()">
+      <button class="share-item" onclick="shareCardToTelegram()">
         <div class="share-icon telegram">✈️</div>
         <div class="share-label">Telegram</div>
       </button>
-      <button class="share-item" onclick="copyShareLink()">
-        <div class="share-icon copy">🔗</div>
-        <div class="share-label" id="share-copy-lbl">Copy Link</div>
+      <button class="share-item" onclick="shareCardToWhatsApp()">
+        <div class="share-icon whatsapp">💬</div>
+        <div class="share-label">WhatsApp</div>
+      </button>
+      <button class="share-item" onclick="downloadShareCard()" id="share-dl-btn">
+        <div class="share-icon" style="background:linear-gradient(135deg,#D4AF37,#b8860b)">⬇️</div>
+        <div class="share-label" id="share-dl-lbl">Save</div>
       </button>
     </div>
+
+    <!-- Native Share (모바일) -->
+    <button id="share-native-btn" class="auth-submit" style="margin-bottom:10px;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#01092b;font-weight:700;display:none" onclick="shareCardNative()">📱 Share via Apps</button>
+
     <button class="share-cancel" onclick="closeShareModal()" id="share-cancel">Cancel</button>
   </div>
 </div>
@@ -1707,6 +1718,25 @@ async function submitFortune() {
 
 // ===== RENDER RESULT =====
 function renderResult(data) {
+  // 공유 카드용 데이터 저장 (공유 모달에서 사용)
+  _lastShareData = {
+    name: document.getElementById('result-name')?.textContent || '',
+    birth_year: +document.getElementById('iYear')?.value || 0,
+    birth_month: +document.getElementById('iMonth')?.value || 0,
+    birth_day: +document.getElementById('iDay')?.value || 0,
+    birth_hour: 12,
+    birth_minute: 0,
+    gender: selectedGender || 'male',
+    city: document.getElementById('iCity')?.value || 'Phnom Penh',
+    language: lang
+  };
+  // 시간 정보 복원
+  const hourEl = document.getElementById('iHour');
+  if (hourEl && hourEl.value) {
+    const parts = hourEl.value.split(':');
+    _lastShareData.birth_hour = +parts[0];
+    _lastShareData.birth_minute = parts[1] ? +parts[1] : 0;
+  }
   const tabs = [];
   const panels = [];
   if (currentMode === 'lifetime') {
@@ -2486,28 +2516,63 @@ async function savePDF() {
   }
 }
 
-// ===== SNS SHARE =====
-let _shareText = '';
-let _shareUrl = 'https://web-production-d0bd4.up.railway.app';
+// ===== SNS SHARE (IMAGE CARD) =====
+const _shareUrl = 'https://web-production-d0bd4.up.railway.app';
+let _shareCardBlobUrl = null;  // 생성된 이미지 blob URL
+let _shareCardBlob = null;     // 이미지 Blob 객체
+let _lastShareData = null;     // 마지막 공유 데이터 (재사용)
 
-function openShareModal() {
-  const name = document.getElementById('result-name')?.textContent || '';
-  const mode = currentMode || 'fortune';
-  const modeLabel = lang==='km' ? (
-    mode==='lifetime'?'ជោគជតាពើញជីវិត':mode==='yearly'?'ជោគជតាឆ្នា០២០៦':mode==='monthly'?'ជោគជតាប្រចាខែ':'ជោគជតាប្រចាថ្ង័យ'
-  ) : (
-    mode==='lifetime'?'Lifetime Fortune':mode==='yearly'?'2026 Fortune':mode==='monthly'?'Monthly Fortune':'Daily Fortune'
-  );
-  _shareText = lang==='km'
-    ? `✨ ${modeLabel}របស់ខ្ញុមបានចែករំលែ។\n\nមកសាកល្បងជោគជតារបស់អ្នកតែនៅ។ ប្រប់ប្រើបស្រប់ជាមួយសាជូទេស័ស្តីក្មែរ\n${_shareUrl}`
-    : `✨ I just checked my ${modeLabel} on Saju Destiny!\n\nDiscover your destiny with traditional Four Pillars fortune telling.\nTry it free → ${_shareUrl}`;
-  // 미리보기 텍스트 표시
-  const preview = document.getElementById('share-preview-text');
-  if (preview) preview.textContent = _shareText;
-  // Native Share API 지원 여부 확인
-  const nativeBtn = document.getElementById('share-native-btn');
-  if (nativeBtn) nativeBtn.style.display = navigator.share ? 'block' : 'none';
+// 공유 모달 열기 + 이미지 카드 자동 생성
+async function openShareModal() {
+  // 모달 열기
   document.getElementById('shareModalOverlay').classList.add('open');
+
+  // 이미지 초기화
+  const imgEl = document.getElementById('share-card-img');
+  const loadEl = document.getElementById('share-card-loading');
+  const loadTxt = document.getElementById('share-card-load-txt');
+  imgEl.style.display = 'none';
+  loadEl.style.display = 'flex';
+  loadEl.style.flexDirection = 'column';
+  loadTxt.textContent = lang==='km' ? 'កំពុងបង្កើតកាតរបស់អ្នក...' : 'Generating your card...';
+
+  // Native Share 버튼 (모바일)
+  const nativeBtn = document.getElementById('share-native-btn');
+  if (nativeBtn) nativeBtn.style.display = (navigator.share && navigator.canShare) ? 'block' : 'none';
+
+  // 현재 결과 데이터 수집
+  if (!_lastShareData) {
+    showToast(lang==='km' ? 'សូមគណនាជោគជតាជាមុន' : 'Please calculate fortune first');
+    loadEl.style.display = 'none';
+    return;
+  }
+
+  try {
+    // 서버 API 호출로 이미지 생성
+    const resp = await fetch('/api/v2/share-card', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(_lastShareData)
+    });
+
+    if (!resp.ok) throw new Error('Card generation failed');
+
+    const blob = await resp.blob();
+    _shareCardBlob = blob;
+    if (_shareCardBlobUrl) URL.revokeObjectURL(_shareCardBlobUrl);
+    _shareCardBlobUrl = URL.createObjectURL(blob);
+
+    imgEl.src = _shareCardBlobUrl;
+    imgEl.onload = () => {
+      loadEl.style.display = 'none';
+      imgEl.style.display = 'block';
+    };
+  } catch(err) {
+    console.error('Share card error:', err);
+    loadTxt.textContent = lang==='km' ? 'មានបញ្ហា - ចែករំលែកតំណ' : 'Error - sharing link instead';
+    // 오류 시 링크 공유로 fallback
+    _shareCardBlob = null;
+  }
 }
 
 function closeShareModal(e) {
@@ -2516,38 +2581,92 @@ function closeShareModal(e) {
   }
 }
 
-async function shareNative() {
-  try {
-    await navigator.share({
-      title: lang==='km' ? 'Saju Destiny - ជោគជតា' : 'Saju Destiny - Fortune Reading',
-      text: _shareText,
-      url: _shareUrl
-    });
-    closeShareModal();
-  } catch(e) {
-    if (e.name !== 'AbortError') showToast(lang==='km'?'មិនអាចចែករំលែបានតើ':'Share failed');
+// 공유 텍스트 생성
+function _buildShareText() {
+  const name = _lastShareData?.name || 'Anonymous';
+  const appUrl = _shareUrl;
+  if (lang === 'km') {
+    return `✨ ${name} បានរកឃើញជោគជតារបស់ខ្លួន!
+
+🌟 ចង់ដឹងជោគជតារបស់អ្នកដែរទេ?
+សាកល្បង Saju Destiny ឥឡូវ → ${appUrl}`;
   }
+  return `✨ ${name} just discovered their Saju Destiny!
+
+🌟 Curious about your own destiny?
+Try Saju Destiny now → ${appUrl}`;
 }
 
-function shareToFacebook() {
-  // Facebook 공유: 페이지 URL + 텍스트
+// Facebook 공유 (이미지 저장 유도 + 링크)
+function shareCardToFacebook() {
+  const shareText = _buildShareText();
   const url = encodeURIComponent(_shareUrl);
-  const quote = encodeURIComponent(_shareText);
-  window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank', 'width=600,height=500');
+  const quote = encodeURIComponent(shareText);
+  // 이미지 먼저 저장 안내
+  if (_shareCardBlob) {
+    showToast(lang==='km' ? 'រក្សាទុករូបភាព ហើយបង្ហោះទៅ Facebook!' : 'Save image first, then post to Facebook!');
+    downloadShareCard();
+    setTimeout(() => {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank', 'width=600,height=500');
+    }, 800);
+  } else {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank', 'width=600,height=500');
+  }
   closeShareModal();
 }
 
-function shareToWhatsApp() {
-  const text = encodeURIComponent(_shareText);
+// Telegram 공유
+function shareCardToTelegram() {
+  const shareText = _buildShareText();
+  const text = encodeURIComponent(shareText);
+  const url = encodeURIComponent(_shareUrl);
+  window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+  closeShareModal();
+}
+
+// WhatsApp 공유
+function shareCardToWhatsApp() {
+  const shareText = _buildShareText();
+  const text = encodeURIComponent(shareText);
   window.open(`https://wa.me/?text=${text}`, '_blank');
   closeShareModal();
 }
 
-function shareToTelegram() {
-  const text = encodeURIComponent(_shareText);
-  const url = encodeURIComponent(_shareUrl);
-  window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
-  closeShareModal();
+// 이미지 저장
+function downloadShareCard() {
+  if (!_shareCardBlobUrl) {
+    showToast(lang==='km' ? 'កំពុងបង្កើតរូបភាព...' : 'Generating image...');
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = _shareCardBlobUrl;
+  a.download = 'saju-destiny-card.png';
+  a.click();
+  showToast(lang==='km' ? 'រូបភាពបានរក្សាទុក!' : 'Image saved!');
+}
+
+// Native Share API (모바일 앱으로 공유)
+async function shareCardNative() {
+  const shareText = _buildShareText();
+  try {
+    if (_shareCardBlob && navigator.canShare && navigator.canShare({ files: [new File([_shareCardBlob], 'saju-card.png', { type: 'image/png' })] })) {
+      const file = new File([_shareCardBlob], 'saju-destiny-card.png', { type: 'image/png' });
+      await navigator.share({
+        title: 'Saju Destiny - ជោគជតា',
+        text: shareText,
+        files: [file]
+      });
+    } else {
+      await navigator.share({
+        title: 'Saju Destiny - ជោគជតា',
+        text: shareText,
+        url: _shareUrl
+      });
+    }
+    closeShareModal();
+  } catch(e) {
+    if (e.name !== 'AbortError') showToast(lang==='km' ? 'មិនអាចចែករំលែបានទេ' : 'Share failed');
+  }
 }
 
 async function copyShareLink() {
