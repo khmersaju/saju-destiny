@@ -256,9 +256,9 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
 
 /* AD BANNER */
 .ad-banner-wrap{padding:12px 16px 0}
-.ad-banner{display:block;width:100%;border-radius:14px;overflow:hidden;text-decoration:none;position:relative;box-shadow:0 4px 16px rgba(0,0,0,0.18);transition:transform 0.15s ease,box-shadow 0.15s ease}
+.ad-banner{display:block;width:100%;border-radius:14px;text-decoration:none;position:relative;box-shadow:0 4px 16px rgba(0,0,0,0.18);transition:transform 0.15s ease,box-shadow 0.15s ease}
 .ad-banner:active{transform:scale(0.98);box-shadow:0 2px 8px rgba(0,0,0,0.12)}
-.ad-banner img{width:100%;height:auto;display:block;border-radius:14px;object-fit:cover}
+.ad-banner img{width:100%;height:auto;display:block;border-radius:14px;object-fit:contain}
 .ad-banner-label{position:absolute;top:8px;right:10px;background:rgba(0,0,0,0.5);color:#fff;font-size:9px;padding:2px 7px;border-radius:6px;letter-spacing:0.6px;font-weight:600}
 .ad-banner-caption{background:linear-gradient(0deg,rgba(0,0,0,0.55) 0%,transparent 100%);position:absolute;bottom:0;left:0;right:0;padding:12px 14px 10px;border-radius:0 0 14px 14px}
 .ad-banner-caption-text{color:#fff;font-size:11px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.6)}
@@ -493,7 +493,7 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
   <!-- AD BANNER HOME -->
   <div class="ad-banner-wrap" id="ad-banner-home">
     <a href="https://www.facebook.com/share/p/1CkVgw1TJD/" target="_blank" rel="noopener noreferrer" class="ad-banner">
-      <img src="/static/ad_banner_kground.jpg" alt="The K Ground & G-mart" loading="lazy" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:cover">
+      <img src="/static/ad_banner_kground.jpg" alt="The K Ground & G-mart" loading="lazy" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:contain !important">
       <span class="ad-banner-label">AD</span>
       <div class="ad-banner-caption"><div class="ad-banner-caption-text">The K Ground & G-mart</div></div>
     </a>
@@ -1870,12 +1870,12 @@ async function submitFortune() {
       <div style="text-align:center;font-size:14px;font-weight:700;color:#01092b;margin-bottom:14px;padding:0 16px">${loadingTitle}</div>
 
       <!-- 광고 카드 -->
-      <div class="loading-ad-wrap" style="margin:0 16px 12px">
-        <div class="loading-ad-badge">AD</div>
-        <a href="${ad.href}" target="_blank" rel="noopener">
-          <img src="${ad.img}" alt="${ad.name}" class="loading-ad-img">
+      <div style="background:#fff;border-radius:14px;margin:0 16px 12px;box-shadow:0 2px 12px rgba(0,0,0,0.08)">
+        <div style="font-size:10px;color:#999;text-align:right;padding:4px 10px 0;font-weight:600">AD</div>
+        <a href="${ad.href}" target="_blank" rel="noopener" style="display:block;text-decoration:none">
+          <img src="${ad.img}" alt="${ad.name}" style="width:100%;height:auto;display:block;object-fit:contain !important;max-width:100%" loading="eager">
         </a>
-        <div class="loading-ad-caption">${ad.name} — ${ad.desc}</div>
+        <div style="padding:8px 12px 10px;font-size:12px;color:#333;font-weight:600">${ad.name} — ${ad.desc}</div>
       </div>
 
       <!-- 방문자 수 -->
@@ -2160,8 +2160,8 @@ function buildChart(chart) {
     chartAdHtml = `
     <div style="margin-top:16px;padding-top:14px;border-top:1px solid #eee">
       <div style="font-size:10px;color:#aaa;text-align:right;margin-bottom:4px">AD</div>
-      <a href="${adInfo.href}" target="_blank" rel="noopener noreferrer" style="display:block;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.12);text-decoration:none">
-        <img src="${adInfo.img}" alt="${adInfo.alt}" style="width:100%;height:auto;display:block;object-fit:contain;background:#f0f0f0">
+      <a href="${adInfo.href}" target="_blank" rel="noopener noreferrer" style="display:block;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.12);text-decoration:none">
+        <img src="${adInfo.img}" alt="${adInfo.alt}" style="width:100%;height:auto;display:block;object-fit:contain !important;max-width:100%">
       </a>
     </div>`;
   }
@@ -2859,7 +2859,7 @@ async function loadAdBanners() {
       // 이미지 URL이 상대경로면 프론트엔드 기준으로 처리
       const imgSrc = b.image_url.startsWith('http') ? b.image_url : b.image_url;
       a.innerHTML = `
-        <img src="${imgSrc}" alt="${b.title||'Advertisement'}" loading="lazy" onerror="this.style.display='none'">
+        <img src="${imgSrc}" alt="${b.title||'Advertisement'}" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:contain !important">
         <span class="ad-banner-label">AD</span>
         ${b.title ? `<div class="ad-banner-caption"><div class="ad-banner-caption-text">${b.title}</div></div>` : ''}
       `;
