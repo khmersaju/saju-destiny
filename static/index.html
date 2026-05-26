@@ -371,7 +371,7 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
     <div class="hero-desc" id="hero-desc">Saju គឺជាប្រព័ន្ធទស្សន៍ទាយបុរាណ ដែលវិភាគជោគជតាតាមឆ្នាំ ខែ ថ្ងៃ និងម៉ោងកំណើត — ជា "សសរទាំង ៤" នៃជីវិត។ ធាតុទាំង ៥ (ឈើ ភ្លើង ដី លោហៈ ទឹក) និងតុល្យភាព Yin-Yang បង្ហាញផ្លូវជីវិតរបស់អ្នក។</div>
     <div class="hero-stats">
       <div class="hero-stat">
-        <div class="hero-stat-num" id="stat-visits">7,700+</div>
+        <div class="hero-stat-num" id="stat-visits">...</div>
         <div class="hero-stat-label" id="stat-visits-label">ការចុចក្រ៉េ</div>
       </div>
       <div class="hero-stat">
@@ -2172,6 +2172,11 @@ function buildChart(chart) {
     ${lunarText ? `<div style="font-size:11px;color:#818c9a;margin-bottom:8px">${lunarText}</div>` : ''}
     <div class="five-elem-bar">${feHtml}</div>
     ${chartAdHtml}
+    <div style="margin-top:16px;text-align:center">
+      <button onclick="switchTab('reading')" style="background:#fade4a;color:#01092b;border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%">
+        ${lang==='km' ? '🔮 អានការទស្សន៍ទាយ →' : '🔮 Read Fortune Reading →'}
+      </button>
+    </div>
   </div>`;
 }
 
@@ -2646,27 +2651,25 @@ async function loadUser() {
 
 // ===== VISIT COUNTER =====
 async function loadAndRecordVisit() {
+  const el = document.getElementById('stat-visits');
   try {
-    // 앱 클릭 카운터 증가 (POST 시마다 카운터 +1)
     const r = await fetch(`${API}/api/v2/auth/visit`, { method: 'POST' });
     const d = await r.json();
     const count = d.total_clicks || d.total_visits || 0;
-    if (count) {
+    if (count && el) {
       window._visitCount = count;
-      // 숫자 애니메이션으로 표시
-      animateCounter('stat-visits', count);
+      el.textContent = count.toLocaleString();
     }
   } catch(e) {
-    // 오류 시 조회만 시도
     try {
       const r2 = await fetch(`${API}/api/v2/auth/visit/count`);
       const d2 = await r2.json();
       const count2 = d2.total_clicks || d2.total_visits || 0;
-      if (count2) {
-        document.getElementById('stat-visits').textContent = formatVisitCount(count2);
+      if (count2 && el) {
+        el.textContent = count2.toLocaleString();
       }
     } catch(e2) {
-      document.getElementById('stat-visits').textContent = '7,700+';
+      if (el) el.textContent = '7,700+';
     }
   }
 }
