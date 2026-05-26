@@ -371,7 +371,7 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
     <div class="hero-desc" id="hero-desc">Saju គឺជាប្រព័ន្ធទស្សន៍ទាយបុរាណ ដែលវិភាគជោគជតាតាមឆ្នាំ ខែ ថ្ងៃ និងម៉ោងកំណើត — ជា "សសរទាំង ៤" នៃជីវិត។ ធាតុទាំង ៥ (ឈើ ភ្លើង ដី លោហៈ ទឹក) និងតុល្យភាព Yin-Yang បង្ហាញផ្លូវជីវិតរបស់អ្នក។</div>
     <div class="hero-stats">
       <div class="hero-stat">
-        <div class="hero-stat-num" id="stat-visits">--</div>
+        <div class="hero-stat-num" id="stat-visits">7,700+</div>
         <div class="hero-stat-label" id="stat-visits-label">ការចុចក្រ៉េ</div>
       </div>
       <div class="hero-stat">
@@ -387,18 +387,7 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
         <div class="hero-stat-label" id="stat-free-label">ឥតគិតថ្លៃ</div>
       </div>
     </div>
-    <div class="today-box">
-      <div>
-        <div class="today-label" id="today-label">ថ្ង័នើះ</div>
-        <div class="today-val" id="today-pillar" style="font-size:20px;letter-spacing:2px">--</div>
-        <div class="today-lunar" id="today-lunar" style="font-size:10px;color:#a0aab4;margin-top:3px">--</div>
-      </div>
-      <div style="text-align:right">
-        <div class="today-label" id="today-date-label">កាលបរិច្ឆើត</div>
-        <div class="today-val" id="today-date" style="font-size:13px">--</div>
-        <div id="today-animal" style="font-size:11px;color:#fade4a;margin-top:2px"></div>
-      </div>
-    </div>
+    <!-- Today box removed - data not available -->
     </div>
 
   <!-- ===== 일일운세 레이더 차트 섹션 (로그인 사용자만 표시) ===== -->
@@ -1360,8 +1349,9 @@ function applyLang() {
   document.getElementById('stat-years-label').textContent = L.stat_years_label;
   document.getElementById('stat-ai-label').textContent = L.stat_ai_label;
   document.getElementById('stat-free-label').textContent = L.stat_free_label;
-  document.getElementById('today-label').textContent = L.today_label;
-  document.getElementById('today-date-label').textContent = L.today_date_label;
+  // today-box removed
+  // document.getElementById('today-label').textContent = L.today_label;
+  // document.getElementById('today-date-label').textContent = L.today_date_label;
   document.getElementById('sec-fortune').textContent = L.sec_fortune;
   document.getElementById('sec-special').textContent = L.sec_special;
   document.getElementById('menu-lifetime').innerHTML = L.menu_lifetime.replace('\n','<br>');

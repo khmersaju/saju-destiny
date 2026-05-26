@@ -203,27 +203,34 @@ def share_page(share_id: str):
         <title>Saju Destiny</title></head><body style="font-family:sans-serif;background:#01092b;color:#fff;text-align:center;padding:60px 20px">
         <div style="font-size:40px;margin-bottom:16px">✨</div>
         <div style="font-size:20px;font-weight:700;color:#fade4a;margin-bottom:8px">Saju Destiny</div>
-        <div style="font-size:14px;color:#8a9ab8;margin-bottom:32px">이 공유 링크는 만료되었거나 존재하지 않습니다.</div>
-        <a href="{app_url}" style="background:#fade4a;color:#01092b;padding:14px 32px;border-radius:14px;font-weight:700;text-decoration:none;font-size:14px">나도 운세 확인하기</a>
+        <div style="font-size:14px;color:#8a9ab8;margin-bottom:32px">This share link has expired or does not exist.</div>
+        <a href="{app_url}" style="background:#fade4a;color:#01092b;padding:14px 32px;border-radius:14px;font-weight:700;text-decoration:none;font-size:14px">Check My Destiny</a>
         </body></html>"""
         return HTMLResponse(content=not_found_html)
 
     # 풀이 텍스트 섹션 HTML
     reading_text = sdata.get('reading_text', '')
-    mode_label_map = {'lifetime': '전체운', 'yearly': '신년운세', 'monthly': '월별운세', 'daily': '일일운세', 'compatibility': '궁합', 'lucky_days': '길일', 'lucky_profile': '럭키 프로필'}
-    mode_label = mode_label_map.get(sdata.get('mode',''), '운세풀이')
+    mode_label_map = {
+        'lifetime': 'Destiny Reading',
+        'yearly': 'Yearly Fortune',
+        'monthly': 'Monthly Fortune',
+        'daily': 'Daily Fortune',
+        'compatibility': 'Compatibility',
+        'lucky_days': 'Lucky Days',
+        'lucky_profile': 'Lucky Profile'
+    }
+    mode_label = mode_label_map.get(sdata.get('mode',''), 'Fortune Reading')
     reading_html = ''
     if reading_text:
-        # 마크다운 스타일 텍스트 정리
         import re as _re
         clean = _re.sub(r'#{1,3}\s*', '', reading_text)
-        clean = _re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', clean)
+        clean = _re.sub(r'\*\*(.+?)\*\*', r'<strong style="color:#fade4a">\1</strong>', clean)
         clean = _re.sub(r'\*(.+?)\*', r'<em>\1</em>', clean)
         paragraphs = [p.strip() for p in clean.split('\n') if p.strip()]
-        paras_html = ''.join(f'<p style="margin-bottom:10px;line-height:1.7;font-size:13px;color:#e0e6f0">{p}</p>' for p in paragraphs)
+        paras_html = ''.join(f'<p style="margin-bottom:12px;line-height:1.8;font-size:14px;color:#e0e6f0">{p}</p>' for p in paragraphs)
         reading_html = f'''
-        <div style="background:#fff;border-radius:14px;padding:20px;margin:16px">
-          <div style="font-size:11px;font-weight:700;color:#fade4a;letter-spacing:1px;margin-bottom:12px">✨ {mode_label.upper()} READING</div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:14px;padding:20px;margin:16px 0">
+          <div style="font-size:11px;font-weight:700;color:#fade4a;letter-spacing:1.5px;margin-bottom:14px">✨ {mode_label.upper()}</div>
           {paras_html}
         </div>'''
 
@@ -242,47 +249,52 @@ def share_page(share_id: str):
 <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
-body{{font-family:'Battambang',sans-serif;background:#f0f4ff;min-height:100vh}}
-.hero{{background:linear-gradient(135deg,#01092b,#1a0a3a);padding:28px 20px 24px;text-align:center;color:#fff}}
+body{{font-family:'Battambang',sans-serif;background:#01092b;min-height:100vh;color:#e0e6f0}}
+.wrap{{max-width:480px;margin:0 auto;padding-bottom:40px}}
+.hero{{background:linear-gradient(135deg,#01092b,#1a0a3a);padding:28px 20px 24px;text-align:center}}
 .hero-badge{{display:inline-block;background:rgba(250,222,74,0.15);border:1px solid rgba(250,222,74,0.4);border-radius:20px;padding:4px 14px;font-size:11px;color:#fade4a;margin-bottom:12px;letter-spacing:1px}}
 .hero-name{{font-size:22px;font-weight:700;color:#fade4a;margin-bottom:4px}}
 .hero-meta{{font-size:13px;color:#8a9ab8;margin-bottom:16px}}
-.card{{background:rgba(255,255,255,0.06);border-radius:14px;padding:16px;margin:0 auto;max-width:340px}}
+.card{{background:rgba(255,255,255,0.06);border-radius:14px;padding:16px;margin:0 16px}}
 .pillars{{display:flex;gap:8px;margin-bottom:14px}}
 .dom-elem{{text-align:center;margin-top:12px;padding:10px;background:rgba(250,222,74,0.1);border-radius:10px;border:1px solid rgba(250,222,74,0.2)}}
 .dom-label{{font-size:10px;color:#8a9ab8;margin-bottom:4px}}
-.dom-val{{font-size:16px;font-weight:700;color:#fade4a}}
-.actions{{padding:16px;display:flex;gap:10px}}
+.dom-val{{font-size:16px;font-weight:700}}
+.reading-wrap{{padding:0 16px;margin-top:16px}}
+.actions{{padding:16px;display:flex;gap:10px;margin-top:8px}}
 .btn{{flex:1;padding:14px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;border:none;text-align:center;text-decoration:none;display:block}}
 .btn-primary{{background:#fade4a;color:#01092b}}
-.btn-secondary{{background:#fff;color:#01092b;border:2px solid #ddd}}
-.footer{{background:#01092b;color:#fff;text-align:center;padding:20px 16px;margin-top:8px}}
+.btn-secondary{{background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)}}
+.footer{{background:rgba(0,0,0,0.3);color:#fff;text-align:center;padding:20px 16px;margin-top:8px}}
 .footer-title{{font-size:14px;font-weight:700;color:#fade4a;margin-bottom:4px}}
 .footer-sub{{font-size:11px;color:#8a9ab8}}
 </style>
 </head>
 <body>
+<div class="wrap">
 <div class="hero">
-  <div class="hero-badge">ជោគជតា​សាជូ · SAJU DESTINY</div>
+  <div class="hero-badge">ជោគជតា​សាជូ · SAJU DESTINY · Cambodia</div>
   <div class="hero-name">{name}</div>
   <div class="hero-meta">{birth} · {gender_disp}</div>
-  <div class="card">
-    <div class="pillars">{pillar_html}</div>
-    {elem_html}
-    <div class="dom-elem">
-      <div class="dom-label">ធាតុ​ស្ថាន​ខ្លាញ (Dominant Element)</div>
-      <div class="dom-val" style="color:{dom_color}">{dom_en} · {dom_km}</div>
-    </div>
+</div>
+<div style="height:16px"></div>
+<div class="card">
+  <div class="pillars">{pillar_html}</div>
+  {elem_html}
+  <div class="dom-elem">
+    <div class="dom-label">Dominant Element · ធាតុ​ស្ថាន​ខ្លាញ</div>
+    <div class="dom-val" style="color:{dom_color}">{dom_en} · {dom_km}</div>
   </div>
 </div>
-{reading_html}
+<div class="reading-wrap">{reading_html}</div>
 <div class="actions">
-  <a href="{app_url}" class="btn btn-primary">🔮 나도 운세 확인하기</a>
-  <a href="{app_url}" class="btn btn-secondary">🌟 앱 열기</a>
+  <a href="{app_url}" class="btn btn-primary">🔮 Check My Destiny</a>
+  <a href="{app_url}" class="btn btn-secondary">✨ Open App</a>
 </div>
 <div class="footer">
-  <div class="footer-title">Saju Destiny</div>
-  <div class="footer-sub">Traditional Four Pillars Destiny Reading</div>
+  <div class="footer-title">Saju Destiny · Cambodia</div>
+  <div class="footer-sub">Traditional Four Pillars Destiny Reading for Cambodians</div>
+</div>
 </div>
 </body></html>"""
     return HTMLResponse(content=html)
