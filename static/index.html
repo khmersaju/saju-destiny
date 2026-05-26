@@ -313,7 +313,7 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
 /* ===== 로딩 화면 광고 스타일 ===== */
 .loading-ad-wrap{background:#fff;border-radius:14px;margin:0 0 12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
 .loading-ad-badge{font-size:10px;color:#999;text-align:right;padding:4px 10px 0;font-weight:600}
-.loading-ad-img{width:100%;display:block;max-height:200px;object-fit:cover}
+.loading-ad-img{width:100%;display:block;max-height:none;object-fit:contain;background:#f8f8f8}
 .loading-ad-caption{padding:8px 12px 10px;font-size:12px;color:#333;font-weight:600}
 .loading-tip-wrap{background:#f0f4ff;border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px}
 .loading-tip-badge{background:#01092b;color:#fade4a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap;margin-top:1px}
@@ -389,13 +389,14 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
     </div>
     <div class="today-box">
       <div>
-        <div class="today-label" id="today-label">ថ្ងៃនេះ</div>
-        <div class="today-val" id="today-pillar">--</div>
-        <div class="today-lunar" id="today-lunar">--</div>
+        <div class="today-label" id="today-label">ថ្ង័នើះ</div>
+        <div class="today-val" id="today-pillar" style="font-size:20px;letter-spacing:2px">--</div>
+        <div class="today-lunar" id="today-lunar" style="font-size:10px;color:#a0aab4;margin-top:3px">--</div>
       </div>
       <div style="text-align:right">
-        <div class="today-label" id="today-date-label">កាលបរិច្ឆេទ</div>
-        <div class="today-val" id="today-date">--</div>
+        <div class="today-label" id="today-date-label">កាលបរិច្ឆើត</div>
+        <div class="today-val" id="today-date" style="font-size:13px">--</div>
+        <div id="today-animal" style="font-size:11px;color:#fade4a;margin-top:2px"></div>
       </div>
     </div>
     </div>
@@ -1955,11 +1956,15 @@ async function submitFortune() {
       endpoint = '/api/v2/lucky-profile';
     }
 
-    const r = await fetch(API + endpoint, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json', 'Authorization': `Bearer ${authToken}`},
-      body: JSON.stringify(body)
-    });
+    // 최소 5초 노출 보장
+    const [r] = await Promise.all([
+      fetch(API + endpoint, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'Authorization': `Bearer ${authToken}`},
+        body: JSON.stringify(body)
+      }),
+      new Promise(res => setTimeout(res, 5000))
+    ]);
     const data = await r.json();
     renderResult(data);
   } catch(e) {
@@ -2569,7 +2574,13 @@ async function loadToday() {
       const animalLabel = lang === 'km' && animalKm[branchEn]
         ? `${data.day_pillar} (${animalKm[branchEn]})`
         : data.day_pillar;
-      document.getElementById('today-pillar').textContent = animalLabel;
+      document.getElementById('today-pillar').textContent = data.day_pillar;
+      // 동물 이름 별도 표시
+      const animalEl = document.getElementById('today-animal');
+      if (animalEl) {
+        const animalName = lang === 'km' && animalKm[branchEn] ? animalKm[branchEn] : branchEn;
+        animalEl.textContent = animalName ? `🐾 ${animalName}` : '';
+      }
     }
     // lunar 응답 필드 다양하게 지원
     const lunarObj = data.lunar || data.lunar_date;
@@ -2713,7 +2724,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   await loadUser();
   // Load today
   loadToday();
-  // Load & record visit count
+  // Load & record visit count (즉시 시작 + 로딩 시 임시값 표시)
+  const statEl = document.getElementById('stat-visits');
+  if (statEl && statEl.textContent === '--') statEl.textContent = '7,700+';
   loadAndRecordVisit();
   // Load ad banners
   loadAdBanners();
