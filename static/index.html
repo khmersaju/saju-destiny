@@ -2703,11 +2703,110 @@ window.addEventListener('DOMContentLoaded', async () => {
   loadAndRecordVisit();
   // Load ad banners
   loadAdBanners();
+  // Load daily radar chart (if user has birth info)
+  if (currentUser && currentUser.birth_year) {
+    loadDailyRadar(currentUser.birth_year, currentUser.birth_month, currentUser.birth_day, currentUser.gender || 'male');
+  }
   // PWA
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
 });
+
+// ===== DAILY RADAR CHART =====
+let _radarChartInstance = null;
+
+function initDailyRadarChart(scores) {
+  const canvas = document.getElementById('radarChart');
+  if (!canvas) return;
+  const labels = lang === 'km'
+    ? ['ទ្រព្យ', 'ស្នេហ៍', 'សុខភាព', 'ការងារ', 'ការ​សិក្សា']
+    : ['Wealth', 'Love', 'Health', 'Career', 'Study'];
+  const data = [
+    scores.wealth || 0,
+    scores.love || 0,
+    scores.health || 0,
+    scores.career || 0,
+    scores.study || 0
+  ];
+  if (_radarChartInstance) {
+    _radarChartInstance.data.labels = labels;
+    _radarChartInstance.data.datasets[0].data = data;
+    _radarChartInstance.update();
+    return;
+  }
+  _radarChartInstance = new Chart(canvas, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: 'rgba(250,222,74,0.15)',
+        borderColor: '#fade4a',
+        borderWidth: 2,
+        pointBackgroundColor: '#fade4a',
+        pointBorderColor: '#fade4a',
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { display: false, stepSize: 25 },
+          grid: { color: 'rgba(255,255,255,0.1)' },
+          angleLines: { color: 'rgba(255,255,255,0.15)' },
+          pointLabels: {
+            color: '#8a9ab8',
+            font: { size: 10, family: 'Battambang, sans-serif' }
+          }
+        }
+      }
+    }
+  });
+}
+
+async function loadDailyRadar(birthYear, birthMonth, birthDay, gender) {
+  try {
+    const r = await fetch(`${API}/api/v2/daily?birth_year=${birthYear}&birth_month=${birthMonth}&birth_day=${birthDay}&gender=${gender}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    if (!d.daily_scores) return;
+    const s = d.daily_scores;
+    document.getElementById('rs-wealth').textContent = s.wealth || '--';
+    document.getElementById('rs-love').textContent = s.love || '--';
+    document.getElementById('rs-health').textContent = s.health || '--';
+    document.getElementById('rs-career').textContent = s.career || '--';
+    document.getElementById('rs-study').textContent = s.study || '--';
+    const now = new Date();
+    const badge = `${now.getMonth()+1}/${now.getDate()}`;
+    const badgeEl = document.getElementById('radar-date-badge');
+    if (badgeEl) badgeEl.textContent = badge;
+    const chips = document.getElementById('radar-lucky-chips');
+    if (chips) {
+      chips.innerHTML = '';
+      if (d.lucky_color) chips.innerHTML += `<span class="lucky-chip">🎨 ${Array.isArray(d.lucky_color) ? d.lucky_color[0] : d.lucky_color}</span>`;
+      if (d.lucky_numbers) chips.innerHTML += `<span class="lucky-chip">🔢 ${Array.isArray(d.lucky_numbers) ? d.lucky_numbers.join(', ') : d.lucky_numbers}</span>`;
+      if (d.lucky_direction) chips.innerHTML += `<span class="lucky-chip">🧭 ${d.lucky_direction}</span>`;
+    }
+    initDailyRadarChart(s);
+    const loginHint = document.getElementById('radar-login-hint');
+    if (loginHint && !authToken) loginHint.style.display = 'block';
+  } catch(e) {
+    console.warn('Daily radar load failed:', e);
+  }
+}
+
+function radarCtaClick() {
+  if (authToken) {
+    showScreen('screen-input');
+  } else {
+    showScreen('screen-login');
+  }
+}
 
 // ===== AD BANNERS =====
 async function loadAdBanners() {
