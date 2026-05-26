@@ -493,9 +493,9 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
   <!-- AD BANNER HOME -->
   <div class="ad-banner-wrap" id="ad-banner-home">
     <a href="https://www.facebook.com/share/p/1CkVgw1TJD/" target="_blank" rel="noopener noreferrer" class="ad-banner">
-      <img src="/static/ad_banner_hebron_hongsam.jpg" alt="Hebron Academy — Korean Red Ginseng" loading="lazy" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:contain !important">
+      <img src="/static/ad_banner_kground.jpg" alt="The K Ground &amp; G-mart" loading="lazy" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:contain !important">
       <span class="ad-banner-label">AD</span>
-      <div class="ad-banner-caption"><div class="ad-banner-caption-text">Hebron Academy — Korean Red Ginseng</div></div>
+      <div class="ad-banner-caption"><div class="ad-banner-caption-text">The K Ground & G-mart</div></div>
     </a>
   </div>
 
@@ -1790,8 +1790,7 @@ async function submitFortune() {
 
   // 광고주 7개 무작위 선택 (Hebron 삭제, 4개 신규 추가)
   const loadingAds = [
-    { img: '/static/ad_banner_hebron_hongsam.jpg', href: 'https://www.facebook.com/share/p/1GxoTXcEGg/', name: 'Hebron Academy', desc: lang==='km' ? 'ស្ទីក​ស្ករ​ទទឹម​និង​ស​ំ​ស​ំ​ក​ូ​រ​ ​— Hebron Academy' : 'Pomegranate & Korean Red Ginseng Stick — Hebron Academy' },
-    { img: '/static/ad_banner_kground.jpg',    href: 'https://www.facebook.com/share/p/1CkVgw1TJD/', name: 'The K Ground & G-mart', desc: lang==='km' ? 'Aloe Vera Deep Cleansing Cream — ផលិតផល​ថែទាំ​ស្បែក' : 'Aloe Vera Deep Cleansing Cream — Skincare' },
+        { img: '/static/ad_banner_kground.jpg',    href: 'https://www.facebook.com/share/p/1CkVgw1TJD/', name: 'The K Ground & G-mart', desc: lang==='km' ? 'Aloe Vera Deep Cleansing Cream — ផលិតផល​ថែទាំ​ស្បែក' : 'Aloe Vera Deep Cleansing Cream — Skincare' },
     { img: '/static/ad_banner_silla.jpg',      href: 'https://www.facebook.com/SillaCambodia/', name: 'Silla Restaurant', desc: lang==='km' ? 'ភោជនីយដ្ឋាន​កូរ៉េ​ស៊ីឡា' : 'Silla Korean Restaurant Cambodia' },
     { img: '/static/ad_banner_edukonnect.jpg', href: 'https://www.facebook.com/EduKonnectSeoul', name: 'EduKonnect Seoul', desc: lang==='km' ? 'សិក្សា​នៅ​កូរ៉េ' : 'Study in Korea' },
     { img: '/static/ad_banner_sunmoon.jpg',    href: 'https://web-production-d0bd4.up.railway.app/', name: 'Sun & Moon Urban Hotel', desc: lang==='km' ? 'Stay & Fly — ចាប់​ពី USD 79' : 'Stay & Fly — Starts from USD 79' },
@@ -2797,7 +2796,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // Load ad banners
   loadAdBanners();
   // 광고 이미지 미리 로드 (로딩 화면에서 즉시 표시되도록)
-  const _adImgs = ['/static/ad_banner_hebron_hongsam.jpg','/static/ad_banner_kground.jpg','/static/ad_banner_silla.jpg','/static/ad_banner_edukonnect.jpg','/static/ad_banner_sunmoon.jpg','/static/ad_banner_cloudnine.jpg','/static/ad_banner_balimassage.jpg','/static/ad_banner_atomy.jpg'];
+  const _adImgs = ['/static/ad_banner_kground.jpg','/static/ad_banner_silla.jpg','/static/ad_banner_edukonnect.jpg','/static/ad_banner_sunmoon.jpg','/static/ad_banner_cloudnine.jpg','/static/ad_banner_balimassage.jpg','/static/ad_banner_atomy.jpg'];
   _adImgs.forEach(src => { const img = new Image(); img.src = src; });
   // Load daily radar chart (if user has birth info)
   if (currentUser && currentUser.birth_year) {
