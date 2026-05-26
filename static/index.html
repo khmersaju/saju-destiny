@@ -1761,7 +1761,7 @@ async function submitFortune() {
 
   // 광고주 5개 무작위 선택
   const loadingAds = [
-    { img: '/static/ad_banner_junggane.jpg',   href: 'https://www.facebook.com/profile.php?id=61576323567135', name: '정가네식당', desc: lang==='km' ? 'ភោជនីយដ្ឋាន​កូរ៉េ​ក្នុង​ភ្នំពេញ' : 'Korean Restaurant in Phnom Penh' },
+    { img: '/static/ad_banner_kground.jpg',    href: 'https://www.facebook.com/share/p/1CkVgw1TJD/', name: 'The K Ground & G-mart', desc: lang==='km' ? 'Aloe Vera Deep Cleansing Cream — ផលិតផល​ថែទាំ​ស្បែក' : 'Aloe Vera Deep Cleansing Cream — Skincare' },
     { img: '/static/ad_banner_hebron60.jpg',   href: 'https://www.facebook.com/photo?fbid=1753908259325181&set=a.748748813174469', name: 'Hebron Academy', desc: lang==='km' ? 'រៀន​ភាសា​កូរ៉េ — ៦០% OFF' : 'Korean Language — 60% OFF' },
     { img: '/static/ad_banner_silla.jpg',      href: 'https://www.facebook.com/SillaCambodia/', name: 'Silla Restaurant', desc: lang==='km' ? 'ភោជនីយដ្ឋាន​កូរ៉េ​ស៊ីឡា' : 'Silla Korean Restaurant Cambodia' },
     { img: '/static/ad_banner_edukonnect.jpg', href: 'https://www.facebook.com/EduKonnectSeoul', name: 'EduKonnect Seoul', desc: lang==='km' ? 'សិក្សា​នៅ​កូរ៉េ' : 'Study in Korea' },
@@ -2730,7 +2730,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // Load ad banners
   loadAdBanners();
   // 광고 이미지 미리 로드 (로딩 화면에서 즉시 표시되도록)
-  const _adImgs = ['/static/ad_banner_junggane.jpg','/static/ad_banner_hebron60.jpg','/static/ad_banner_silla.jpg','/static/ad_banner_edukonnect.jpg','/static/ad_banner_hebron.jpg'];
+  const _adImgs = ['/static/ad_banner_kground.jpg','/static/ad_banner_hebron60.jpg','/static/ad_banner_silla.jpg','/static/ad_banner_edukonnect.jpg','/static/ad_banner_hebron.jpg'];
   _adImgs.forEach(src => { const img = new Image(); img.src = src; });
   // Load daily radar chart (if user has birth info)
   if (currentUser && currentUser.birth_year) {
