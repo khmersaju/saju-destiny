@@ -1,5 +1,5 @@
 // Saju Destiny Service Worker v1.0
-const CACHE_NAME = 'saju-destiny-v20260527-counter-fix';
+const CACHE_NAME = 'saju-destiny-v20260527-contact-final';
 const STATIC_ASSETS = ['/', '/index.html', '/manifest.json'];
 
 // 설치
