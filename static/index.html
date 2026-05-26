@@ -1927,6 +1927,13 @@ async function submitFortune() {
     else if (currentMode === 'daily') endpoint = '/api/v2/daily';
     else if (currentMode === 'compatibility') {
       endpoint = '/api/v2/compatibility';
+      const pBName = document.getElementById('pName').value.trim() || 'Partner';
+      const pBYear = +document.getElementById('pYear').value;
+      const pBMonth = +document.getElementById('pMonth').value;
+      const pBDay = +document.getElementById('pDay').value;
+      // 두 사람 정보 저장 (결과 화면에서 표시용)
+      window._compatPersonA = { name, year, month, day, gender: selectedGender };
+      window._compatPersonB = { name: pBName, year: pBYear, month: pBMonth, day: pBDay, gender: selectedPGender };
       body = {
         person_a: {
           name, birth_year: year, birth_month: month, birth_day: day,
@@ -1934,10 +1941,10 @@ async function submitFortune() {
           gender: selectedGender, city, language: lang
         },
         person_b: {
-          name: document.getElementById('pName').value.trim() || 'Partner',
-          birth_year: +document.getElementById('pYear').value,
-          birth_month: +document.getElementById('pMonth').value,
-          birth_day: +document.getElementById('pDay').value,
+          name: pBName,
+          birth_year: pBYear,
+          birth_month: pBMonth,
+          birth_day: pBDay,
           birth_hour: 12, birth_minute: 0,
           gender: selectedPGender, city, language: lang
         },
@@ -2324,13 +2331,39 @@ function buildCompat(data) {
   const friendshipScore = compat.friendship_score || 0;
   const relation = lang==='km' ? (compat.relation_km || compat.relation || '') : (compat.relation || '');
   const advice = compat.advice || '';
+
+  // 두 사람 프로필 카드
+  const pA = window._compatPersonA || {};
+  const pB = window._compatPersonB || {};
+  const genderLabel = (g) => {
+    if (lang === 'km') return g === 'male' ? '\u1794\u17d2\u179a\u17bb\u179f' : '\u179f\u17d2\u178f\u17d0';
+    return g === 'male' ? 'Male' : 'Female';
+  };
+  const personCard = (pA.name && pB.name) ? `
+    <div style="display:flex;gap:10px;margin-bottom:16px;align-items:stretch">
+      <div style="flex:1;background:linear-gradient(135deg,#01092b,#0d1f4a);border-radius:14px;padding:14px 12px;text-align:center;border:1.5px solid rgba(250,222,74,0.3)">
+        <div style="font-size:22px;margin-bottom:4px">${pA.gender==='male'?'\u{1F468}':'\u{1F469}'}</div>
+        <div style="font-size:15px;font-weight:700;color:#fade4a;margin-bottom:4px">${pA.name}</div>
+        <div style="font-size:12px;color:#aaa;margin-bottom:2px">${pA.year || ''}.${pA.month || ''}.${pA.day || ''}</div>
+        <div style="font-size:11px;color:#888">${genderLabel(pA.gender)}</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:22px;color:#fade4a;flex-shrink:0">&hearts;</div>
+      <div style="flex:1;background:linear-gradient(135deg,#01092b,#0d1f4a);border-radius:14px;padding:14px 12px;text-align:center;border:1.5px solid rgba(250,222,74,0.3)">
+        <div style="font-size:22px;margin-bottom:4px">${pB.gender==='male'?'\u{1F468}':'\u{1F469}'}</div>
+        <div style="font-size:15px;font-weight:700;color:#fade4a;margin-bottom:4px">${pB.name}</div>
+        <div style="font-size:12px;color:#aaa;margin-bottom:2px">${pB.year || ''}.${pB.month || ''}.${pB.day || ''}</div>
+        <div style="font-size:11px;color:#888">${genderLabel(pB.gender)}</div>
+      </div>
+    </div>` : '';
+
   const subScores = (loveScore || marriageScore) ? `
     <div style="margin:12px 0">
-      ${[[lang==='km'?'ស\u17d2\u1793\u17c1\u17a0\u17b6':'Love', loveScore],[lang==='km'?'\u17a2\u17b6\u1796\u17b6\u17a0\u17cd':'Marriage', marriageScore],[lang==='km'?'\u17a2\u17b6\u1787\u17b8\u1796':'Business', businessScore],[lang==='km'?'\u1798\u17b7\u178f\u17d2\u178f':'Friendship', friendshipScore]].map(([l,s])=>`
+      ${[[lang==='km'?'\u179f\u17d2\u1793\u17c1\u17a0\u17b6':'Love', loveScore],[lang==='km'?'\u17a2\u17b6\u1796\u17b6\u17a0\u17cd':'Marriage', marriageScore],[lang==='km'?'\u17a2\u17b6\u1787\u17b8\u1796':'Business', businessScore],[lang==='km'?'\u1798\u17b7\u178f\u17d2\u178f':'Friendship', friendshipScore]].map(([l,s])=>`
       <div class="score-row"><span class="score-label">${l}</span><span class="score-val">${s}</span></div>
       <div class="score-bar-wrap"><div class="score-bar" style="width:${s}%"></div></div>`).join('')}
     </div>` : '';
   return `<div class="info-card">
+    ${personCard}
     <div class="compat-score-circle" style="background:linear-gradient(135deg,${color},${color}aa)">
       <div class="compat-score-num">${score}</div>
       <div class="compat-score-label">${lang==='km'?'\u1796\u17b7\u1793\u17d2\u178f\u17bb':'Score'}</div>
