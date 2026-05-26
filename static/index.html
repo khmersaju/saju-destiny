@@ -1880,7 +1880,8 @@ async function submitFortune() {
       <div class="loading-ad-wrap" style="margin:0 16px 12px">
         <div class="loading-ad-badge">AD</div>
         <a href="${ad.href}" target="_blank" rel="noopener">
-          <img src="${ad.img}" alt="${ad.name}" class="loading-ad-img">
+          <img src="${ad.img}" alt="${ad.name}" class="loading-ad-img"
+            onerror="this.style.display='none';this.parentElement.nextElementSibling&&(this.parentElement.nextElementSibling.style.padding='12px 12px 4px')">
         </a>
         <div class="loading-ad-caption">${ad.name} — ${ad.desc}</div>
       </div>
@@ -1894,8 +1895,13 @@ async function submitFortune() {
         <div class="loading-tip-text">${tip}</div>
       </div>
 
-      <!-- 완료 메시지 (처음엔 숨김) -->
+      <!-- 완료 메시지 + 운세보기 버튼 (처음엔 숨김) -->
       <div id="loading-complete-msg" style="display:none;text-align:center;font-size:13px;color:#01092b;font-weight:600;padding:0 16px 8px">${analysisComplete}</div>
+      <div id="loading-view-btn-wrap" style="display:none;padding:0 16px 8px">
+        <button id="loading-view-btn" style="width:100%;padding:13px;background:linear-gradient(90deg,#fade4a,#f5a623);border:none;border-radius:14px;font-size:14px;font-weight:700;color:#01092b;cursor:pointer;letter-spacing:0.5px">
+          ${lang==='km' ? 'មើល​ជោគជតា →' : 'View Fortune Reading →'}
+        </button>
+      </div>
 
       <!-- 진행률 바 -->
       <div style="padding:0 16px">
@@ -1963,16 +1969,25 @@ async function submitFortune() {
 
 // ===== RENDER RESULT =====
 function renderResult(data) {
-  // 로딩 완료 처리
+  // 로딩 완료 처리 — 결과 데이터 저장 후 운세보기 버튼 표시
   if (window._loadingProgInterval) clearInterval(window._loadingProgInterval);
+  window._pendingResultData = data;  // 데이터 저장
   const bar = document.getElementById('adv-progress-bar');
   const lbl = document.getElementById('adv-progress-label');
   const completeMsg = document.getElementById('loading-complete-msg');
+  const viewBtnWrap = document.getElementById('loading-view-btn-wrap');
+  const viewBtn = document.getElementById('loading-view-btn');
   if (bar) bar.style.width = '100%';
   if (lbl) lbl.textContent = (lang==='km' ? 'ការ​វិភាគ​ជោគជតា​បាន​ចប់​ហើយ! 🎉' : 'Analysis complete! 🎉');
   if (completeMsg) completeMsg.style.display = 'block';
+  if (viewBtnWrap) viewBtnWrap.style.display = 'block';
+  if (viewBtn) viewBtn.onclick = function() { _renderResultFinal(window._pendingResultData); };
+  return;
+}
 
-  // 공유 카드용 데이터 저장 (공유 모달에서 사용)
+// ===== RENDER RESULT FINAL ("View Fortune" 버튼 클릭 시 호출) =====
+function _renderResultFinal(data) {
+  // 공유 카드용 데이터 저장
   _lastShareData = {
     name: document.getElementById('result-name')?.textContent || '',
     birth_year: +document.getElementById('iYear')?.value || 0,
@@ -1984,14 +1999,12 @@ function renderResult(data) {
     city: document.getElementById('iCity')?.value || 'Phnom Penh',
     language: lang
   };
-  // 시간 정보 복원
   const hourEl = document.getElementById('iHour');
   if (hourEl && hourEl.value) {
     const parts = hourEl.value.split(':');
     _lastShareData.birth_hour = +parts[0];
     _lastShareData.birth_minute = parts[1] ? +parts[1] : 0;
   }
-  // 점신 스타일 공유링크용 데이터 저장
   if (data.chart) {
     const ch = data.chart;
     window._lastResultDominant = ch.dominant_element || ch.dominant || '';
