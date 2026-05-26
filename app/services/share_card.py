@@ -329,11 +329,20 @@ def generate_share_card(
     _draw_rounded_rect(draw, [60, y, W - 60, y + 72], radius=16,
                        outline=(*dom_color, 180), width=2)
 
-    draw.text((W//2, y + 20), f"Dominant Element", font=f_en_xs,
+    draw.text((W//2, y + 20), "Dominant Element", font=f_en_xs,
               fill=(200, 220, 255), anchor="mm")
-    draw.text((W//2, y + 50),
-              f"{dom_en}  ·  {dom_km}",
-              font=f_en_bold_md, fill=dom_color, anchor="mm")
+    # 영어 + 크메르어 분리 렌더링 (폰트 호환성 문제 해결)
+    en_part = f"{dom_en}  ·  "
+    km_part = dom_km
+    # 영어 파트 너비 측정
+    en_bbox = draw.textbbox((0, 0), en_part, font=f_en_bold_md)
+    en_w = en_bbox[2] - en_bbox[0]
+    km_bbox = draw.textbbox((0, 0), km_part, font=f_km_md)
+    km_w = km_bbox[2] - km_bbox[0]
+    total_w = en_w + km_w
+    start_x = W//2 - total_w//2
+    draw.text((start_x, y + 50), en_part, font=f_en_bold_md, fill=dom_color, anchor="lm")
+    draw.text((start_x + en_w, y + 50), km_part, font=f_km_md, fill=dom_color, anchor="lm")
 
     # ══════════════════════════════════════════════════════════════
     # 섹션 6: CTA 문구 + QR 코드 (하단)
