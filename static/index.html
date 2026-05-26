@@ -1856,7 +1856,7 @@ async function submitFortune() {
   const tipElementKey = elementKeyMap[dominantEl] || 'Metal';
   const tip = _getConsistentTip(tipElementKey, lang === 'km' ? 'km' : 'en');
 
-  const todayVisitors = (window._visitCount || 7700).toLocaleString();
+  const todayVisitors = window._visitCount ? window._visitCount.toLocaleString() : '...';
   const visitorMsg = lang === 'km'
     ? `ថ្ងៃ​នេះ <strong>${todayVisitors}</strong> នាក់​បាន​ពិនិត្យ​ជោគជតា​ហើយ!`
     : `Today <strong>${todayVisitors}</strong> people checked their destiny!`;
@@ -2669,7 +2669,7 @@ async function loadAndRecordVisit() {
         el.textContent = count2.toLocaleString();
       }
     } catch(e2) {
-      if (el) el.textContent = '7,700+';
+      // API 실패 시 빈 값 유지
     }
   }
 }
@@ -2722,7 +2722,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   loadToday();
   // Load & record visit count (즉시 시작 + 로딩 시 임시값 표시)
   const statEl = document.getElementById('stat-visits');
-  if (statEl && statEl.textContent === '--') statEl.textContent = '7,700+';
+  // stat-visits: API 응답 전까지 '...' 표시 (loadAndRecordVisit에서 실제값으로 교체)
   loadAndRecordVisit();
   // Load ad banners
   loadAdBanners();
