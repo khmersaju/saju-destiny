@@ -400,8 +400,8 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
     </div>
     </div>
 
-  <!-- ===== 일일운세 레이더 차트 섹션 ===== -->
-  <div class="daily-radar-section" id="daily-radar-section">
+  <!-- ===== 일일운세 레이더 차트 섹션 (로그인 사용자만 표시) ===== -->
+  <div class="daily-radar-section" id="daily-radar-section" style="display:none">
     <div class="daily-radar-header">
       <div class="daily-radar-title-sub" id="radar-sub-label">ជោគជតា​ប្រចាំ​ថ្ងៃ · TODAY'S FORTUNE</div>
     </div>
@@ -2635,6 +2635,7 @@ async function loadAndRecordVisit() {
     const d = await r.json();
     const count = d.total_clicks || d.total_visits || 0;
     if (count) {
+      window._visitCount = count;
       // 숫자 애니메이션으로 표시
       animateCounter('stat-visits', count);
     }
@@ -2792,6 +2793,9 @@ async function loadDailyRadar(birthYear, birthMonth, birthDay, gender) {
       if (d.lucky_numbers) chips.innerHTML += `<span class="lucky-chip">🔢 ${Array.isArray(d.lucky_numbers) ? d.lucky_numbers.join(', ') : d.lucky_numbers}</span>`;
       if (d.lucky_direction) chips.innerHTML += `<span class="lucky-chip">🧭 ${d.lucky_direction}</span>`;
     }
+    // 레이더 섹션 표시
+    const radarSection = document.getElementById('daily-radar-section');
+    if (radarSection) radarSection.style.display = 'block';
     initDailyRadarChart(s);
     const loginHint = document.getElementById('radar-login-hint');
     if (loginHint && !authToken) loginHint.style.display = 'block';
