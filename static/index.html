@@ -1064,6 +1064,20 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
 
 <script>
 const API = window.location.origin;  // 같은 서버에서 API 서빙
+// 언어 자동 감지: localStorage 저장값 없으면 브라우저 언어 기반으로 자동 설정
+(function() {
+  if (!localStorage.getItem('lang')) {
+    // 브라우저/시스템 언어 확인 (navigator.language 또는 navigator.languages)
+    const browserLangs = (navigator.languages && navigator.languages.length)
+      ? navigator.languages
+      : [navigator.language || navigator.userLanguage || 'en'];
+    // 크메르어 언어 코드: km, km-KH
+    const isKhmer = browserLangs.some(l => l && (l.toLowerCase().startsWith('km')));
+    // 캄보디아 지역 설정도 크메르어로 처리
+    const isKH = browserLangs.some(l => l && l.toLowerCase().includes('kh'));
+    localStorage.setItem('lang', (isKhmer || isKH) ? 'km' : 'en');
+  }
+})();
 let lang = localStorage.getItem('lang') || 'km';
 let currentMode = '';
 let selectedGender = 'male';
@@ -1764,23 +1778,92 @@ async function submitFortune() {
   ];
   const ad = loadingAds[Math.floor(Math.random() * loadingAds.length)];
 
-  // 사주 팁 목록 (크메르어/영어)
-  const sajuTips = lang === 'km' ? [
-    'ថ្ងៃ​ចូលឆ្នាំ​ខ្មែរ​ត្រូវ​គ្នា​នឹង​ការ​ផ្លាស់ប្ដូរ​ថាមពល​ប្រចាំ​ឆ្នាំ​ក្នុង​ប្រព័ន្ធ​សាជូ',
-    'ធាតុ​ទឹក (水) តំណាង​ឱ្យ​ប្រាជ្ញា​និង​ការ​ប្រាស្រ័យ​ទាក់ទង',
-    'ធាតុ​ភ្លើង (火) ផ្ដល់​ថាមពល​ច្នៃប្រឌិត​និង​ចិត្ត​ក្លាហាន',
-    'ធាតុ​ដែក (金) តំណាង​ឱ្យ​ការ​ប្ដេជ្ញា​ចិត្ត​និង​ភាព​ម៉ឺងម៉ាត់',
-    'ធាតុ​ឈើ (木) ផ្ដល់​ថាមពល​ការ​លូតលាស់​និង​ភាព​ច្នៃប្រឌិត',
-    'ធាតុ​ដី (土) តំណាង​ឱ្យ​ស្ថិរភាព​និង​ការ​ទុក​ចិត្ត',
-  ] : [
-    'The Four Pillars system uses birth year, month, day & hour to map your destiny',
-    'Water element (水) represents wisdom and communication skills',
-    'Fire element (火) brings creative energy and courage',
-    'Metal element (金) represents determination and discipline',
-    'Wood element (木) brings growth energy and creativity',
-    'Earth element (土) represents stability and trustworthiness',
-  ];
-  const tip = sajuTips[Math.floor(Math.random() * sajuTips.length)];
+  // 오행별 일관된 팁 목록 (지배 오행 기준, 매번 동일한 팁 표시)
+  const TIPS_BY_ELEMENT = {
+    km: {
+      Wood: [
+        'ធាតុ​ឥជើអ (木) ច្ន័យប្រតិត​នឹង​ការ​លូតលាស់ — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​ការ​ត្វើរ​សម្រាប់​សម្រាល់​របស់​អ្នក',
+        'ធាតុ​ឥជើអ​មាន​សក្តានុភាព​ក្រឹម​នឹង​ក្រឹម​ជួរ​ខ្មែរ​នឹង​នឹង​ក្រើម​ក្រឹម​ជួរ',
+        'អ្នក​ត្រូវ​ការ​នឹង​ការ​ជិត​ជ័រ — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'អ្នក​មាន​ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+      ],
+      Fire: [
+        'ធាតុ​ភ្លើង (火) ផ្តល់​តាមពល​ច្ន័យប្រតិត​នឹង​ចិត​ក្លាហាន — ការ​ការ​នឹង​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'ធាតុ​ភ្លើង​មាន​សក្តានុភាព​ក្រឹម​នឹង​ក្រឹម​ជួរ​ខ្មែរ​នឹង​នឹង​ក្រើម​ក្រឹម​ជួរ',
+        'អ្នក​ត្រូវ​ការ​នឹង​ការ​ជិត​ជ័រ — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'អ្នក​មាន​ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+      ],
+      Earth: [
+        'ធាតុ​ដី (土) តំណាᦹ​ឥយ​ស្តិរភាព​នឹង​ការ​តុក​ចិត — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'ធាតុ​ដី​មាន​សក្តានុភាព​ក្រឹម​នឹង​ក្រឹម​ជួរ​ខ្មែរ​នឹង​នឹង​ក្រើម​ក្រឹម​ជួរ',
+        'អ្នក​ត្រូវ​ការ​នឹង​ការ​ជិត​ជ័រ — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'អ្នក​មាន​ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+      ],
+      Metal: [
+        'ធាតុ​ដែក (金) តំណាᦹ​ឥយ​ការ​ប័តើញ័​ចិត​នឹង​ភាព​ម្ឡឹងម្ឡាត់ — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'ធាតុ​ដែក​មាន​សក្តានុភាព​ក្រឹម​នឹង​ក្រឹម​ជួរ​ខ្មែរ​នឹង​នឹង​ក្រើម​ក្រឹម​ជួរ',
+        'អ្នក​ត្រូវ​ការ​នឹង​ការ​ជិត​ជ័រ — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'អ្នក​មាន​ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+      ],
+      Water: [
+        'ធាតុ​តឹក (水) តំណាᦹ​ឥយ​ប្រាជ្ញ​នឹង​ការ​ប្រាស្រ័យ​តាកតង — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'ធាតុ​តឹក​មាន​សក្តានុភាព​ក្រឹម​នឹង​ក្រឹម​ជួរ​ខ្មែរ​នឹង​នឹង​ក្រើម​ក្រឹម​ជួរ',
+        'អ្នក​ត្រូវ​ការ​នឹង​ការ​ជិត​ជ័រ — ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+        'អ្នក​មាន​ការ​ប័កស័ក្សា​នឹង​សិក្សា​ជា​រង័ស់​ការ​ជិត​ជ័រ​សម្រាប់​សម្រាល់​របស់',
+      ],
+    },
+    en: {
+      Wood: [
+        'Wood element (木) — You thrive in growth & creativity. Green is your power color for luck.',
+        'Wood people excel in education, healthcare, and agriculture — fields that nurture others.',
+        'Wearing green or teal on important days activates your Wood energy for success.',
+        'Your Wood energy aligns with Khmer New Year’s renewal — a powerful time for new beginnings.',
+      ],
+      Fire: [
+        'Fire element (火) — You radiate passion and courage. Red and orange amplify your energy.',
+        'Fire people shine in hospitality, tourism, and entertainment — Cambodia’s growing industries.',
+        'Wearing red at celebrations like Khmer New Year or weddings boosts your Fire fortune.',
+        'Your Fire energy peaks at midday — schedule important meetings between 11am and 1pm.',
+      ],
+      Earth: [
+        'Earth element (土) — You bring stability and trust. Yellow and gold are your lucky colors.',
+        'Earth people are natural leaders in real estate, government, and agriculture.',
+        'Visiting temples in yellow attire strengthens your Earth energy and brings blessings.',
+        'Your Earth energy is strongest during seasonal transitions — ideal for making big decisions.',
+      ],
+      Metal: [
+        'Metal element (金) — You embody discipline and precision. White and silver are your power colors.',
+        'Metal people excel in finance, construction, and law — fields requiring sharp judgment.',
+        'Wearing white or silver on contract days enhances your Metal energy for clear decisions.',
+        'Your Metal energy aligns with the crispness of dawn — early mornings are your peak hours.',
+      ],
+      Water: [
+        'Water element (水) — You flow with wisdom and adaptability. Black and navy are your power colors.',
+        'Water people thrive in trade, IT, diplomacy, and international business.',
+        'The Mekong River’s Water energy mirrors your own — living near water amplifies your fortune.',
+        'Your Water energy peaks at night — creative thinking and planning are best after sunset.',
+      ],
+    }
+  };
+
+  // 지배 오행 기준으로 일관된 팁 선택
+  // 사용자의 도미넌트 오행이 없으면 생년월일시 기준 해시로 일관된 팁 선택
+  function _getConsistentTip(elementKey, langKey) {
+    const tipSet = (TIPS_BY_ELEMENT[langKey] || TIPS_BY_ELEMENT['en'])[elementKey]
+                || (TIPS_BY_ELEMENT[langKey] || TIPS_BY_ELEMENT['en'])['Metal'];
+    // 생년월일 기반 해시로 항상 동일한 인덱스 선택 (Math.random 사용 안 함)
+    const birthKey = `${_lastShareData?.birth_year||0}${_lastShareData?.birth_month||0}${_lastShareData?.birth_day||0}`;
+    let hash = 0;
+    for (let i = 0; i < birthKey.length; i++) hash = (hash * 31 + birthKey.charCodeAt(i)) & 0xffff;
+    return tipSet[hash % tipSet.length];
+  }
+
+  // 지배 오행 파악 (window._lastResultDominant 또는 폼 데이터 기반)
+  const dominantEl = window._lastResultDominant || '';
+  const elementKeyMap = { Wood:'Wood', Fire:'Fire', Earth:'Earth', Metal:'Metal', Water:'Water',
+    '木':'Wood', '火':'Fire', '土':'Earth', '金':'Metal', '水':'Water' };
+  const tipElementKey = elementKeyMap[dominantEl] || 'Metal';
+  const tip = _getConsistentTip(tipElementKey, lang === 'km' ? 'km' : 'en');
 
   const todayVisitors = (window._visitCount || 7700).toLocaleString();
   const visitorMsg = lang === 'km'
