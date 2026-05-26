@@ -368,7 +368,7 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
     <div class="hero-badge" id="hero-badge">✦ Saju Destiny × Cambodia ✦</div>
     <div class="hero-title" id="hero-title">ជោគជតា ប្រពៃណី</div>
     <div class="hero-sub" id="hero-sub">ការវិភាគ Four Pillars ត្រឹមត្រូវ</div>
-    <div class="hero-desc" id="hero-desc">Saju គឺជាប្រព័ន្ធទស្សន៍ទាយបុរាណ ដែលវិភាគជោគជតាតាមឆ្នាំ ខែ ថ្ងៃ និងម៉ោងកំណើត — ជា "សសរទាំង ៤" នៃជីវិត។ ធាតុទាំង ៥ (ឈើ ភ្លើង ដី លោហៈ ទឹក) និងតុល្យភាព Yin-Yang បង្ហាញផ្លូវជីវិតរបស់អ្នក។</div>
+    <div class="hero-desc" id="hero-desc">Saju គឺជាប្រព័ន្ធទស្សន៍ទាយបុរាណ ដែលវិភាគជោគជតាតាមឆ្នាំ ខែ ថ្ងៃ និងម៉ោងកំណើត — ជា "សសរទាំងបួន" នៃជីវិត។ ធាតុទាំង ៥ (ឈើ ភ្លើង ដី លោហៈ ទឹក) និងតុល្យភាព Yin-Yang បង្ហាញផ្លូវជីវិតរបស់អ្នក។</div>
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="hero-stat-num" id="stat-visits">...</div>
@@ -729,32 +729,59 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
         </select>
       </div>
       <div class="fg">
-        <label class="fl" id="lbl-occupation">មុខរបរ <span class="fl-opt">(optional)</span></label>
+        <label class="fl" id="lbl-occupation">💼 <span id="lbl-occ-text">មុខរបរ *</span></label>
+        <p style="font-size:11px;color:#888;margin:2px 0 6px" id="lbl-occ-hint">មុខរបររបស់អ្នក ជួយឱ្យការអាន Saju មានលក្ខណៈផ្ទាល់ខ្លួន</p>
         <select class="fi" id="rOccupation">
           <option value="" id="occ-select">ជ្រើសរើស...</option>
-          <option value="student" id="occ-student">និស្សិត</option>
-          <option value="business" id="occ-business">អ្នកជំនួញ</option>
-          <option value="employee" id="occ-employee">បុគ្គលិក</option>
-          <option value="government" id="occ-government">មន្ត្រីរាជការ</option>
-          <option value="freelance" id="occ-freelance">ឡករាជ្យ</option>
-          <option value="farmer" id="occ-farmer">កសិករ</option>
-          <option value="other" id="occ-other">ផ្សេងតីឡត</option>
+          <option value="student" id="occ-student">🎓 និស្សិត (Student)</option>
+          <option value="office_worker" id="occ-office">🏢 បុគ្គលិកការិយាល័យ (Office Worker)</option>
+          <option value="business" id="occ-business">💼 ម្ចាស់អាជីវកម្ម (Business Owner)</option>
+          <option value="seller" id="occ-seller">🛒 អ្នកលក់ (Seller)</option>
+          <option value="teacher" id="occ-teacher">📚 គ្រូបង្រៀន (Teacher)</option>
+          <option value="beauty_spa" id="occ-beauty">💆 សម្រស់ / ស្ប៉ា (Beauty / Spa)</option>
+          <option value="driver" id="occ-driver">🚗 អ្នកបើកបរ (Driver)</option>
+          <option value="farmer" id="occ-farmer">🌾 កសិករ (Farmer)</option>
+          <option value="freelance" id="occ-freelance">🖥️ ឯករាជ្យ (Freelancer)</option>
+          <option value="government" id="occ-government">🏛️ មន្ត្រីរាជការ (Government Officer)</option>
+          <option value="overseas" id="occ-overseas">✈️ កម្មករក្រៅប្រទេស (Overseas Worker)</option>
+          <option value="other" id="occ-other">📌 ផ្សេងៗ (Other)</option>
         </select>
       </div>
 
-      <div class="auth-sec-title" id="lbl-interests">💫 ចំណាប់អារម្មណ៍</div>
+      <div class="auth-sec-title" id="lbl-interests">💫 ចំណាប់អារម្មណ៍ *</div>
+      <p style="font-size:11px;color:#888;margin:-8px 0 8px" id="lbl-int-hint">ចំណាប់អារម្មណ៍របស់អ្នក ជួយឱ្យការអាន Saju មានលក្ខណៈផ្ទាល់ខ្លួនកាន់តែច្បាស់</p>
       <div class="interests-grid" id="interests-grid">
         <button class="interest-btn" onclick="toggleInterest(this,'love')">❤️ ស្នេហា</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'wealth')">💰 ទ្រព្យ</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'health')">🌿 សុខភាព</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'marriage')">💍 អាពាហ៍ពិពាហ៍</button>
         <button class="interest-btn" onclick="toggleInterest(this,'career')">💼 អាជីព</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'money')">💰 ទ្រព្យ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'business')">🏪 ជំនួញ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'study')">📖 ការសិក្សា</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'study_abroad')">🌏 សិក្សាបរទេស</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'health')">🌿 សុខភាព</button>
         <button class="interest-btn" onclick="toggleInterest(this,'family')">👨‍👩‍👧 គ្រួសារ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'lucky_day')">📅 ថ្ងៃមង្គល</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'phone_fortune')">📱 ជោគជតាលេខទូរស័ព្ទ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'car_plate')">🚗 ស្លាកលេខរថយន្ត</button>
         <button class="interest-btn" onclick="toggleInterest(this,'travel')">✈️ ដំណើរ</button>
       </div>
 
       <div class="fg" style="margin-top:14px;margin-bottom:0">
-        <label class="fl" id="lbl-referral">លេខកូដណែនាំ <span class="fl-opt">(optional)</span></label>
+        <label class="fl" id="lbl-referral">🎁 <span id="lbl-ref-text">លេខកូដណែនាំ</span> <span class="fl-opt" id="lbl-ref-opt">(ស្រេចចិត្ត)</span></label>
         <input class="fi" id="rReferral" type="text" placeholder="ឧ. KDAB12CD" style="text-transform:uppercase">
+      </div>
+
+      <!-- Marketing Consent -->
+      <div style="background:#f7f9fc;border-radius:12px;padding:12px 14px;margin-top:14px;margin-bottom:0">
+        <div style="font-size:12px;font-weight:700;color:#01092b;margin-bottom:8px" id="lbl-consent-title">📋 ការយល់ព្រម</div>
+        <label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;cursor:pointer">
+          <input type="checkbox" id="consentService" checked style="margin-top:2px;accent-color:#fade4a">
+          <span style="font-size:12px;color:#444" id="lbl-consent-service">ខ្ញុំយល់ព្រមទទួលការជូនដំណឹងអំពីសេវាកម្ម</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+          <input type="checkbox" id="consentMarketing" style="margin-top:2px;accent-color:#fade4a">
+          <span style="font-size:12px;color:#444" id="lbl-consent-marketing">ខ្ញុំយល់ព្រមទទួលសារផ្សព្វផ្សាយ និងការផ្តល់ជូនពិសេស</span>
+        </label>
       </div>
 
       <button class="auth-submit" onclick="doRegister()" id="lbl-reg-btn">✨ បង្កើតគណនីឥតគិតថ្លៃ</button>
@@ -1083,11 +1110,11 @@ const TR = {
     topbar_sub: 'Four Pillars ជោគជតា',
     hero_badge: '✦ Saju Destiny × Cambodia ✦',
     hero_title: 'Saju Destiny',
-    hero_sub: 'Four Pillars (សសរទាំង ៤) — ឆ្នាំ · ខែ · ថ្ងៃ · ម៉ោង',
-    hero_desc: 'Saju គឺជាប្រព័ន្ធទស្សន៍ទាយបុរាណ ដែលវិភាគជោគជតាតាមឆ្នាំ ខែ ថ្ងៃ និងម៉ោងកំណើត — ជា "សសរទាំង ៤" នៃជីវិត។ ធាតុទាំង ៥ (ឈើ ភ្លើង ដី លោហៈ ទឹក) និងតុល្យភាព Yin-Yang បង្ហាញផ្លូវជីវិតរបស់អ្នក។',
-    stat_visits_label: 'ការចុចសរុប',
+    hero_sub: 'Four Pillars — ឆ្នាំ · ខែ · ថ្ងៃ · ម៉ោង',
+    hero_desc: 'Saju គឺជាប្រព័ន្ធទស្សន៍ទាយបុរាណ ដែលវិភាគជោគជតាតាមឆ្នាំ ខែ ថ្ងៃ និងម៉ោងកំណើត — ជា "សសរទាំងបួន" នៃជីវិត។ ធាតុទាំង ៥ (ឈើ ភ្លើង ដី លោហៈ ទឹក) និងតុល្យភាព Yin-Yang បង្ហាញផ្លូវជីវិតរបស់អ្នក។',
+    stat_visits_label: 'ចំនួនអ្នកចូលប្រើ',
     stat_years_label: 'ឆ្នាំប្រពៃណី',
-    stat_ai_label: 'ការវិភាគច្បាស់',
+    stat_ai_label: 'វិភាគមានភាពត្រឹមត្រូវ',
     stat_free_label: 'ឥតគិតថ្លៃ',
     today_label: 'ថ្ងៃនេះ',
     today_date_label: 'កាលបរិច្ឆេទ',
@@ -1097,12 +1124,12 @@ const TR = {
     menu_yearly: 'ឆ្នាំ\n២០២៦',
     menu_monthly: 'ប្រចាំ\nខែ',
     menu_daily: 'ប្រចាំ\nថ្ងៃ',
-    menu_compat: 'គូស្នេហ៍\nភាព',
+    menu_compat: 'គូស្នេហ៍\nគ្នា',
     menu_lucky_days: 'ថ្ងៃ\nមង្គល',
     menu_lucky_profile: 'ពណ៌ &\nទិស',
     menu_lifestage: 'វ័យ\nជីវិត',
     promo_text: 'Premium Membership',
-    promo_sub: 'ការវិភាគលម្អិត + ការប្រឹក្សា',
+    promo_sub: 'វិភាគលម្អិត + ការប្រឹក្សាជាមួយជំនាញ',
     promo_btn: 'ចូលរួម',
     lbl_name: 'ឈ្មោះ',
     lbl_birth: 'ថ្ងៃខែឆ្នាំកំណើត (ប្រតិទិនព្រះអាទិត្យ)',
@@ -1132,8 +1159,8 @@ const TR = {
     lbl_reg_gender: 'ភេទ',
     lbl_location: '📍 ទីតាំង',
     lbl_reg_city: 'ទីក្រុង',
-    lbl_occupation: 'មុខរបរ',
-    lbl_interests: '💫 ចំណាប់អារម្មណ៍',
+    lbl_occupation: '💼 មុខរបរ *',
+    lbl_interests: '💫 ចំណាប់អារម្មណ៍ *',
     lbl_referral: 'លេខកូដណែនាំ',
     profile_title: 'គណនី',
     push_title: '🔔 ទទួលជោគជតាប្រចាំថ្ងៃ',
@@ -1145,15 +1172,15 @@ const TR = {
     tab_lifestage: '🌱 វ័យជីវិត',
     tab_daeun: '🔄 វដ្ត',
     tab_monthly: '📅 ប្រចាំខែ',
-    tab_compat: '💑 គូស្នេហ៍',
+    tab_compat: '💑 គូស្នេហ៍គ្នា',
     tab_lucky_days: '📆 ថ្ងៃមង្គល',
     tab_lucky_profile: '🎨 ហោរា',
-    loading: 'កំពុងគណនា...',
+    loading: 'កំពុងវិភាគ...',
     err_login: 'សូមចូលគណនីជាមុន',
     err_fill: 'សូមបំពេញព័ត៌មានចាំបាច់',
-    err_conn: 'បញ្ហាការតភ្ជាប់',
-    reg_ok: 'ចុះឈ្មោះបានជោគជ័យ!',
-    login_ok: 'ចូលបានជោគជ័យ!',
+    err_conn: 'មានបញ្ហាការតភ្ជាប់ សូមសាកល្បងម្តងទៀត',
+    reg_ok: 'ចុះឈ្មោះបានជោគជ័យ! សូមស្វាគមន៍!',
+    login_ok: 'ចូលបានជោគជ័យ! សូមស្វាគមន៍!',
     logout_ok: 'ចាកចេញបានជោគជ័យ',
     lbl_login_email: '📧 អ៊ីម៉ែល *',
     lbl_login_pw: '🔒 ពាក្យសម្ងាត់ *',
@@ -1165,13 +1192,13 @@ const TR = {
     tier_premium: 'PREMIUM Member',
     logout: 'ចាកចេញ',
     ad_title: 'មើលការផ្សាយពាណិជ្ជកម្ម',
-    ad_sub: 'មើលការផ្សាយ 1 ដើម្បីបើកជោគជតាប្រចាំថ្ងៃ',
+    ad_sub: 'មើលការផ្សាយ 1 ក្រែង ដើម្បីបើកជោគជតាប្រចាំថ្ងៃ',
     ad_watch: '▶ មើលការផ្សាយ (30s)',
     mode_lifetime: 'ជោគជតាពេញជីវិត',
     mode_yearly: 'ជោគជតាឆ្នាំ ២០២៦',
     mode_monthly: 'ជោគជតាប្រចាំខែ',
     mode_daily: 'ជោគជតាប្រចាំថ្ងៃ',
-    mode_compat: 'ភាពស្ទួនគូស្នេហ៍',
+    mode_compat: 'គូស្នេហ៍គ្នា',
     mode_lucky_days: 'ថ្ងៃមង្គល',
     mode_lucky_profile: 'ហោរាផ្ទាល់ខ្លួន',
     input_sub: 'បំពេញព័ត៌មានកំណើត',
@@ -1197,10 +1224,10 @@ const TR = {
     fp_confirmpw_lbl: '🔒 បញ្ជាក់ពាក្យសម្ងាត់',
     fp_reset_btn: 'ផ្លាស់ប្ដូរពាក្យសម្ងាត់',
     fp_reset_ok: 'ពាក្យសម្ងាត់ត្រូវបានផ្លាស់ប្ដូរជោគជ័យ!',
-    fp_err_notfound: 'លេខអ៊ីម៉ែលនេះក្នុងប្រព័ន្ធ',
-    fp_err_code: 'លេខកូដមិនត្រូវ មិននឹងហើយ ឬបំណងនឹងសុពលភាព',
-    fp_err_pwmatch: 'ពាក្យសម្ងាត់មិនត្រូវគ្នា',
-    fp_err_pwshort: 'ពាក្យសម្ងាត់ត្រូវការយ៉ាងហោចណាស់ ៦ តួ',
+    fp_err_notfound: 'អ៊ីម៉ែលនេះមិនមាននៅក្នុងប្រព័ន្ធទេ',
+    fp_err_code: 'លេខកូដមិនត្រូវ ឬផុតកំណត់ហើយ',
+    fp_err_pwmatch: 'ពាក្យសម្ងាត់ទាំងពីរមិនដូចគ្នា',
+    fp_err_pwshort: 'ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច ៦ តួអក្សរ',
   },
   en: {
     topbar_sub: 'Four Pillars Destiny Reading',
@@ -1464,10 +1491,10 @@ function applyLang() {
   });
   // Interests 버튼 언어 전환
   const interestMap = lang === 'km'
-    ? {love:'❤️ ស្នេហា',wealth:'💰 ទ្រព្យ',health:'🌿 សុខភាព',career:'💼 អាជីព',family:'👨‍👩‍👧 គ្រួសារ',travel:'✈️ ដំណើរ'}
-    : {love:'❤️ Love',wealth:'💰 Wealth',health:'🌿 Health',career:'💼 Career',family:'👨‍👩‍👧 Family',travel:'✈️ Travel'};
+    ? {love:'❤️ ស្នេហា',marriage:'💍 អាពាហ៍ពិពាហ៍',career:'💼 អាជីព',money:'💰 ទ្រព្យ',business:'🏪 ជំនួញ',study:'📖 ការសិក្សា',study_abroad:'🌏 សិក្សាបរទេស',health:'🌿 សុខភាព',family:'👨‍👩‍👧 គ្រួសារ',lucky_day:'📅 ថ្ងៃមង្គល',phone_fortune:'📱 ជោគជតាលេខទូរស័ព្ទ',car_plate:'🚗 ស្លាកលេខរថយន្ត',travel:'✈️ ដំណើរ'}
+    : {love:'❤️ Love',marriage:'💍 Marriage',career:'💼 Career',money:'💰 Wealth',business:'🏪 Business',study:'📖 Study',study_abroad:'🌏 Study Abroad',health:'🌿 Health',family:'👨‍👩‍👧 Family',lucky_day:'📅 Lucky Day',phone_fortune:'📱 Phone Fortune',car_plate:'🚗 Car Plate',travel:'✈️ Travel'};
   const interestBtns = document.querySelectorAll('.interest-btn');
-  const interestKeys = ['love','wealth','health','career','family','travel'];
+  const interestKeys = ['love','marriage','career','money','business','study','study_abroad','health','family','lucky_day','phone_fortune','car_plate','travel'];
   interestBtns.forEach((btn,i) => {
     const key = interestKeys[i];
     if (key && interestMap[key]) btn.textContent = interestMap[key];
