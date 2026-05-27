@@ -1800,6 +1800,11 @@ async function submitFortune() {
   ];
   const ad = loadingAds[Math.floor(Math.random() * loadingAds.length)];
 
+  // 광고 이미지 프리로드 (이미지가 먼저 보이도록)
+  const _adPreloadImg = new Image();
+  _adPreloadImg.src = ad.img;
+  window._adPreloadedSrc = ad.img;
+
   // 오행별 일관된 팁 목록 (지배 오행 기준, 매번 동일한 팁 표시)
   const TIPS_BY_ELEMENT = {
     km: {
@@ -1902,7 +1907,12 @@ async function submitFortune() {
       <div style="background:#fff;border-radius:14px;margin:0 16px 12px;box-shadow:0 2px 12px rgba(0,0,0,0.08)">
         <div style="font-size:10px;color:#999;text-align:right;padding:4px 10px 0;font-weight:600">AD</div>
         <a href="${ad.href}" target="_blank" rel="noopener" style="display:block;text-decoration:none">
-          <img src="${ad.img}" alt="${ad.name}" style="width:100%;height:auto;display:block;object-fit:contain !important;max-width:100%" loading="eager">
+          <div id="loading-ad-img-wrap" style="width:100%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;min-height:220px">
+            <img src="${ad.img}" alt="${ad.name}"
+              style="width:100%;height:auto;display:block;max-height:480px;object-fit:contain"
+              onload="this.parentNode.style.minHeight='0'"
+              onerror="this.parentNode.style.display='none'">
+          </div>
         </a>
         <div style="padding:8px 12px 10px;font-size:12px;color:#333;font-weight:600">${ad.name} — ${ad.desc}</div>
       </div>
