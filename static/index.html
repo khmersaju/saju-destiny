@@ -6,13 +6,18 @@
 <title>Saju Fortune - ជោគជតា</title>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Battambang','Noto Sans KR',sans-serif;background:#f4f7fe;color:#1f2024;min-height:100vh;max-width:480px;margin:0 auto;position:relative}
+body.lang-ko{font-family:'Noto Serif KR','Noto Sans KR',sans-serif}
+body.lang-ko .topbar-logo,body.lang-ko .hero-title,body.lang-ko .input-title,body.lang-ko .result-name,body.lang-ko .auth-sec-title,body.lang-ko .section-title{font-family:'Noto Serif KR',serif;font-weight:700;letter-spacing:-0.5px}
+body.lang-ko .hero-sub,body.lang-ko .hero-desc,body.lang-ko .fl,body.lang-ko .auth-note,body.lang-ko .tab-btn{font-family:'Noto Serif KR','Noto Sans KR',sans-serif}
+body.lang-ko button,body.lang-ko select,body.lang-ko input{font-family:'Noto Serif KR','Noto Sans KR',sans-serif}
 a{cursor:pointer;color:#e8720c;text-decoration:none}
 
 /* TOP BAR */
@@ -1564,7 +1569,10 @@ function applyLang() {
   document.getElementById('lbl-login-pw').textContent = L.lbl_login_pw;
   document.getElementById('lbl-reg-btn').textContent = L.lbl_reg_btn;
   document.getElementById('auth-note-login').innerHTML = L.auth_note_login + ' <a onclick="switchAuthTab(\'register\')">' + L.go_reg + '</a>';
-  document.getElementById('auth-note-reg').innerHTML = L.auth_note_login.replace("Don't have an account?","Already have an account?").replace("មិនទាន់មានគណនី?","មានគណនីរួចហើយ?") + ' <a onclick="switchAuthTab(\'login\')">' + L.go_login + '</a>';
+  {
+    const alreadyHaveText = lang === 'km' ? 'មានគណនីរួចហើយ?' : lang === 'ko' ? '이미 계정이 있으신가요?' : 'Already have an account?';
+    document.getElementById('auth-note-reg').innerHTML = alreadyHaveText + ' <a onclick="switchAuthTab(\'login\')">' + L.go_login + '</a>';
+  }
   document.getElementById('lbl-personal').textContent = L.lbl_personal;
   document.getElementById('lbl-lastname').textContent = L.lbl_lastname;
   document.getElementById('lbl-firstname').textContent = L.lbl_firstname;
@@ -1598,15 +1606,15 @@ function applyLang() {
   document.getElementById('lnk-terms').textContent = L.lnk_terms;
   document.getElementById('lnk-contact').textContent = L.lnk_contact;
   // Contact 화면 번역
-  const ctTitle = document.getElementById('contact-title'); if(ctTitle) ctTitle.textContent = lang==='km'?'ទំនាក់ទំនង':'Contact Us';
-  const ctAddr = document.getElementById('contact-lbl-address'); if(ctAddr) ctAddr.textContent = lang==='km'?'អាសយដ្ឋាន':'Address';
-  const ctPhone = document.getElementById('contact-lbl-phone'); if(ctPhone) ctPhone.textContent = lang==='km'?'លេខទូរស័ព្ទ':'Phone';
-  const ctEmail = document.getElementById('contact-lbl-email'); if(ctEmail) ctEmail.textContent = lang==='km'?'អ៊ីម៉ែល':'Email';
-  const ctHours = document.getElementById('contact-lbl-hours'); if(ctHours) ctHours.textContent = lang==='km'?'ម៉ោងធ្វើការ':'Business Hours';
-  const ctWd = document.getElementById('contact-hours-weekday'); if(ctWd) ctWd.textContent = lang==='km'?'ច័ន្ទ – សុក្រ: ម៉ោង ៩:០០ – ១៨:០០':'Mon – Fri: 9:00 AM – 6:00 PM';
-  const ctSat = document.getElementById('contact-hours-sat'); if(ctSat) ctSat.textContent = lang==='km'?'សៅរ៍: ម៉ោង ៩:០០ – ១៣:០០':'Sat: 9:00 AM – 1:00 PM';
-  const ctSun = document.getElementById('contact-hours-sun'); if(ctSun) ctSun.textContent = lang==='km'?'អាទិត្យ: បិទ':'Sun: Closed';
-  const ctFb = document.getElementById('contact-fb-btn'); if(ctFb) ctFb.textContent = lang==='km'?'ចូលទៅកាន់ Facebook របស់យើង':'Visit us on Facebook';
+  const ctTitle = document.getElementById('contact-title'); if(ctTitle) ctTitle.textContent = lang==='km'?'ទំនាក់ទំនង':lang==='ko'?'문의하기':'Contact Us';
+  const ctAddr = document.getElementById('contact-lbl-address'); if(ctAddr) ctAddr.textContent = lang==='km'?'អាសយដ្ឋាន':lang==='ko'?'주소':'Address';
+  const ctPhone = document.getElementById('contact-lbl-phone'); if(ctPhone) ctPhone.textContent = lang==='km'?'លេខទូរស័ព្ទ':lang==='ko'?'전화번호':'Phone';
+  const ctEmail = document.getElementById('contact-lbl-email'); if(ctEmail) ctEmail.textContent = lang==='km'?'អ៊ីម៉ែល':lang==='ko'?'이메일':'Email';
+  const ctHours = document.getElementById('contact-lbl-hours'); if(ctHours) ctHours.textContent = lang==='km'?'ម៉ោងធ្វើការ':lang==='ko'?'영업시간':'Business Hours';
+  const ctWd = document.getElementById('contact-hours-weekday'); if(ctWd) ctWd.textContent = lang==='km'?'ច័ន្ទ – សុក្រ: ម៉ោង ៩:០០ – ១៨:០០':lang==='ko'?'월 – 금: 오전 9:00 – 오후 6:00':'Mon – Fri: 9:00 AM – 6:00 PM';
+  const ctSat = document.getElementById('contact-hours-sat'); if(ctSat) ctSat.textContent = lang==='km'?'សៅរ៍: ម៉ោង ៩:០០ – ១៣:០០':lang==='ko'?'토: 오전 9:00 – 오후 1:00':'Sat: 9:00 AM – 1:00 PM';
+  const ctSun = document.getElementById('contact-hours-sun'); if(ctSun) ctSun.textContent = lang==='km'?'អាទិត្យ: បិទ':lang==='ko'?'일: 휴무':'Sun: Closed';
+  const ctFb = document.getElementById('contact-fb-btn'); if(ctFb) ctFb.textContent = lang==='km'?'ចូលទៅកាន់ Facebook របស់យើង':lang==='ko'?'Facebook 방문하기':'Visit us on Facebook';
   // 비밀번호 찾기 링크
   const fpLink = document.getElementById('lbl-forgot-pw');
   if (fpLink) fpLink.textContent = L.lbl_forgot_pw || (lang==='km'?'ភ្លេចពាក្យសម្ងាត់?':'Forgot Password?');
@@ -1626,11 +1634,13 @@ function applyLang() {
   const fpCfl = document.getElementById('fp-confirmpw-lbl'); if(fpCfl) fpCfl.textContent = L.fp_confirmpw_lbl||'';
   const fpRb = document.getElementById('fp-reset-btn'); if(fpRb) fpRb.textContent = L.fp_reset_btn||'';
   // Gender 버튼 텍스트 언어 전환 (3곳: 메인, 파트너, 회원가입)
-  const maleText = lang === 'km' ? '♂ បុរស' : '♂ Male';
-  const femaleText = lang === 'km' ? '♀ ស្ត្រី' : '♀ Female';
+  const maleText = lang === 'km' ? '♂ បុរស' : lang === 'ko' ? '♂ 남성' : '♂ Male';
+  const femaleText = lang === 'km' ? '♀ ស្ត្រី' : lang === 'ko' ? '♀ 여성' : '♀ Female';
   // Occupation 드롭다운 언어 전환
   const occTexts = lang === 'km'
     ? {select:'ជ្រើសរើស...',student:'និស្សិត',business:'អ្នកជំនួញ',employee:'បុគ្គលិក',government:'មន្ត្រីរាជការ',freelance:'ឯករាជ្យ',farmer:'កសិករ',other:'ផ្សេងទៀត'}
+    : lang === 'ko'
+    ? {select:'선택...',student:'학생',business:'사업주',employee:'직원',government:'공무원',freelance:'프리랜서',farmer:'농부',other:'기타'}
     : {select:'Select...',student:'Student',business:'Business Owner',employee:'Employee',government:'Government Officer',freelance:'Freelancer',farmer:'Farmer',other:'Other'};
   Object.entries(occTexts).forEach(([k,v]) => {
     const el = document.getElementById('occ-'+k);
@@ -1639,6 +1649,8 @@ function applyLang() {
   // Interests 버튼 언어 전환
   const interestMap = lang === 'km'
     ? {love:'❤️ ស្នេហា',marriage:'💍 អាពាហ៍ពិពាហ៍',career:'💼 អាជីព',money:'💰 ទ្រព្យ',business:'🏪 ជំនួញ',study:'📖 ការសិក្សា',study_abroad:'🌏 សិក្សាបរទេស',health:'🌿 សុខភាព',family:'👨‍👩‍👧 គ្រួសារ',lucky_day:'📅 ថ្ងៃមង្គល',phone_fortune:'📱 ជោគជតាលេខទូរស័ព្ទ',car_plate:'🚗 ស្លាកលេខរថយន្ត',travel:'✈️ ដំណើរ'}
+    : lang === 'ko'
+    ? {love:'❤️ 연애',marriage:'💍 결혼',career:'💼 직업',money:'💰 재물',business:'🏪 사업',study:'📖 학업',study_abroad:'🌏 유학',health:'🌿 건강',family:'👨‍👩‍👧 가족',lucky_day:'📅 길일',phone_fortune:'📱 전화번호 운',car_plate:'🚗 차량번호',travel:'✈️ 여행'}
     : {love:'❤️ Love',marriage:'💍 Marriage',career:'💼 Career',money:'💰 Wealth',business:'🏪 Business',study:'📖 Study',study_abroad:'🌏 Study Abroad',health:'🌿 Health',family:'👨‍👩‍👧 Family',lucky_day:'📅 Lucky Day',phone_fortune:'📱 Phone Fortune',car_plate:'🚗 Car Plate',travel:'✈️ Travel'};
   const interestBtns = document.querySelectorAll('.interest-btn');
   const interestKeys = ['love','marriage','career','money','business','study','study_abroad','health','family','lucky_day','phone_fortune','car_plate','travel'];
@@ -1654,6 +1666,42 @@ function applyLang() {
     const el = document.getElementById(id);
     if (el) el.textContent = femaleText;
   });
+  // 생년월일 select placeholder 언어별 업데이트
+  const placeholders = {
+    km: {year:'ឆ្នាំ', month:'ខែ', day:'ថ្ងៃ', hour:'មិនដឹង'},
+    en: {year:'Year', month:'Month', day:'Day', hour:'Unknown'},
+    ko: {year:'년도', month:'월', day:'일', hour:'모름'}
+  };
+  const ph = placeholders[lang] || placeholders.en;
+  ['iYear','pYear','rYear'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel && sel.options[0] && sel.options[0].value === '') sel.options[0].textContent = ph.year;
+  });
+  ['iMonth','pMonth','rMonth'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel && sel.options[0] && sel.options[0].value === '') sel.options[0].textContent = ph.month;
+  });
+  ['iDay','pDay','rDay'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel && sel.options[0] && sel.options[0].value === '') sel.options[0].textContent = ph.day;
+  });
+  const hourSel = document.getElementById('iHour');
+  if (hourSel && hourSel.options[0] && hourSel.options[0].value === '') hourSel.options[0].textContent = ph.hour;
+  // Compat type selector 번역
+  const compatTypeLabels = {
+    km: {title:'ប្រភេទ', love:'💑 ស្នេហា &\nអាពាហ៍', business:'💼 ជំនួញ', friendship:'🤝 មិត្ត-\nភាព', study:'📚 ការ\nសិក្សា', work:'🏢 ការ\nងារ', family:'👨‍👩‍👧 គ្រួ-\nសារ'},
+    en: {title:'Choose Compatibility Type', love:'💑 Love &\nMarriage', business:'💼 Business\nPartner', friendship:'🤝 Friend-\nship', study:'📚 Study\nPartner', work:'🏢 Work\nColleague', family:'👨‍👩‍👧 Family\nBond'},
+    ko: {title:'궁합 유형 선택', love:'💑 연애 &\n결혼', business:'💼 비즈니스\n파트너', friendship:'🤝 우정', study:'📚 학업\n파트너', work:'🏢 직장\n동료', family:'👨‍👩‍👧 가족\n관계'}
+  };
+  const ctl = compatTypeLabels[lang] || compatTypeLabels.en;
+  const ctTitleEl = document.getElementById('lbl-compat-type');
+  if (ctTitleEl) ctTitleEl.textContent = ctl.title;
+  ['love','business','friendship','study','work','family'].forEach(t => {
+    const btn = document.getElementById('ctbtn-' + t);
+    if (btn && ctl[t]) btn.innerHTML = ctl[t].replace(/\n/g,'<br>');
+  });
+  // body 클래스로 한국어 폰트 적용
+  document.body.className = lang === 'ko' ? 'lang-ko' : '';
   // 프로필 화면이 열려있으면 재렌더링
   if (document.getElementById('screen-profile').classList.contains('active') && currentUser) {
     renderProfile();
@@ -1904,6 +1952,8 @@ async function updateLunar() {
     if (data.lunar_date) {
       disp.textContent = lang === 'km'
         ? `ប្រតិទិនច័ន្ទ: ${data.lunar_date} | ឆ្នាំ${data.zodiac_km || data.zodiac || ''}`
+        : lang === 'ko'
+        ? `음력: ${data.lunar_date} | ${data.zodiac || ''}년`
         : `Lunar: ${data.lunar_date} | Year of ${data.zodiac || ''}`;
       disp.style.display = 'block';
     }
@@ -1946,12 +1996,17 @@ async function submitFortune() {
   };
   showScreen('result');
   document.getElementById('result-name').textContent = name;
-  document.getElementById('result-meta').textContent = `${year}.${month}.${day} | ${selectedGender === 'male' ? (lang==='km'?'ប្រុស':'Male') : (lang==='km'?'ស្រី':'Female')}`;
+  const genderLabel = selectedGender === 'male'
+    ? (lang==='km'?'ប្រុស':lang==='ko'?'남성':'Male')
+    : (lang==='km'?'ស្រី':lang==='ko'?'여성':'Female');
+  document.getElementById('result-meta').textContent = `${year}.${month}.${day} | ${genderLabel}`;
   document.getElementById('result-tabs').innerHTML = '';
   // ===== 점신 스타일 로딩 화면 =====
   const nameDisplay = currentUser ? (currentUser.first_name || currentUser.full_name || 'You') : 'You';
   const loadingTitle = lang === 'km'
     ? `កំពុង​វិភាគ​ជោគជតា​របស់ ${nameDisplay}!`
+    : lang === 'ko'
+    ? `${nameDisplay}님의 운세를 분석하는 중...`
     : `Checking ${nameDisplay}'s fortune!`;
 
   // 광고주 7개 무작위 선택 (Hebron 삭제, 4개 신규 추가)
@@ -2966,8 +3021,6 @@ function animateCounter(elemId, target) {
 
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', async () => {
-  // Set language button: 현재 사용 중인 언어의 국기를 표시 (km=캄보디아 국기, en=미국 국기)
-  document.getElementById('langBtn').textContent = lang === 'km' ? '🇰🇭' : '🇺🇸';
   // 저장된 이메일 자동 입력
   const savedEmail = localStorage.getItem('savedEmail');
   const saveEnabled = localStorage.getItem('saveEmailEnabled');
@@ -3022,6 +3075,8 @@ function initDailyRadarChart(scores) {
   if (!canvas) return;
   const labels = lang === 'km'
     ? ['ទ្រព្យ', 'ស្នេហ៍', 'សុខភាព', 'ការងារ', 'ការ​សិក្សា']
+    : lang === 'ko'
+    ? ['재물', '연애', '건강', '직업', '학업']
     : ['Wealth', 'Love', 'Health', 'Career', 'Study'];
   const data = [
     scores.wealth || 0,

@@ -1,5 +1,5 @@
-// Saju Destiny Service Worker v1.0
-const CACHE_NAME = 'saju-v20260527-compat6-ko';
+// Saju Fortune Service Worker v1.1
+const CACHE_NAME = 'saju-v20260527-ko-fix2';
 const STATIC_ASSETS = ['/', '/index.html', '/manifest.json'];
 
 // 설치
@@ -30,7 +30,7 @@ self.addEventListener('fetch', event => {
 
 // 푸시 알림 수신
 self.addEventListener('push', event => {
-  let data = { title: '🌟 Saju Destiny', body: 'ជោគជតាប្រចាំថ្ងៃរបស់អ្នក', url: '/' };
+  let data = { title: '🌟 Saju Fortune', body: 'ជោគជតាប្រចាំថ្ងៃរបស់អ្នក', url: '/' };
   if (event.data) {
     try { data = { ...data, ...event.data.json() }; } catch(e) {}
   }
@@ -81,7 +81,7 @@ async function sendDailyFortune() {
   try {
     const r = await fetch('/api/v2/today');
     const d = await r.json();
-    await self.registration.showNotification('🌅 ជោគជតាប្រចាំថ្ងៃ — Saju Destiny', {
+    await self.registration.showNotification('🌅 ជោគជតាប្រចាំថ្ងៃ — Saju Fortune', {
       body: `សសរស្ដម្ភថ្ងៃ: ${d.day_pillar || '—'} · ចុចដើម្បីអានបន្ថែម`,
       icon: '/icon-192.png',
       tag: 'daily-fortune',

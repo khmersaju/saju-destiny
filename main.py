@@ -175,7 +175,7 @@ def share_page(share_id: str):
     # OG 메타 이미지 URL (공유 카드 이미지)
     og_img = f"{app_url}/api/v2/share-card-img/{share_id}"
     og_title = f"{name} ការ​ចែក​ជោគជតា​ក្នុង​ប្រព័ន្ធ​សាជូ"
-    og_desc = f"ធាតុ​{dom_km} ({dom_en}) — {birth} · {gender_disp} | Saju Destiny ជោគជតា​ក្នុង​ប្រព័ន្ធ​សាជូ"
+    og_desc = f"ធាតុ​{dom_km} ({dom_en}) — {birth} · {gender_disp} | Saju Fortune ជោគជតា​ក្នុង​ប្រព័ន្ធ​សាជូ"
 
     # 필러 한자 카드 HTML
     pillar_labels = ['YEAR', 'MONTH', 'DAY', 'HOUR']
@@ -215,11 +215,11 @@ def share_page(share_id: str):
     # 데이터 없으면 안내 페이지
     if not sdata.get('name'):
         not_found_html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>Saju Destiny</title></head><body style="font-family:sans-serif;background:#01092b;color:#fff;text-align:center;padding:60px 20px">
+        <title>Saju Fortune</title></head><body style="font-family:sans-serif;background:#01092b;color:#fff;text-align:center;padding:60px 20px">
         <div style="font-size:40px;margin-bottom:16px">✨</div>
-        <div style="font-size:20px;font-weight:700;color:#fade4a;margin-bottom:8px">Saju Destiny</div>
+        <div style="font-size:20px;font-weight:700;color:#fade4a;margin-bottom:8px">Saju Fortune</div>
         <div style="font-size:14px;color:#8a9ab8;margin-bottom:32px">This share link has expired or does not exist.</div>
-        <a href="{app_url}" style="background:#fade4a;color:#01092b;padding:14px 32px;border-radius:14px;font-weight:700;text-decoration:none;font-size:14px">Check My Destiny</a>
+        <a href="{app_url}" style="background:#fade4a;color:#01092b;padding:14px 32px;border-radius:14px;font-weight:700;text-decoration:none;font-size:14px">Check My Fortune</a>
         </body></html>"""
         return HTMLResponse(content=not_found_html)
 
@@ -288,7 +288,7 @@ body{{font-family:'Battambang',sans-serif;background:#01092b;min-height:100vh;co
 <body>
 <div class="wrap">
 <div class="hero">
-  <div class="hero-badge">ជោគជតា​សាជូ · SAJU DESTINY · Cambodia</div>
+  <div class="hero-badge">ជោគជតា​សាជូ · SAJU FORTUNE · Cambodia</div>
   <div class="hero-name">{name}</div>
   <div class="hero-meta">{birth} · {gender_disp}</div>
 </div>
@@ -303,11 +303,11 @@ body{{font-family:'Battambang',sans-serif;background:#01092b;min-height:100vh;co
 </div>
 <div class="reading-wrap">{reading_html}</div>
 <div class="actions">
-  <a href="{app_url}" class="btn btn-primary">🔮 Check My Destiny</a>
+  <a href="{app_url}" class="btn btn-primary">🔮 Check My Fortune</a>
   <a href="{app_url}" class="btn btn-secondary">✨ Open App</a>
 </div>
 <div class="footer">
-  <div class="footer-title">Saju Destiny · Cambodia</div>
+  <div class="footer-title">Saju Fortune · Cambodia</div>
   <div class="footer-sub">Traditional Four Pillars Destiny Reading for Cambodians</div>
 </div>
 </div>

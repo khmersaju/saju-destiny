@@ -216,6 +216,38 @@ def _ai_fortune(prompt: str, max_tokens: int = 600, language: str = "en") -> str
         )
         english_text = resp_en.choices[0].message.content.strip()
 
+        if language == "ko":
+            # ③-ko 한국어 번역
+            translate_prompt_ko = (
+                f"Translate the following Saju fortune reading into natural, fluent Korean (한국어).\n"
+                f"CRITICAL RULES:\n"
+                f"1. Keep Saju technical terms (Four Pillars, Day Master, Wood, Fire, Earth, Metal, Water, Yin, Yang) "
+                f"and add Korean meaning in parentheses, e.g. '사주(四柱)', '오행(五行)', '목(木)'.\n"
+                f"2. Translate ALL other sentences fully into Korean.\n"
+                f"3. Maintain the EXACT same length, depth, and structure as the original.\n"
+                f"4. NEVER truncate, summarize, or omit any part.\n"
+                f"5. Keep the warm, encouraging tone.\n\n"
+                f"Text to translate:\n{english_text}"
+            )
+            resp_ko = c.chat.completions.create(
+                model=AI_MODEL,
+                messages=[
+                    {"role": "system", "content": (
+                        "You are a professional Korean-English bilingual translator specializing in Saju fortune texts. "
+                        "Translate sentences into Korean, keeping Saju technical terms in English with Korean meaning in parentheses. "
+                        "NEVER truncate or skip any sentences. Translate every paragraph completely."
+                    )},
+                    {"role": "user", "content": translate_prompt_ko},
+                ],
+                max_tokens=int(max_tokens * 2.0),
+                temperature=0,
+                seed=42,
+            )
+            korean_text = resp_ko.choices[0].message.content.strip()
+            _FORTUNE_CACHE[cache_key] = korean_text
+            _db_cache_set(cache_key, language, korean_text)
+            return korean_text
+
         if language != "km":
             # 영어 결과 인메모리 + DB 영구 캐시 저장
             _FORTUNE_CACHE[cache_key] = english_text
