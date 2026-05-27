@@ -156,31 +156,34 @@ def _ensure_admin():
     salt = "khmer_destiny_salt_v1"
     admin_email = "khmersaju@gmail.com"
     admin_pw_hash = hashlib.sha256(f"{salt}lucky815!".encode()).hexdigest()
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT id, tier FROM users WHERE email = ?", (admin_email,))
-    row = c.fetchone()
-    if row:
-        # 이미 존재하면 tier를 admin으로 업데이트
-        c.execute("UPDATE users SET tier='admin', password_hash=? WHERE email=?",
-                  (admin_pw_hash, admin_email))
-        print(f"[Admin] Updated tier to admin for {admin_email}")
-    else:
-        # 없으면 새로 생성
-        ref_code = secrets.token_hex(4).upper()
-        c.execute("""
-            INSERT INTO users (email, password_hash, full_name, first_name, last_name,
-                gender, birth_year, birth_month, birth_day,
-                city, language_pref, tier, referral_code)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
-        """, (
-            admin_email, admin_pw_hash, 'Admin', 'Admin', 'Khmer Saju',
-            'Male', 1990, 1, 1,
-            'Phnom Penh', 'en', 'admin', ref_code
-        ))
-        print(f"[Admin] Created admin account: {admin_email}")
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT id, tier FROM users WHERE email = ?", (admin_email,))
+        row = c.fetchone()
+        if row:
+            # 이미 존재하면 tier를 admin으로 업데이트
+            c.execute("UPDATE users SET tier='admin', password_hash=? WHERE email=?",
+                      (admin_pw_hash, admin_email))
+            print(f"[Admin] Updated tier to admin for {admin_email}")
+        else:
+            # 없으면 새로 생성
+            ref_code = secrets.token_hex(4).upper()
+            c.execute("""
+                INSERT INTO users (email, password_hash, full_name, first_name, last_name,
+                    gender, birth_year, birth_month, birth_day,
+                    city, language_pref, tier, referral_code)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+            """, (
+                admin_email, admin_pw_hash, 'Admin', 'Admin', 'Khmer Saju',
+                'male', 1990, 1, 1,
+                'Phnom Penh', 'en', 'admin', ref_code
+            ))
+            print(f"[Admin] Created admin account: {admin_email}")
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"[Admin] Error: {e}")
 
 _ensure_admin()
 
