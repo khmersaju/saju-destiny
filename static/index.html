@@ -1649,9 +1649,15 @@ function applyLang() {
   document.getElementById('lbl-reg-gender').textContent = L.lbl_reg_gender;
   document.getElementById('lbl-location').textContent = L.lbl_location;
   document.getElementById('lbl-reg-city').textContent = L.lbl_reg_city;
-  document.getElementById('lbl-occupation').textContent = L.lbl_occupation;
-  document.getElementById('lbl-interests').textContent = L.lbl_interests;
-  document.getElementById('lbl-referral').textContent = L.lbl_referral;
+  // lbl-occupation: span 구조 보존하면서 텍스트만 교체
+  const occLabel = document.getElementById('lbl-occ-text');
+  if (occLabel) occLabel.textContent = lang === 'km' ? 'មុខរបរ *' : lang === 'ko' ? '직업 *' : 'Occupation *';
+  // lbl-interests: 직접 텍스트 교체
+  const intLabel = document.getElementById('lbl-interests');
+  if (intLabel) intLabel.textContent = lang === 'km' ? '💫 ចំណាប់អារម្មណ៍ *' : lang === 'ko' ? '💫 관심사 *' : '💫 Interests *';
+  // lbl-referral: span 구조 보존
+  const refText = document.getElementById('lbl-ref-text');
+  if (refText) refText.textContent = lang === 'km' ? 'លេខកូដណែនាំ' : lang === 'ko' ? '추천 코드' : 'Referral Code';
   document.getElementById('profile-title').textContent = L.profile_title;
   document.getElementById('push-title').textContent = L.push_title;
   document.getElementById('push-sub').textContent = L.push_sub;

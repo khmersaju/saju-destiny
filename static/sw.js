@@ -1,5 +1,5 @@
 // Saju Fortune Service Worker v1.1
-const CACHE_NAME = 'saju-v3-i18n-fix2';
+const CACHE_NAME = 'saju-v4-i18n-fix';
 const STATIC_ASSETS = ['/', '/index.html', '/manifest.json'];
 
 // 설치
