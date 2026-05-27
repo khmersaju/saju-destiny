@@ -104,6 +104,11 @@ class CompatibilityInput(BaseModel):
     person_a: BirthInput
     person_b: BirthInput
     language: str = Field(default="en")
+    compat_type: str = Field(default="love", description="love|business|friendship|study|work|family")
+    person_a_occupation: Optional[str] = Field(default=None)
+    person_a_interests: Optional[str] = Field(default=None)
+    person_b_occupation: Optional[str] = Field(default=None)
+    person_b_interests: Optional[str] = Field(default=None)
 
 
 class LuckyDaysInput(BaseModel):
@@ -258,6 +263,29 @@ def _ai_fortune(prompt: str, max_tokens: int = 600, language: str = "en") -> str
 
     except Exception as e:
         return f"[Fortune reading temporarily unavailable: {str(e)[:60]}]"
+
+
+def _get_type_scores(compat: dict, compat_type: str) -> dict:
+    """궁합 유형별 세분화 점수 반환 (30~100)"""
+    base = compat['score']
+    love = compat.get('love_score', base)
+    marriage = compat.get('marriage_score', base)
+    business = compat.get('business_score', base)
+    friendship = compat.get('friendship_score', base)
+    # study, work, family 점수 파생
+    study = max(30, min(100, base + (5 if compat.get('animal_bonus', 0) >= 0 else -8)))
+    work = max(30, min(100, business - 4))
+    family = max(30, min(100, base + (8 if compat.get('animal_bonus', 0) > 0 else -4)))
+
+    scores_map = {
+        'love': {'main': love, 'sub': {'Romance': love, 'Marriage': marriage, 'Communication': max(30, min(100, base+3)), 'Trust': max(30, min(100, base-2))}},
+        'business': {'main': business, 'sub': {'Leadership': max(30, min(100, business+3)), 'Finance': max(30, min(100, business-5)), 'Strategy': max(30, min(100, business+2)), 'Communication': max(30, min(100, base-3))}},
+        'friendship': {'main': friendship, 'sub': {'Chemistry': friendship, 'Support': max(30, min(100, friendship+4)), 'Fun': max(30, min(100, friendship+6)), 'Loyalty': max(30, min(100, base-2))}},
+        'study': {'main': study, 'sub': {'Focus': study, 'Motivation': max(30, min(100, study+5)), 'Collaboration': max(30, min(100, study-3)), 'Balance': max(30, min(100, base))}},
+        'work': {'main': work, 'sub': {'Teamwork': work, 'Productivity': max(30, min(100, work+4)), 'Conflict': max(30, min(100, work-6)), 'Growth': max(30, min(100, work+3))}},
+        'family': {'main': family, 'sub': {'Harmony': family, 'Support': max(30, min(100, family+5)), 'Understanding': max(30, min(100, base-3)), 'Bond': max(30, min(100, family+2))}},
+    }
+    return scores_map.get(compat_type, scores_map['love'])
 
 
 def _build_chart_summary(chart: dict, name: str = "", gender: str = "male") -> str:
@@ -581,24 +609,110 @@ async def get_compatibility(data: CompatibilityInput):
         f"{data.person_b.name or 'Person B'}'s {elem_b} Day Master."
     )
 
-    prompt = (
-        f"Person A ({data.person_a.gender.upper()}):\n{summary_a}\n"
-        f"Person B ({data.person_b.gender.upper()}):\n{summary_b}\n"
-        f"Compatibility Score: {compat['score']}/100\n"
-        f"Relationship Type: {compat['relation']}\n"
-        f"Elemental Interaction: {elem_interaction}\n\n"
-        f"Provide a detailed compatibility reading UNIQUE to these two specific charts. "
-        f"Reference their actual Day Master elements and how they interact (generate/control/neutral). "
-        f"Include: overall compatibility based on their elements, emotional connection, communication style, "
-        f"financial harmony, family life potential, and challenges to overcome. "
-        f"Add Cambodian cultural perspective (family approval, auspicious wedding timing). "
-        f"Write 4 paragraphs."
-    )
-    ai_text = _ai_fortune(prompt, max_tokens=1000, language=data.language)
+    # 궁합 유형별 점수 세분화
+    compat_type = getattr(data, 'compat_type', 'love')
+    type_scores = _get_type_scores(compat, compat_type)
+
+    # 직업/관심사 컨텍스트
+    occ_a = getattr(data, 'person_a_occupation', None) or ''
+    int_a = getattr(data, 'person_a_interests', None) or ''
+    occ_b = getattr(data, 'person_b_occupation', None) or ''
+    int_b = getattr(data, 'person_b_interests', None) or ''
+    occ_ctx = ''
+    if occ_a or occ_b:
+        occ_ctx = f"\nOccupation context: {data.person_a.name} is {occ_a or 'unknown occupation'}, {data.person_b.name} is {occ_b or 'unknown occupation'}."
+    if int_a or int_b:
+        occ_ctx += f"\nInterests: {data.person_a.name} interests: {int_a or 'not specified'}; {data.person_b.name} interests: {int_b or 'not specified'}."
+
+    # 유형별 프롬프트
+    type_prompts = {
+        'love': (
+            f"This is a LOVE & MARRIAGE compatibility reading.\n"
+            f"Person A ({data.person_a.gender.upper()}, {data.person_a.name}):\n{summary_a}\n"
+            f"Person B ({data.person_b.gender.upper()}, {data.person_b.name}):\n{summary_b}\n"
+            f"Compatibility Score: {type_scores['main']}/100\n"
+            f"Elemental Interaction: {elem_interaction}{occ_ctx}\n\n"
+            f"Write a detailed LOVE & MARRIAGE compatibility reading (5 paragraphs) covering:\n"
+            f"1. Emotional chemistry and romantic attraction based on their Five Elements\n"
+            f"2. Communication style and understanding each other's needs\n"
+            f"3. Long-term marriage potential, family life, and children\n"
+            f"4. Financial harmony and shared life goals\n"
+            f"5. Specific improvement advice: if score is below 65, give 3 concrete actions they can take to overcome elemental clashes and build a stronger bond. If score is above 65, give 3 tips to deepen their connection. Be honest — not all pairings are ideal."
+        ),
+        'business': (
+            f"This is a BUSINESS PARTNERSHIP compatibility reading.\n"
+            f"Person A ({data.person_a.gender.upper()}, {data.person_a.name}):\n{summary_a}\n"
+            f"Person B ({data.person_b.gender.upper()}, {data.person_b.name}):\n{summary_b}\n"
+            f"Compatibility Score: {type_scores['main']}/100\n"
+            f"Elemental Interaction: {elem_interaction}{occ_ctx}\n\n"
+            f"Write a detailed BUSINESS PARTNERSHIP compatibility reading (5 paragraphs) covering:\n"
+            f"1. Leadership styles and decision-making compatibility\n"
+            f"2. Financial energy and wealth-building potential together\n"
+            f"3. Risk tolerance and strategic thinking alignment\n"
+            f"4. Communication in professional settings and conflict resolution\n"
+            f"5. Specific advice: if score below 65, give 3 concrete strategies to compensate for elemental clashes in business. If above 65, give 3 ways to maximize their business synergy. Reference their actual elements."
+        ),
+        'friendship': (
+            f"This is a FRIENDSHIP compatibility reading.\n"
+            f"Person A ({data.person_a.gender.upper()}, {data.person_a.name}):\n{summary_a}\n"
+            f"Person B ({data.person_b.gender.upper()}, {data.person_b.name}):\n{summary_b}\n"
+            f"Compatibility Score: {type_scores['main']}/100\n"
+            f"Elemental Interaction: {elem_interaction}{occ_ctx}\n\n"
+            f"Write a detailed FRIENDSHIP compatibility reading (5 paragraphs) covering:\n"
+            f"1. Natural chemistry and ease of connection\n"
+            f"2. Shared interests and activities they would enjoy together\n"
+            f"3. How they support each other during difficult times\n"
+            f"4. Potential friction points and misunderstandings\n"
+            f"5. Practical tips to maintain and strengthen this friendship. If score below 60, explain honestly why this friendship requires extra effort and what specific actions can help."
+        ),
+        'study': (
+            f"This is a STUDY PARTNER compatibility reading.\n"
+            f"Person A ({data.person_a.gender.upper()}, {data.person_a.name}):\n{summary_a}\n"
+            f"Person B ({data.person_b.gender.upper()}, {data.person_b.name}):\n{summary_b}\n"
+            f"Compatibility Score: {type_scores['main']}/100\n"
+            f"Elemental Interaction: {elem_interaction}{occ_ctx}\n\n"
+            f"Write a detailed STUDY PARTNER compatibility reading (5 paragraphs) covering:\n"
+            f"1. Learning styles and intellectual compatibility based on their elements\n"
+            f"2. Motivation and focus energy — do they energize or distract each other?\n"
+            f"3. Strengths each person brings to academic collaboration\n"
+            f"4. Potential study conflicts (e.g., pace differences, subject preferences)\n"
+            f"5. Specific study strategies for this pairing. If score below 60, give honest advice on whether they should study together or separately, and how to compensate for incompatibilities."
+        ),
+        'work': (
+            f"This is a WORK COLLEAGUE compatibility reading.\n"
+            f"Person A ({data.person_a.gender.upper()}, {data.person_a.name}):\n{summary_a}\n"
+            f"Person B ({data.person_b.gender.upper()}, {data.person_b.name}):\n{summary_b}\n"
+            f"Compatibility Score: {type_scores['main']}/100\n"
+            f"Elemental Interaction: {elem_interaction}{occ_ctx}\n\n"
+            f"Write a detailed WORK COLLEAGUE compatibility reading (5 paragraphs) covering:\n"
+            f"1. Work styles and professional energy compatibility\n"
+            f"2. Team dynamics — who leads, who supports, and how they divide tasks\n"
+            f"3. Stress responses and how they handle workplace pressure together\n"
+            f"4. Career growth potential as colleagues or collaborators\n"
+            f"5. Workplace advice: if score below 60, give 3 specific strategies to avoid professional conflicts. If above 60, give 3 ways to leverage their elemental synergy at work."
+        ),
+        'family': (
+            f"This is a FAMILY BOND compatibility reading.\n"
+            f"Person A ({data.person_a.gender.upper()}, {data.person_a.name}):\n{summary_a}\n"
+            f"Person B ({data.person_b.gender.upper()}, {data.person_b.name}):\n{summary_b}\n"
+            f"Compatibility Score: {type_scores['main']}/100\n"
+            f"Elemental Interaction: {elem_interaction}{occ_ctx}\n\n"
+            f"Write a detailed FAMILY BOND compatibility reading (5 paragraphs) covering:\n"
+            f"1. Natural family roles and how their elements define their relationship (parent-child, siblings, etc.)\n"
+            f"2. Emotional support and nurturing dynamics between them\n"
+            f"3. Generational or personality gaps and how elements explain them\n"
+            f"4. Family harmony — shared values, traditions, and Cambodian family culture\n"
+            f"5. Advice for strengthening family bonds: if score below 60, give specific actions to heal elemental conflicts. If above 60, give tips to deepen family connection."
+        ),
+    }
+    prompt = type_prompts.get(compat_type, type_prompts['love'])
+    ai_text = _ai_fortune(prompt, max_tokens=1200, language=data.language)
 
     return {
         "success": True,
         "compatibility": compat,
+        "compat_type": compat_type,
+        "type_scores": type_scores,
         "chart_a": chart_a,
         "chart_b": chart_b,
         "ai_reading": ai_text,

@@ -29,7 +29,7 @@ else:
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 SECRET_KEY = os.getenv("JWT_SECRET", "khmer-destiny-secret-2025-change-in-prod")
-TOKEN_EXPIRE_DAYS = 30
+TOKEN_EXPIRE_DAYS = 90  # 90일 유지 (자동 로그아웃 방지)
 
 # ── DB 초기화 ──
 def init_db():

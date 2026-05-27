@@ -357,7 +357,11 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
     <span id="topbar-sub">ជោគជតា ប្រពៃណី</span>
   </div>
   <div class="topbar-right">
-    <button class="lang-btn" onclick="toggleLang()" id="langBtn" title="Switch Language">🇰🇭</button>
+    <div style="display:flex;gap:4px;align-items:center">
+      <button class="lang-btn" onclick="setLang('km')" id="langBtnKm" title="ភាសាខ្មែរ" style="font-size:22px;opacity:1">🇰🇭</button>
+      <button class="lang-btn" onclick="setLang('en')" id="langBtnEn" title="English" style="font-size:22px;opacity:0.4">🇺🇸</button>
+      <button class="lang-btn" onclick="setLang('ko')" id="langBtnKo" title="한국어" style="font-size:22px;opacity:0.4">🇰🇷</button>
+    </div>
     <div id="topUserBtn"></div>
   </div>
 </div>
@@ -566,6 +570,19 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
         <option value="Other">Other Region</option>
         <option value="Overseas">Overseas</option>
       </select>
+    </div>
+
+    <!-- COMPAT TYPE SELECTOR -->
+    <div id="compat-type-selector" style="display:none;margin-bottom:16px">
+      <div class="auth-sec-title" id="lbl-compat-type">Choose Compatibility Type</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+        <button class="compat-type-btn active" id="ctbtn-love" onclick="setCompatType('love')" style="background:#1a1a2e;border:2px solid #f0b429;color:#f0b429;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" id="lbl-ct-love">💑 Love &amp;<br>Marriage</button>
+        <button class="compat-type-btn" id="ctbtn-business" onclick="setCompatType('business')" style="background:#1a1a2e;border:2px solid #555;color:#ccc;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💼 Business<br>Partner</button>
+        <button class="compat-type-btn" id="ctbtn-friendship" onclick="setCompatType('friendship')" style="background:#1a1a2e;border:2px solid #555;color:#ccc;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🤝 Friend-<br>ship</button>
+        <button class="compat-type-btn" id="ctbtn-study" onclick="setCompatType('study')" style="background:#1a1a2e;border:2px solid #555;color:#ccc;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">📚 Study<br>Partner</button>
+        <button class="compat-type-btn" id="ctbtn-work" onclick="setCompatType('work')" style="background:#1a1a2e;border:2px solid #555;color:#ccc;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🏢 Work<br>Colleague</button>
+        <button class="compat-type-btn" id="ctbtn-family" onclick="setCompatType('family')" style="background:#1a1a2e;border:2px solid #555;color:#ccc;border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">👨‍👩‍👧 Family<br>Bond</button>
+      </div>
     </div>
 
     <!-- COMPAT EXTRA -->
@@ -1090,9 +1107,12 @@ const API = window.location.origin;  // 같은 서버에서 API 서빙
       : [navigator.language || navigator.userLanguage || 'en'];
     // 크메르어 언어 코드: km, km-KH
     const isKhmer = browserLangs.some(l => l && (l.toLowerCase().startsWith('km')));
-    // 캄보디아 지역 설정도 크메르어로 처리
     const isKH = browserLangs.some(l => l && l.toLowerCase().includes('kh'));
-    localStorage.setItem('lang', (isKhmer || isKH) ? 'km' : 'en');
+    const isKorean = browserLangs.some(l => l && l.toLowerCase().startsWith('ko'));
+    let detectedLang = 'en';
+    if (isKhmer || isKH) detectedLang = 'km';
+    else if (isKorean) detectedLang = 'ko';
+    localStorage.setItem('lang', detectedLang);
   }
 })();
 let lang = localStorage.getItem('lang') || 'km';
@@ -1101,6 +1121,7 @@ let selectedGender = 'male';
 let selectedPGender = 'male';
 let selectedRGender = '';
 let selectedInterests = [];
+let selectedCompatType = 'love';
 let authToken = localStorage.getItem('authToken') || '';
 let currentUser = null;
 
@@ -1351,17 +1372,143 @@ const TR = {
     fp_err_code: 'Invalid or expired code',
     fp_err_pwmatch: 'Passwords do not match',
     fp_err_pwshort: 'Password must be at least 6 characters',
+  },
+  ko: {
+    topbar_sub: '사주 포춘 — 사주 풀이',
+    hero_badge: '✦ Saju Fortune × 캄보디아 ✦',
+    hero_title: 'Saju Fortune',
+    hero_sub: '사주 분석 — 년 · 월 · 일 · 시',
+    hero_desc: '사주(四柱)는 태어난 년, 월, 일, 시를 기반으로 운명과 성격, 인생 경로를 분석하는 전통 동양 철학입니다. 오행(목·화·토·금·수)과 음양의 균형이 당신의 운세를 보여줍니다.',
+    stat_visits_label: '총 방문자 수',
+    stat_years_label: '전통의 역사',
+    stat_ai_label: '정밀 분석',
+    stat_free_label: '무료 이용',
+    today_label: '오늘',
+    today_date_label: '날짜',
+    sec_fortune: '운세 보기',
+    sec_special: '특별 메뉴',
+    menu_lifetime: '평생\n운세',
+    menu_yearly: '2026년\n운세',
+    menu_monthly: '월별\n운세',
+    menu_daily: '일별\n운세',
+    menu_compat: '궁합\n보기',
+    menu_lucky_days: '길일\n찾기',
+    menu_lucky_profile: '색깔 &\n방향',
+    menu_lifestage: '인생\n단계',
+    promo_text: '프리미엄 멤버십',
+    promo_sub: '상세 분석 + 전문가 상담',
+    promo_btn: '가입하기',
+    lbl_name: '이름',
+    lbl_birth: '생년월일 (양력)',
+    lbl_time: '태어난 시간 (30분 단위)',
+    lbl_gender: '성별',
+    lbl_city: '도시',
+    lbl_partner: '상대방 정보',
+    lbl_p_name: '상대방 이름',
+    lbl_p_birth: '상대방 생년월일',
+    lbl_p_gender: '상대방 성별',
+    submit_btn: '🔮 운세 보기',
+    time_note: '* 정확한 출생 시간을 입력하면 더 정밀한 결과를 얻을 수 있습니다',
+    nav_home: '홈', nav_fortune: '운세', nav_compat: '궁합', nav_lucky: '길일', nav_profile: '계정',
+    auth_title: '계정', auth_sub: '로그인 또는 회원가입',
+    lbl_login: '로그인', lbl_register: '회원가입',
+    lbl_login_btn: '로그인',
+    lbl_reg_btn: '✨ 무료 회원가입',
+    auth_note_login: '계정이 없으신가요?',
+    go_reg: '무료 회원가입',
+    go_login: '로그인',
+    lbl_personal: '👤 개인 정보',
+    lbl_lastname: '성 *',
+    lbl_firstname: '이름 *',
+    lbl_phone: '📱 전화번호 *',
+    lbl_birth_info: '🎂 생년월일 정보',
+    lbl_reg_birth: '생년월일',
+    lbl_reg_gender: '성별',
+    lbl_location: '📍 위치',
+    lbl_reg_city: '도시',
+    lbl_occupation: '💼 직업 *',
+    lbl_interests: '💫 관심사 *',
+    lbl_referral: '추천 코드',
+    profile_title: '내 계정',
+    push_title: '🔔 일일 운세 알림',
+    push_sub: '매일 아침 오늘의 운세를 받아보세요',
+    push_allow: '✅ 허용',
+    push_deny: '나중에',
+    tab_chart: '📊 사주 차트',
+    tab_reading: '🔮 운세 풀이',
+    tab_lifestage: '🌱 인생 단계',
+    tab_daeun: '🔄 대운',
+    tab_monthly: '📅 월별',
+    tab_compat: '💑 궁합',
+    tab_lucky_days: '📆 길일',
+    tab_lucky_profile: '🎨 행운 프로필',
+    loading: '분석 중...',
+    err_login: '먼저 로그인해 주세요',
+    err_fill: '필수 항목을 입력해 주세요',
+    err_conn: '연결 오류가 발생했습니다. 다시 시도해 주세요',
+    reg_ok: '회원가입 완료! 환영합니다!',
+    login_ok: '로그인 성공! 환영합니다!',
+    logout_ok: '로그아웃 되었습니다',
+    lbl_login_email: '📧 이메일 *',
+    lbl_login_pw: '🔒 비밀번호 *',
+    err_email_pw: '이메일과 비밀번호를 입력해 주세요',
+    err_firstname: '이름을 입력해 주세요',
+    err_lastname: '성을 입력해 주세요',
+    err_phone: '전화번호를 입력해 주세요',
+    tier_free: 'FREE 회원',
+    tier_premium: 'PREMIUM 회원',
+    logout: '로그아웃',
+    ad_title: '광고 보기',
+    ad_sub: '광고 1개를 보고 일일 운세를 이용하세요',
+    ad_watch: '▶ 광고 보기 (30초)',
+    mode_lifetime: '평생 운세',
+    mode_yearly: '2026년 운세',
+    mode_monthly: '월별 운세',
+    mode_daily: '일별 운세',
+    mode_compat: '궁합 보기',
+    mode_lucky_days: '길일 찾기',
+    mode_lucky_profile: '행운 프로필',
+    input_sub: '생년월일 정보를 입력하세요',
+    share_title: '📤 운세 공유하기',
+    share_cancel: '취소',
+    share_copy_lbl: '링크 복사',
+    lnk_privacy: '개인정보처리방침',
+    lnk_terms: '이용약관',
+    lnk_contact: '문의하기',
+    lbl_forgot_pw: '비밀번호를 잊으셨나요?',
+    fp_title1: '비밀번호 찾기',
+    fp_desc1: '이메일을 입력하면 인증 코드를 보내드립니다',
+    fp_email_lbl: '이메일',
+    fp_send_btn: '코드 전송',
+    fp_title2: '인증 코드 확인',
+    fp_code_note: '인증 코드 (10분간 유효)',
+    fp_code_hint: '* 실제 서비스에서는 이메일로 코드가 전송됩니다',
+    fp_code_lbl: '🔢 6자리 코드 입력',
+    fp_verify_btn: '확인',
+    fp_title3: '새 비밀번호',
+    fp_verified_msg: '✓ 코드가 확인되었습니다',
+    fp_newpw_lbl: '🔒 새 비밀번호 (최소 6자)',
+    fp_confirmpw_lbl: '🔒 비밀번호 확인',
+    fp_reset_btn: '비밀번호 변경',
+    fp_reset_ok: '비밀번호가 성공적으로 변경되었습니다!',
+    fp_err_notfound: '이메일을 찾을 수 없습니다',
+    fp_err_code: '코드가 올바르지 않거나 만료되었습니다',
+    fp_err_pwmatch: '비밀번호가 일치하지 않습니다',
+    fp_err_pwshort: '비밀번호는 최소 6자 이상이어야 합니다',
   }
 };
 
 function t(k) { return (TR[lang] || TR.km)[k] || k; }
 
 // ===== LANGUAGE =====
-function toggleLang() {
-  lang = lang === 'km' ? 'en' : 'km';
+function toggleLang() { setLang(lang === 'km' ? 'en' : lang === 'en' ? 'ko' : 'km'); }
+function setLang(l) {
+  lang = l;
   localStorage.setItem('lang', lang);
-  // 현재 사용 중인 언어의 국기를 표시 (km=캄보디아 국기, en=미국 국기)
-  document.getElementById('langBtn').textContent = lang === 'km' ? '🇰🇭' : '🇺🇸';
+  ['km','en','ko'].forEach(code => {
+    const btn = document.getElementById('langBtn' + code.charAt(0).toUpperCase() + code.slice(1));
+    if (btn) btn.style.opacity = code === lang ? '1' : '0.4';
+  });
   applyLang();
 }
 
@@ -1666,6 +1813,8 @@ function openMode(mode) {
   document.getElementById('input-title').textContent = modeLabels[mode] || mode;
   document.getElementById('input-sub').textContent = L.input_sub;
   document.getElementById('compat-extra').style.display = mode === 'compatibility' ? 'block' : 'none';
+  document.getElementById('compat-type-selector').style.display = mode === 'compatibility' ? 'block' : 'none';
+  if (mode === 'compatibility') { selectedCompatType = 'love'; setCompatType('love'); }
   document.getElementById('fg-time').style.display = ['compatibility','lucky_days','lucky_profile'].includes(mode) ? 'none' : 'block';
   autoFillFromUser();
   showScreen('input');
@@ -1716,6 +1865,23 @@ function setRGender(g) {
   selectedRGender = g;
   document.getElementById('rgMale').classList.toggle('active', g === 'male');
   document.getElementById('rgFemale').classList.toggle('active', g === 'female');
+}
+
+// ===== COMPAT TYPE =====
+function setCompatType(type) {
+  selectedCompatType = type;
+  const types = ['love','business','friendship','study','work','family'];
+  types.forEach(t => {
+    const btn = document.getElementById('ctbtn-' + t);
+    if (!btn) return;
+    if (t === type) {
+      btn.style.borderColor = '#f0b429';
+      btn.style.color = '#f0b429';
+    } else {
+      btn.style.borderColor = '#555';
+      btn.style.color = '#ccc';
+    }
+  });
 }
 
 // ===== INTERESTS =====
@@ -1985,7 +2151,8 @@ async function submitFortune() {
           birth_hour: 12, birth_minute: 0,
           gender: selectedPGender, city, language: lang
         },
-        language: lang
+        language: lang,
+        compat_type: selectedCompatType
       };
     } else if (currentMode === 'lucky_days') {
       endpoint = '/api/v2/lucky-days';
@@ -2374,7 +2541,20 @@ function buildCompat(data) {
   const pB = window._compatPersonB || {};
   const genderLabel = (g) => {
     if (lang === 'km') return g === 'male' ? '\u1794\u17d2\u179a\u17bb\u179f' : '\u179f\u17d2\u178f\u17d0';
+    if (lang === 'ko') return g === 'male' ? '\ub0a8\uc131' : '\uc5ec\uc131';
     return g === 'male' ? 'Male' : 'Female';
+  };
+  const compatTypeLabel = () => {
+    const labels = {
+      love: {km:'\u179f\u17d2\u1793\u17c1\u17a0\u17b6 & \u17a2\u17b6\u1796\u17b6\u17a0\u17cd', en:'Love & Marriage', ko:'\uc5f0\uc560 & \uacb0\ud63c'},
+      business: {km:'\u178f\u17d0\u1780\u17b6\u179a\u17a2\u17b6\u1787\u17b8\u1796', en:'Business Partner', ko:'\ube44\uc988\ub2c8\uc2a4'},
+      friendship: {km:'\u1798\u17b7\u178f\u17d2\u178f\u1797\u17b6\u1796', en:'Friendship', ko:'\uc6b0\uc815'},
+      study: {km:'\u178f\u17d0\u1780\u17b6\u179a\u179f\u17b7\u1780\u17d2\u179f\u17b6', en:'Study Partner', ko:'\ud559\uc5c5'},
+      work: {km:'\u178f\u17d0\u1780\u17b6\u179a\u1780\u17b6\u179a\u1784\u17b6\u179a', en:'Work Colleague', ko:'\uc9c1\uc7a5'},
+      family: {km:'\u1780\u17d2\u179a\u17bd\u179f\u17b6\u179a', en:'Family Bond', ko:'\uac00\uc871'}
+    };
+    const t = labels[selectedCompatType] || labels.love;
+    return t[lang] || t.en;
   };
   const personCard = (pA.name && pB.name) ? `
     <div style="display:flex;gap:10px;margin-bottom:16px;align-items:stretch">
@@ -2400,6 +2580,9 @@ function buildCompat(data) {
       <div class="score-bar-wrap"><div class="score-bar" style="width:${s}%"></div></div>`).join('')}
     </div>` : '';
   return `<div class="info-card">
+    <div style="text-align:center;margin-bottom:12px">
+      <span style="background:rgba(250,222,74,0.15);border:1px solid #fade4a;border-radius:20px;padding:5px 14px;font-size:13px;color:#fade4a;font-weight:700">${compatTypeLabel()}</span>
+    </div>
     ${personCard}
     <div class="compat-score-circle" style="background:linear-gradient(135deg,${color},${color}aa)">
       <div class="compat-score-num">${score}</div>
@@ -2722,10 +2905,19 @@ async function loadUser() {
     const r = await fetch(`${API}/api/v2/auth/me`, {
       headers: {'Authorization': `Bearer ${authToken}`}
     });
+    if (r.status === 401) {
+      // 명시적 인증 실패 시에만 로그아웃 (네트워크 오류는 무시)
+      authToken = ''; localStorage.removeItem('authToken');
+      return;
+    }
     const d = await r.json();
-    if (d.id) { currentUser = d; updateTopBtn(); }
-    else { authToken = ''; localStorage.removeItem('authToken'); }
-  } catch(e) {}
+    if (d.user) { currentUser = d.user; updateTopBtn(); }
+    else if (d.id) { currentUser = d; updateTopBtn(); }
+    // 기타 오류(서버 오류 등)는 로그아웃하지 않고 토큰 유지
+  } catch(e) {
+    // 네트워크 오류 시 토큰 유지 (자동 로그아웃 방지)
+    console.log('[loadUser] Network error, keeping token:', e.message);
+  }
 }
 
 // ===== VISIT COUNTER =====
@@ -2793,7 +2985,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   populateDays('rDay');
   populateYears('pYear', 1930, 2010);
   populateDays('pDay');
-  // Apply language
+  // Apply language + init lang buttons
+  ['km','en','ko'].forEach(code => {
+    const btn = document.getElementById('langBtn' + code.charAt(0).toUpperCase() + code.slice(1));
+    if (btn) btn.style.opacity = code === lang ? '1' : '0.4';
+  });
   applyLang();
   // Load user
   await loadUser();
