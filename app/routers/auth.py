@@ -150,6 +150,40 @@ def init_db():
 
 init_db()
 
+def _ensure_admin():
+    """관리자 계정이 없으면 자동 생성"""
+    import hashlib
+    salt = "khmer_destiny_salt_v1"
+    admin_email = "khmersaju@gmail.com"
+    admin_pw_hash = hashlib.sha256(f"{salt}lucky815!".encode()).hexdigest()
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT id, tier FROM users WHERE email = ?", (admin_email,))
+    row = c.fetchone()
+    if row:
+        # 이미 존재하면 tier를 admin으로 업데이트
+        c.execute("UPDATE users SET tier='admin', password_hash=? WHERE email=?",
+                  (admin_pw_hash, admin_email))
+        print(f"[Admin] Updated tier to admin for {admin_email}")
+    else:
+        # 없으면 새로 생성
+        ref_code = secrets.token_hex(4).upper()
+        c.execute("""
+            INSERT INTO users (email, password_hash, full_name, first_name, last_name,
+                gender, birth_year, birth_month, birth_day,
+                city, language_pref, tier, referral_code)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+        """, (
+            admin_email, admin_pw_hash, 'Admin', 'Admin', 'Khmer Saju',
+            'Male', 1990, 1, 1,
+            'Phnom Penh', 'en', 'admin', ref_code
+        ))
+        print(f"[Admin] Created admin account: {admin_email}")
+    conn.commit()
+    conn.close()
+
+_ensure_admin()
+
 # ── 유틸 ──
 def hash_password(pw: str) -> str:
     salt = "khmer_destiny_salt_v1"
@@ -616,3 +650,80 @@ async def get_share(code: str):
     try: d['five_elements'] = _json.loads(d['five_elements'] or '{}')
     except: d['five_elements'] = {}
     return {"success": True, "data": d}
+
+
+# ── 관리자 전용: 사용자 목록 내보내기 ──
+import csv, io
+from fastapi.responses import StreamingResponse
+
+@router.get("/admin/export-users")
+async def export_users(user: dict = Depends(require_user)):
+    """관리자 전용 — 전체 회원 목록을 CSV로 내보내기"""
+    if user.get("tier") != "admin":
+        raise HTTPException(status_code=403, detail="Admin only")
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("""
+        SELECT
+            id, email, first_name, last_name,
+            phone, gender,
+            birth_year, birth_month, birth_day, birth_hour, birth_minute,
+            city, province, occupation, language_pref,
+            tier, is_active, email_verified,
+            created_at, last_login, login_count,
+            referral_code, referred_by, notes
+        FROM users
+        ORDER BY created_at DESC
+    """)
+    rows = c.fetchall()
+    conn.close()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    # 헤더
+    writer.writerow([
+        "ID", "Email", "First Name", "Last Name",
+        "Phone", "Gender",
+        "Birth Year", "Birth Month", "Birth Day", "Birth Hour", "Birth Minute",
+        "City", "Province", "Occupation", "Language",
+        "Tier", "Active", "Email Verified",
+        "Created At", "Last Login", "Login Count",
+        "Referral Code", "Referred By", "Notes"
+    ])
+    for row in rows:
+        writer.writerow(list(row))
+
+    output.seek(0)
+    filename = f"saju_fortune_users_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+
+@router.get("/admin/users-json")
+async def list_users_json(user: dict = Depends(require_user)):
+    """관리자 전용 — 전체 회원 목록 JSON 반환"""
+    if user.get("tier") != "admin":
+        raise HTTPException(status_code=403, detail="Admin only")
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("""
+        SELECT
+            id, email, first_name, last_name,
+            phone, gender,
+            birth_year, birth_month, birth_day,
+            city, province, occupation, language_pref,
+            tier, is_active, created_at, last_login, login_count,
+            referral_code, referred_by
+        FROM users
+        ORDER BY created_at DESC
+    """)
+    rows = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return {"total": len(rows), "users": rows}
