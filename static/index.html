@@ -508,7 +508,7 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
   <!-- AD BANNER HOME -->
   <div class="ad-banner-wrap" id="ad-banner-home">
     <a href="https://www.facebook.com/share/p/1CkVgw1TJD/" target="_blank" rel="noopener noreferrer" class="ad-banner">
-      <img src="/static/ad_banner_kground.jpg" alt="The K Ground &amp; G-mart" loading="lazy" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:contain !important">
+      <img src="/static/ad_banner_kground.jpg" alt="The K Ground &amp; G-mart" loading="eager" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:contain !important">
       <span class="ad-banner-label">AD</span>
       <div class="ad-banner-caption"><div class="ad-banner-caption-text">The K Ground & G-mart</div></div>
     </a>
@@ -760,38 +760,38 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
         <label class="fl" id="lbl-occupation">💼 <span id="lbl-occ-text">មុខរបរ *</span></label>
         <p style="font-size:11px;color:#888;margin:2px 0 6px" id="lbl-occ-hint">មុខរបររបស់អ្នក ជួយឱ្យការអាន Saju មានលក្ខណៈផ្ទាល់ខ្លួន</p>
         <select class="fi" id="rOccupation">
-          <option value="" id="occ-select">ជ្រើសរើស...</option>
-          <option value="student" id="occ-student">🎓 និស្សិត</option>
-          <option value="office_worker" id="occ-office" data-occ-key="office">🏢 បុគ្គលិការិយាល័យ</option>
-          <option value="business" id="occ-business">💼 ម្ចាសអាជីវកម្ម</option>
-          <option value="seller" id="occ-seller">🛒 អ្នកលក់</option>
-          <option value="teacher" id="occ-teacher">📚 គ្រូបង្រើន</option>
-          <option value="beauty_spa" id="occ-beauty" data-occ-key="beauty">💆 សម្រស់ / ស្បា</option>
-          <option value="driver" id="occ-driver">🚗 អ្នកបើកបរ</option>
-          <option value="farmer" id="occ-farmer">🌾 កសិករ</option>
-          <option value="freelance" id="occ-freelance">🖥️ ឣករាជ្យ</option>
-          <option value="government" id="occ-government">🏗️ មន្ត្រីរាជការ</option>
-          <option value="overseas" id="occ-overseas">✈️ កម្មករក្រ៉ួប្រតើស</option>
-          <option value="other" id="occ-other">📌 ផ្សើងំ</option>
+          <option value="" id="occ-select" data-key="select">ជ្រើសរើស...</option>
+          <option value="student" id="occ-student" data-key="student">🎓 និស្សិត</option>
+          <option value="office_worker" id="occ-office" data-occ-key="office" data-key="office">🏢 បុគ្គលិការិយាល័យ</option>
+          <option value="business" id="occ-business" data-key="business">💼 ម្ចាសអាជីវកម្ម</option>
+          <option value="seller" id="occ-seller" data-key="seller">🛒 អ្នកលក់</option>
+          <option value="teacher" id="occ-teacher" data-key="teacher">📚 គ្រូបង្រើន</option>
+          <option value="beauty_spa" id="occ-beauty" data-occ-key="beauty" data-key="beauty">💆 សម្រស់ / ស្បា</option>
+          <option value="driver" id="occ-driver" data-key="driver">🚗 អ្នកបើកបរ</option>
+          <option value="farmer" id="occ-farmer" data-key="farmer">🌾 កសិករ</option>
+          <option value="freelance" id="occ-freelance" data-key="freelance">🖥️ ឣករាជ្យ</option>
+          <option value="government" id="occ-government" data-key="government">🏗️ មន្ត្រីរាជការ</option>
+          <option value="overseas" id="occ-overseas" data-key="overseas">✈️ កម្មករក្រ៉ួប្រតើស</option>
+          <option value="other" id="occ-other" data-key="other">📌 ផ្សើងំ</option>
         </select>
       </div>
 
       <div class="auth-sec-title" id="lbl-interests">💫 ចំណាប់អារម្មណ៍ *</div>
       <p style="font-size:11px;color:#888;margin:-8px 0 8px" id="lbl-int-hint">ចំណាប់អារម្មណ៍របស់អ្នក ជួយឱ្យការអាន Saju មានលក្ខណៈផ្ទាល់ខ្លួនកាន់តែច្បាស់</p>
       <div class="interests-grid" id="interests-grid">
-        <button class="interest-btn" onclick="toggleInterest(this,'love')">❤️ ស្នេហា</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'marriage')">💍 អាពាហ៍ពិពាហ៍</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'career')">💼 អាជីព</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'money')">💰 ទ្រព្យ</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'business')">🏪 ជំនួញ</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'study')">📖 ការសិក្សា</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'study_abroad')">🌏 សិក្សាបរទេស</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'health')">🌿 សុខភាព</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'family')">👨‍👩‍👧 គ្រួសារ</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'lucky_day')">📅 ថ្ងៃមង្គល</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'phone_fortune')">📱 ជោគជតាលេខទូរស័ព្ទ</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'car_plate')">🚗 ស្លាកលេខរថយន្ត</button>
-        <button class="interest-btn" onclick="toggleInterest(this,'travel')">✈️ ដំណើរ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'love')" data-key="love">❤️ ស្នេហា</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'marriage')" data-key="marriage">💍 អាពាហ៍ពិពាហ៍</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'career')" data-key="career">💼 អាជីព</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'money')" data-key="money">💰 ទ្រព្យ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'business')" data-key="business">🏪 ជំនួញ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'study')" data-key="study">📖 ការសិក្សា</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'study_abroad')" data-key="study_abroad">🌏 សិក្សាបរទេស</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'health')" data-key="health">🌿 សុខភាព</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'family')" data-key="family">👨‍👩‍👧 គ្រួសារ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'lucky_day')" data-key="lucky_day">📅 ថ្ងៃមង្គល</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'phone_fortune')" data-key="phone_fortune">📱 ជោគជតាលេខទូរស័ព្ទ</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'car_plate')" data-key="car_plate">🚗 ស្លាកលេខរថយន្ត</button>
+        <button class="interest-btn" onclick="toggleInterest(this,'travel')" data-key="travel">✈️ ដំណើរ</button>
       </div>
 
       <div class="fg" style="margin-top:14px;margin-bottom:0">
@@ -1702,9 +1702,10 @@ function applyLang() {
     : lang === 'ko'
     ? {select:'선택...',student:'🎓 학생',office:'🏢 직장인',business:'💼 사업주',seller:'🛒 판매원',teacher:'📚 교사/강사',beauty:'💆 미용/스파',driver:'🚗 운전기사',farmer:'🌾 농업인',freelance:'🖥️ 프리랜서러',government:'🏗️ 공무원',overseas:'✈️ 해외근로자',other:'📌 기타'}
     : {select:'Select...',student:'🎓 Student',office:'🏢 Office Worker',business:'💼 Business Owner',seller:'🛒 Seller',teacher:'📚 Teacher',beauty:'💆 Beauty / Spa',driver:'🚗 Driver',farmer:'🌾 Farmer',freelance:'🖥️ Freelancer',government:'🏗️ Government Officer',overseas:'✈️ Overseas Worker',other:'📌 Other'};
-  Object.entries(occTexts).forEach(([k,v]) => {
-    const el = document.getElementById('occ-'+k);
-    if (el) el.textContent = v;
+  // occupation: data-key 속성 기반으로 교체 (ID 의존 제거)
+  document.querySelectorAll('#rOccupation option[data-key]').forEach(opt => {
+    const k = opt.getAttribute('data-key');
+    if (k && occTexts[k]) opt.textContent = occTexts[k];
   });
   // Interests 버튼 언어 전환
   const interestMap = lang === 'km'
@@ -1712,10 +1713,9 @@ function applyLang() {
     : lang === 'ko'
     ? {love:'❤️ 연애',marriage:'💍 결혼',career:'💼 직업',money:'💰 재물',business:'🏪 사업',study:'📖 학업',study_abroad:'🌏 유학',health:'🌿 건강',family:'👨‍👩‍👧 가족',lucky_day:'📅 길일',phone_fortune:'📱 전화번호 운',car_plate:'🚗 차량번호',travel:'✈️ 여행'}
     : {love:'❤️ Love',marriage:'💍 Marriage',career:'💼 Career',money:'💰 Wealth',business:'🏪 Business',study:'📖 Study',study_abroad:'🌏 Study Abroad',health:'🌿 Health',family:'👨‍👩‍👧 Family',lucky_day:'📅 Lucky Day',phone_fortune:'📱 Phone Fortune',car_plate:'🚗 Car Plate',travel:'✈️ Travel'};
-  const interestBtns = document.querySelectorAll('.interest-btn');
-  const interestKeys = ['love','marriage','career','money','business','study','study_abroad','health','family','lucky_day','phone_fortune','car_plate','travel'];
-  interestBtns.forEach((btn,i) => {
-    const key = interestKeys[i];
+  // interest-btn: data-key 속성 기반으로 교체 (인덱스 의존 제거)
+  document.querySelectorAll('.interest-btn[data-key]').forEach(btn => {
+    const key = btn.getAttribute('data-key');
     if (key && interestMap[key]) btn.textContent = interestMap[key];
   });
   ['gMale','pgMale','rgMale'].forEach(id => {
@@ -2079,12 +2079,16 @@ async function submitFortune() {
     { img: '/static/ad_banner_balimassage.jpg',href: 'https://balimassagekh.com/', name: 'Bali Massage', desc: lang==='km' ? 'Escape the City — សន្សំ​ដល់ 30%' : 'Escape the City — Save Up To 30%' },
     { img: '/static/ad_banner_atomy.jpg',      href: 'https://kh.atomy.com/main', name: 'Atomy HemoHIM', desc: lang==='km' ? 'ជំនួយ​ប្រព័ន្ធ​ភាពស​ស្ទើ​ ​ — Atomy Cambodia' : 'Support Healthy Immune System — Atomy Cambodia' },
   ];
-  const ad = loadingAds[Math.floor(Math.random() * loadingAds.length)];
-
-  // 광고 이미지 프리로드 (이미지가 먼저 보이도록)
-  const _adPreloadImg = new Image();
-  _adPreloadImg.src = ad.img;
-  window._adPreloadedSrc = ad.img;
+    const ad = loadingAds[Math.floor(Math.random() * loadingAds.length)];
+  // 광고 이미지 프리로드 - onload 완료 후 DOM 삽입 (지연 없이 즉시 표시)
+  // 캐시된 이미지 사용 (이미 로드된 경우 즉시 표시)
+  const _cachedImg = window._adImgCache && window._adImgCache[ad.img];
+  const _adPreloadImg = _cachedImg || new Image();
+  if (!_cachedImg) {
+    window._adPreloadedImg = _adPreloadImg;
+    window._adPreloadedSrc = ad.img;
+    _adPreloadImg.src = ad.img;
+  }
 
   // 오행별 일관된 팁 목록 (지배 오행 기준, 매번 동일한 팁 표시)
   const TIPS_BY_ELEMENT = {
@@ -2235,8 +2239,21 @@ async function submitFortune() {
     if (lbl) lbl.textContent = progressLabel + ' ' + Math.round(_prog) + '%';
     if (_prog >= 95) clearInterval(_progInterval);
   }, 400);
-  window._loadingProgInterval = _progInterval;
-
+    window._loadingProgInterval = _progInterval;
+  // 프리로드 완료 시 DOM 이미지 즉시 교체 (로딩 지연 제거)
+  const _adWrap = document.getElementById('loading-ad-img-wrap');
+  if (_adWrap) {
+    const _domImg = _adWrap.querySelector('img');
+    if (_adPreloadImg.complete && _adPreloadImg.naturalWidth > 0) {
+      // 이미 로드 완료된 경우
+      if (_domImg) { _domImg.src = _adPreloadImg.src; _adWrap.style.minHeight = '0'; }
+    } else {
+      // 로드 중인 경우: onload 시 DOM 이미지 교체
+      _adPreloadImg.onload = () => {
+        if (_domImg) { _domImg.src = _adPreloadImg.src; _adWrap.style.minHeight = '0'; }
+      };
+    }
+  }
   try {
     let endpoint = '', body = baseBody;
     if (currentMode === 'lifetime') endpoint = '/api/v2/lifetime';
@@ -3159,7 +3176,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   loadAdBanners();
   // 광고 이미지 미리 로드 (로딩 화면에서 즉시 표시되도록)
   const _adImgs = ['/static/ad_banner_kground.jpg','/static/ad_banner_silla.jpg','/static/ad_banner_edukonnect.jpg','/static/ad_banner_sunmoon.jpg','/static/ad_banner_cloudnine.jpg','/static/ad_banner_balimassage.jpg','/static/ad_banner_atomy.jpg'];
-  _adImgs.forEach(src => { const img = new Image(); img.src = src; });
+  window._adImgCache = {};
+  _adImgs.forEach(src => {
+    const img = new Image();
+    img.onload = () => { window._adImgCache[src] = img; };
+    img.src = src;
+  });
   // Load daily radar chart (if user has birth info)
   if (currentUser && currentUser.birth_year) {
     loadDailyRadar(currentUser.birth_year, currentUser.birth_month, currentUser.birth_day, currentUser.gender || 'male');
@@ -3287,7 +3309,7 @@ async function loadAdBanners() {
       // 이미지 URL이 상대경로면 프론트엔드 기준으로 처리
       const imgSrc = b.image_url.startsWith('http') ? b.image_url : b.image_url;
       a.innerHTML = `
-        <img src="${imgSrc}" alt="${b.title||'Advertisement'}" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:contain !important">
+        <img src="${imgSrc}" alt="${b.title||'Advertisement'}" loading="eager" onerror="this.style.display='none'" style="width:100%;height:auto;display:block;border-radius:14px;object-fit:contain !important">
         <span class="ad-banner-label">AD</span>
         ${b.title ? `<div class="ad-banner-caption"><div class="ad-banner-caption-text">${b.title}</div></div>` : ''}
       `;
