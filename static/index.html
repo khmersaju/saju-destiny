@@ -761,18 +761,18 @@ a{cursor:pointer;color:#e8720c;text-decoration:none}
         <p style="font-size:11px;color:#888;margin:2px 0 6px" id="lbl-occ-hint">មុខរបររបស់អ្នក ជួយឱ្យការអាន Saju មានលក្ខណៈផ្ទាល់ខ្លួន</p>
         <select class="fi" id="rOccupation">
           <option value="" id="occ-select">ជ្រើសរើស...</option>
-          <option value="student" id="occ-student">🎓 និស្សិត (Student)</option>
-          <option value="office_worker" id="occ-office">🏢 បុគ្គលិកការិយាល័យ (Office Worker)</option>
-          <option value="business" id="occ-business">💼 ម្ចាស់អាជីវកម្ម (Business Owner)</option>
-          <option value="seller" id="occ-seller">🛒 អ្នកលក់ (Seller)</option>
-          <option value="teacher" id="occ-teacher">📚 គ្រូបង្រៀន (Teacher)</option>
-          <option value="beauty_spa" id="occ-beauty">💆 សម្រស់ / ស្ប៉ា (Beauty / Spa)</option>
-          <option value="driver" id="occ-driver">🚗 អ្នកបើកបរ (Driver)</option>
-          <option value="farmer" id="occ-farmer">🌾 កសិករ (Farmer)</option>
-          <option value="freelance" id="occ-freelance">🖥️ ឯករាជ្យ (Freelancer)</option>
-          <option value="government" id="occ-government">🏛️ មន្ត្រីរាជការ (Government Officer)</option>
-          <option value="overseas" id="occ-overseas">✈️ កម្មករក្រៅប្រទេស (Overseas Worker)</option>
-          <option value="other" id="occ-other">📌 ផ្សេងៗ (Other)</option>
+          <option value="student" id="occ-student">🎓 និស្សិត</option>
+          <option value="office_worker" id="occ-office" data-occ-key="office">🏢 បុគ្គលិការិយាល័យ</option>
+          <option value="business" id="occ-business">💼 ម្ចាសអាជីវកម្ម</option>
+          <option value="seller" id="occ-seller">🛒 អ្នកលក់</option>
+          <option value="teacher" id="occ-teacher">📚 គ្រូបង្រើន</option>
+          <option value="beauty_spa" id="occ-beauty" data-occ-key="beauty">💆 សម្រស់ / ស្បា</option>
+          <option value="driver" id="occ-driver">🚗 អ្នកបើកបរ</option>
+          <option value="farmer" id="occ-farmer">🌾 កសិករ</option>
+          <option value="freelance" id="occ-freelance">🖥️ ឣករាជ្យ</option>
+          <option value="government" id="occ-government">🏗️ មន្ត្រីរាជការ</option>
+          <option value="overseas" id="occ-overseas">✈️ កម្មករក្រ៉ួប្រតើស</option>
+          <option value="other" id="occ-other">📌 ផ្សើងំ</option>
         </select>
       </div>
 
@@ -1260,6 +1260,18 @@ const TR = {
     fp_err_code: 'លេខកូដមិនត្រូវ ឬផុតកំណត់ហើយ',
     fp_err_pwmatch: 'ពាក្យសម្ងាត់ទាំងពីរមិនដូចគ្នា',
     fp_err_pwshort: 'ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច ៦ តួអក្សរ',
+    lbl_occ_hint: 'មុខរបររបស់អ្នក ជួយឱ្យការអាន Saju មានលក្ខណៈផ្ទាល់ខ្លួន',
+    lbl_int_hint: 'ចំណាប់អារម្មណ៍របស់អ្នក ជួយឱ្យការអាន Saju មានលក្ខណៈផ្ទាល់ខ្លួនកាន់តែច្បាស់',
+    lbl_ref_opt: '(ស្រេចចិត្ត)',
+    lbl_ref_placeholder: 'ឧ. KDAB12CD',
+    lbl_consent_title: '📋 ការយល់ព្រម',
+    lbl_consent_service: 'ខ្ញុំយល់ព្រមទទួលការជូនដំណឹងអំពីសេវាកម្ម',
+    lbl_consent_marketing: 'ខ្ញុំយល់ព្រមទទួលសារផ្សព្វផ្សាយ និងការផ្តល់ជូនពិសេស',
+    lbl_reg_email: '📧 Email / អ៊ីម៉ែល *',
+    lbl_reg_pw: '🔒 Password / ពាក្យសម្ងាត់ *',
+    lbl_reg_pw_opt: '(min 6 chars / យ៉ាងហោចណាស់ ៦ តួ)',
+    lbl_khmer_name: 'Khmer Name / ឈ្មោះខ្មែរ',
+    lbl_khmer_name_opt: '(optional)',
   },
   en: {
     topbar_sub: 'Four Pillars Fortune Reading',
@@ -1314,8 +1326,8 @@ const TR = {
     lbl_reg_gender: 'Gender',
     lbl_location: '📍 Location',
     lbl_reg_city: 'City',
-    lbl_occupation: 'Occupation',
-    lbl_interests: '💫 Interests',
+    lbl_occupation: '💼 Occupation *',
+    lbl_interests: '💫 Interests *',
     lbl_referral: 'Referral Code',
     profile_title: 'My Account',
     push_title: '🔔 Daily Fortune Notification',
@@ -1383,6 +1395,18 @@ const TR = {
     fp_err_code: 'Invalid or expired code',
     fp_err_pwmatch: 'Passwords do not match',
     fp_err_pwshort: 'Password must be at least 6 characters',
+    lbl_occ_hint: 'Your occupation helps personalize your Saju reading',
+    lbl_int_hint: 'Your interests help us tailor your Saju reading more precisely',
+    lbl_ref_opt: '(optional)',
+    lbl_ref_placeholder: 'e.g. KDAB12CD',
+    lbl_consent_title: '📋 Consent',
+    lbl_consent_service: 'I agree to receive service notifications',
+    lbl_consent_marketing: 'I agree to receive promotions and special offers',
+    lbl_reg_email: '📧 Email *',
+    lbl_reg_pw: '🔒 Password *',
+    lbl_reg_pw_opt: '(min 6 characters)',
+    lbl_khmer_name: 'Khmer Name',
+    lbl_khmer_name_opt: '(optional)',
   },
   ko: {
     topbar_sub: '사주 포춘 — 사주 풀이',
@@ -1506,6 +1530,18 @@ const TR = {
     fp_err_code: '코드가 올바르지 않거나 만료되었습니다',
     fp_err_pwmatch: '비밀번호가 일치하지 않습니다',
     fp_err_pwshort: '비밀번호는 최소 6자 이상이어야 합니다',
+    lbl_occ_hint: '직업을 입력하면 더 정확한 사주 풀이를 제공해 드립니다',
+    lbl_int_hint: '관심사를 선택하면 맞춤형 사주 풀이를 제공해 드립니다',
+    lbl_ref_opt: '(선택)',
+    lbl_ref_placeholder: '예: KDAB12CD',
+    lbl_consent_title: '📋 동의',
+    lbl_consent_service: '서비스 알림 수신에 동의합니다',
+    lbl_consent_marketing: '이벤트 및 특별 혜택 정보 수신에 동의합니다',
+    lbl_reg_email: '📧 이메일 *',
+    lbl_reg_pw: '🔒 비밀번호 *',
+    lbl_reg_pw_opt: '(최소 6자)',
+    lbl_khmer_name: '크메르어 이름',
+    lbl_khmer_name_opt: '(선택)',
   }
 };
 
@@ -1584,13 +1620,31 @@ function applyLang() {
   document.getElementById('lbl-firstname').textContent = L.lbl_firstname;
   document.getElementById('lbl-phone').textContent = L.lbl_phone;
   document.getElementById('lbl-birth-info').textContent = L.lbl_birth_info;
-  // Register 폼 Email/Password/KhmerName 언어 전환
+  // Register 폼 Email/Password/KhmerName 언어 전환 (TR 키 기반)
   const regEmail = document.getElementById('lbl-reg-email');
-  if (regEmail) regEmail.innerHTML = lang === 'km' ? '📧 Email / អ៊ីម៉ែល *' : '📧 Email *';
+  if (regEmail) regEmail.textContent = L.lbl_reg_email || '📧 Email *';
   const regPw = document.getElementById('lbl-reg-pw');
-  if (regPw) regPw.innerHTML = lang === 'km' ? '🔒 Password / ពាក្យសម្ងាត់ * <span class="fl-opt">(min 6 chars / យ៉ាងហោចណាស់ ៦ តួ)</span>' : '🔒 Password * <span class="fl-opt">(min 6 characters)</span>';
+  if (regPw) regPw.innerHTML = (L.lbl_reg_pw || '🔒 Password *') + ' <span class="fl-opt">' + (L.lbl_reg_pw_opt || '(min 6 characters)') + '</span>';
   const regKn = document.getElementById('lbl-khmer-name');
-  if (regKn) regKn.innerHTML = lang === 'km' ? 'Khmer Name / ឈ្មោះខ្មែរ <span class="fl-opt">(optional)</span>' : 'Khmer Name <span class="fl-opt">(optional)</span>';
+  if (regKn) regKn.innerHTML = (L.lbl_khmer_name || 'Khmer Name') + ' <span class="fl-opt">' + (L.lbl_khmer_name_opt || '(optional)') + '</span>';
+  // 직업 hint
+  const occHint = document.getElementById('lbl-occ-hint');
+  if (occHint) occHint.textContent = L.lbl_occ_hint || '';
+  // 관심사 hint
+  const intHint = document.getElementById('lbl-int-hint');
+  if (intHint) intHint.textContent = L.lbl_int_hint || '';
+  // 추천 코드 optional 라벨 + placeholder
+  const refOpt = document.getElementById('lbl-ref-opt');
+  if (refOpt) refOpt.textContent = L.lbl_ref_opt || '(optional)';
+  const refInput = document.getElementById('rReferral');
+  if (refInput) refInput.placeholder = L.lbl_ref_placeholder || 'e.g. KDAB12CD';
+  // 동의 섹션
+  const consentTitle = document.getElementById('lbl-consent-title');
+  if (consentTitle) consentTitle.textContent = L.lbl_consent_title || '📋 Consent';
+  const consentService = document.getElementById('lbl-consent-service');
+  if (consentService) consentService.textContent = L.lbl_consent_service || 'I agree to receive service notifications';
+  const consentMarketing = document.getElementById('lbl-consent-marketing');
+  if (consentMarketing) consentMarketing.textContent = L.lbl_consent_marketing || 'I agree to receive promotions and special offers';
   document.getElementById('lbl-reg-birth').textContent = L.lbl_reg_birth;
   document.getElementById('lbl-reg-gender').textContent = L.lbl_reg_gender;
   document.getElementById('lbl-location').textContent = L.lbl_location;
@@ -1644,10 +1698,10 @@ function applyLang() {
   const femaleText = lang === 'km' ? '♀ ស្ត្រី' : lang === 'ko' ? '♀ 여성' : '♀ Female';
   // Occupation 드롭다운 언어 전환
   const occTexts = lang === 'km'
-    ? {select:'ជ្រើសរើស...',student:'និស្សិត',business:'អ្នកជំនួញ',employee:'បុគ្គលិក',government:'មន្ត្រីរាជការ',freelance:'ឯករាជ្យ',farmer:'កសិករ',other:'ផ្សេងទៀត'}
+    ? {select:'ជ្រើសរើស...',student:'🎓 និស្សិត',office:'🏢 បុគ្គលិការិយាល័យ',business:'💼 ម្ចាសអាជីវកម្ម',seller:'🛒 អ្នកលក់',teacher:'📚 គ្រូបង្រើន',beauty:'💆 សម្រស់ / ស្បា',driver:'🚗 អ្នកបើកបរ',farmer:'🌾 កសិករ',freelance:'🖥️ ឣករាជ្យ',government:'🏗️ មន្ត្រីរាជការ',overseas:'✈️ កម្មករក្រ៉ួប្រតើស',other:'📌 ផ្សើងំ'}
     : lang === 'ko'
-    ? {select:'선택...',student:'학생',business:'사업주',employee:'직원',government:'공무원',freelance:'프리랜서',farmer:'농부',other:'기타'}
-    : {select:'Select...',student:'Student',business:'Business Owner',employee:'Employee',government:'Government Officer',freelance:'Freelancer',farmer:'Farmer',other:'Other'};
+    ? {select:'선택...',student:'🎓 학생',office:'🏢 직장인',business:'💼 사업주',seller:'🛒 판매원',teacher:'📚 교사/강사',beauty:'💆 미용/스파',driver:'🚗 운전기사',farmer:'🌾 농업인',freelance:'🖥️ 프리랜서러',government:'🏗️ 공무원',overseas:'✈️ 해외근로자',other:'📌 기타'}
+    : {select:'Select...',student:'🎓 Student',office:'🏢 Office Worker',business:'💼 Business Owner',seller:'🛒 Seller',teacher:'📚 Teacher',beauty:'💆 Beauty / Spa',driver:'🚗 Driver',farmer:'🌾 Farmer',freelance:'🖥️ Freelancer',government:'🏗️ Government Officer',overseas:'✈️ Overseas Worker',other:'📌 Other'};
   Object.entries(occTexts).forEach(([k,v]) => {
     const el = document.getElementById('occ-'+k);
     if (el) el.textContent = v;
