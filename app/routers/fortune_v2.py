@@ -136,162 +136,113 @@ class DailyFortuneInput(BaseModel):
 
 
 # ─── 운세 텍스트 생성 (결정론적 캐싱) ──────────────────────────────────
+# 캐시 버전: v3 (네이티브 언어 직접 생성으로 전환)
+_CACHE_VERSION = "v3-native"
+
 def _make_cache_key(prompt: str, language: str) -> str:
     """입력값 기반 캐시 키 생성 (동일 입력 = 동일 키)"""
-    raw = json.dumps({"prompt": prompt, "lang": language}, ensure_ascii=False, sort_keys=True)
+    raw = json.dumps({"prompt": prompt, "lang": language, "ver": _CACHE_VERSION}, ensure_ascii=False, sort_keys=True)
     return hashlib.sha256(raw.encode()).hexdigest()
+
+
+# ─── 언어별 시스템 프롬프트 ────────────────────────────────────────────
+_SYSTEM_EN = (
+    "You are a master Saju (Four Pillars of Destiny) fortune teller "
+    "with deep knowledge of Cambodian culture and the Khmer way of life. "
+    "You interpret destiny through the ancient principles of the Four Pillars, "
+    "Five Elements (Wood, Fire, Earth, Metal, Water), Yin-Yang balance, "
+    "and the 60-year Sexagenary cycle. "
+    "Your readings are warm, insightful, practical, and culturally respectful. "
+    "IMPORTANT: Do NOT reference any specific religion, religious figures, "
+    "temples, prayers, or religious practices. "
+    "Focus only on natural cosmic principles, elemental balance, and practical life guidance. "
+    "Always provide actionable advice relevant to Cambodian daily life. "
+    "Write your entire response in clear, natural, flowing English. "
+    "Avoid awkward phrasing, overly literal constructions, or translation-like sentence structures. "
+    "Every sentence must read as if written by a native English speaker."
+)
+
+_SYSTEM_KM = (
+    "អ្នកជាគ្រូសាស្ត្រាចារ្យ Saju (Four Pillars of Destiny) ដែលមានចំណេះដឹងស៊ីជម្រៅ "
+    "អំពីវប្បធម៌ខ្មែរ និងជីវិតប្រចាំថ្ងៃរបស់ជនជាតិខ្មែរ។ "
+    "អ្នកបកស្រាយវាសនាតាមរយៈគោលការណ៍បុរាណនៃ Four Pillars (សសរទាំង ៤), "
+    "Five Elements (ធាតុ ៥: ឈើ ភ្លើង ដី លោហ ទឹក), Yin-Yang (យឹន-យាង), "
+    "និងវដ្ត ៦០ ឆ្នាំ (Sexagenary cycle)។ "
+    "សរសេរជាភាសាខ្មែរដ៏ស្រស់ស្អាត ងាយស្រួលយល់ និងពេញលេញ។ "
+    "ចំពោះពាក្យបច្ចេកទេសសាស្ត្រា (Four Pillars, Day Master, Wood, Fire, Earth, Metal, Water, Yin, Yang, "
+    "និងឈ្មោះសត្វ ១២ ឆ្នាំ) ត្រូវសរសេរជាភាសាអង់គ្លេស ហើយបន្ថែមន័យខ្មែរក្នុងវង់ក្រចក ឧ. Wood (ឈើ), Rooster (មាន់)។ "
+    "ប្រយោគទាំងអស់ក្រៅពីពាក្យបច្ចេកទេស ត្រូវតែជាភាសាខ្មែរ ។ "
+    "កុំយោងសាសនា ទីវត្ត ការអធិស្ឋាន ឬការអនុវត្តសាសនា។ "
+    "ផ្តោតលើគោលការណ៍ធម្មជាតិ ការតុល្យភាពធាតុ និងការណែនាំជីវិតជាក់ស្តែង។"
+)
+
+_SYSTEM_KO = (
+    "당신은 사주(四柱) 명리학의 대가입니다. "
+    "한국의 전통 사주 명리학과 오행(五行) 이론에 정통하며, 캄보디아 문화와 생활 방식을 깊이 이해합니다. "
+    "천간(天干), 지지(地支), 오행(木·火·土·金·水), 음양(陰陽), 육십갑자(六十甲子)의 원리로 운명을 풀이합니다. "
+    "\n\n"
+    "[언어 규칙 — 반드시 준수]\n"
+    "1. 모든 풀이는 자연스러운 한국어로 작성한다. 번역투, 직역체, 어색한 문장은 절대 금지.\n"
+    "2. 사주 전문 용어는 한자 병기를 사용한다: 사주(四柱), 오행(五行), 일간(日干), 목(木), 화(火), 토(土), 금(金), 수(水), 음(陰), 양(陽).\n"
+    "3. 영어 단어(Wood, Metal, Fire, Earth, Water, Day Master, Four Pillars 등)를 풀이 본문에 절대 사용하지 않는다.\n"
+    "4. 띠 이름은 한국어로 표기한다: 쥐띠, 소띠, 호랑이띠, 토끼띠, 용띠, 뱀띠, 말띠, 양띠, 원숭이띠, 닭띠, 개띠, 돼지띠.\n"
+    "5. 문장은 간결하고 명확하게 쓴다. 중복 표현, 불필요한 수식어, 번역체 문장 구조를 피한다.\n"
+    "6. 종교, 사찰, 기도, 종교 의식은 언급하지 않는다.\n"
+    "7. 오행 상생·상극 원리를 바탕으로 구체적이고 실용적인 조언을 제공한다.\n"
+    "8. 어조는 따뜻하고 직접적이며 전문적이다. 과도한 칭찬이나 근거 없는 낙관은 피한다."
+)
 
 
 def _ai_fortune(prompt: str, max_tokens: int = 600, language: str = "en") -> str:
     """
-    사주 풀이 텍스트 생성.
+    사주 풀이 텍스트 생성 — 언어별 네이티브 직접 생성 방식.
     ① 동일 입력값이면 캐시에서 즉시 반환 (완전 동일한 내용 보장)
-    ② 영어로 먼저 생성 (temperature=0 완전 결정론적)
-    ③ km 요청 시 영어 풀이를 크메르어로 번역 (temperature=0)
-    
-    NOTE: 크메르어 유니코드 문자는 영어 대비 토큰 소비가 약 2.5~3배 많음.
-    번역 max_tokens = 영어 max_tokens * 3.0 으로 설정하여 잘림 방지.
+    ② 각 언어별 전용 시스템 프롬프트로 처음부터 해당 언어로 직접 생성
+       - en: 영어 네이티브 생성
+       - km: 크메르어 네이티브 생성 (전문용어만 영어+크메르어 병기)
+       - ko: 한국어 네이티브 생성 (사주 전문용어 한자 병기)
     """
     global _FORTUNE_CACHE
 
     # ① 캐시 확인: 동일 입력이면 즉시 반환
     cache_key = _make_cache_key(prompt, language)
-    # 1새 인메모리 캐시 확인 (빠름)
     if cache_key in _FORTUNE_CACHE:
         return _FORTUNE_CACHE[cache_key]
-    # 2새 DB 영구 캐시 확인 (서버 재시작 후에도 유지)
     db_cached = _db_cache_get(cache_key)
     if db_cached:
-        _FORTUNE_CACHE[cache_key] = db_cached  # 인메모리에도 올려놓기
+        _FORTUNE_CACHE[cache_key] = db_cached
         return db_cached
 
-    system_en = (
-        "You are a master Saju (Four Pillars of Destiny) fortune teller "
-        "with deep knowledge of Cambodian culture and the Khmer way of life. "
-        "You interpret destiny through the ancient principles of the Four Pillars, "
-        "Five Elements (Wood, Fire, Earth, Metal, Water), Yin-Yang balance, "
-        "and the 60-year Sexagenary cycle. "
-        "Your readings are warm, insightful, practical, and culturally respectful. "
-        "IMPORTANT: Do NOT reference any specific religion, religious figures, "
-        "temples, prayers, or religious practices (including Buddhism, Christianity, Islam, etc.). "
-        "Focus only on natural cosmic principles, elemental balance, and practical life guidance. "
-        "Always provide actionable advice relevant to Cambodian daily life "
-        "(career, relationships, health, finances). "
-        "Write your entire response in clear, accessible English."
-    )
+    # 언어별 시스템 프롬프트 선택
+    if language == "ko":
+        system_prompt = _SYSTEM_KO
+        token_multiplier = 1.8  # 한국어는 영어 대비 토큰 약 1.5~2배
+    elif language == "km":
+        system_prompt = _SYSTEM_KM
+        token_multiplier = 3.5  # 크메르어 유니코드는 영어 대비 약 3~3.5배
+    else:
+        system_prompt = _SYSTEM_EN
+        token_multiplier = 1.0
 
-    # 크메르어 병기 번역 시 사용할 전문용어 대응표
-    SAJU_TERMS_BILINGUAL = (
-        "IMPORTANT BILINGUAL GLOSSARY — when you translate, keep these English terms "
-        "and add the Khmer explanation in parentheses right after each term:\n"
-        "Four Pillars → Four Pillars (សសរទាំង ៤) | "
-        "Day Master → Day Master (អ្នកគ្រប់ក្រង) | "
-        "Five Elements → Five Elements (ធាតុ ៥) | "
-        "Wood → Wood (ឈើ) | Fire → Fire (ភ្លើង) | "
-        "Earth → Earth (ដី) | Metal → Metal (លោហ) | Water → Water (ទឹក) | "
-        "Yin → Yin (យឹន) | Yang → Yang (យាង) | "
-        "Rat → Rat (កណ្ដុរ) | Ox → Ox (គោ) | Tiger → Tiger (ខ្លា) | "
-        "Rabbit → Rabbit (ទន្សាយ) | Dragon → Dragon (នាគ) | Snake → Snake (ពស់) | "
-        "Horse → Horse (សេះ) | Goat → Goat (ពពែ) | Monkey → Monkey (ស្វា) | "
-        "Rooster → Rooster (មាន់) | Dog → Dog (ឆ្កែ) | Pig → Pig (ជ្រូក) | "
-        "Sexagenary cycle → Sexagenary cycle (វត្ត ៦០ ឆ្នាំ) | "
-        "Fortune → Fortune (ជោគជតា) | Destiny → Destiny (វាសនា) | "
-        "Lucky → Lucky (មង្គល) | Auspicious → Auspicious (សុប័រមង្គល)"
-    )
+    actual_max_tokens = int(max_tokens * token_multiplier)
 
     try:
         c = _get_client()
-
-        # ② 영어 풀이 생성 — temperature=0 으로 완전 결정론적
-        # 동일 프롬프트 = 동일 결과 보장
-        resp_en = c.chat.completions.create(
+        resp = c.chat.completions.create(
             model=AI_MODEL,
             messages=[
-                {"role": "system", "content": system_en},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
-            max_tokens=max_tokens,
-            temperature=0,   # ★ 결정론적: 동일 입력 = 동일 출력
-            seed=42,          # ★ 추가 안전장치: seed 고정
-        )
-        english_text = resp_en.choices[0].message.content.strip()
-
-        if language == "ko":
-            # ③-ko 한국어 번역
-            translate_prompt_ko = (
-                f"Translate the following Saju fortune reading into natural, fluent Korean (한국어).\n"
-                f"CRITICAL RULES:\n"
-                f"1. Keep Saju technical terms (Four Pillars, Day Master, Wood, Fire, Earth, Metal, Water, Yin, Yang) "
-                f"and add Korean meaning in parentheses, e.g. '사주(四柱)', '오행(五行)', '목(木)'.\n"
-                f"2. Translate ALL other sentences fully into Korean.\n"
-                f"3. Maintain the EXACT same length, depth, and structure as the original.\n"
-                f"4. NEVER truncate, summarize, or omit any part.\n"
-                f"5. Keep the warm, encouraging tone.\n\n"
-                f"Text to translate:\n{english_text}"
-            )
-            resp_ko = c.chat.completions.create(
-                model=AI_MODEL,
-                messages=[
-                    {"role": "system", "content": (
-                        "You are a professional Korean-English bilingual translator specializing in Saju fortune texts. "
-                        "Translate sentences into Korean, keeping Saju technical terms in English with Korean meaning in parentheses. "
-                        "NEVER truncate or skip any sentences. Translate every paragraph completely."
-                    )},
-                    {"role": "user", "content": translate_prompt_ko},
-                ],
-                max_tokens=int(max_tokens * 2.0),
-                temperature=0,
-                seed=42,
-            )
-            korean_text = resp_ko.choices[0].message.content.strip()
-            _FORTUNE_CACHE[cache_key] = korean_text
-            _db_cache_set(cache_key, language, korean_text)
-            return korean_text
-
-        if language != "km":
-            # 영어 결과 인메모리 + DB 영구 캐시 저장
-            _FORTUNE_CACHE[cache_key] = english_text
-            _db_cache_set(cache_key, language, english_text)
-            return english_text
-
-        # ③ 크메르어 번역 — temperature=0 으로 완전 결정론적
-        # 영어 전문용어는 유지하고 크메르어 설명을 괄호 안에 병기
-        translate_prompt = (
-            f"{SAJU_TERMS_BILINGUAL}\n\n"
-            f"Now translate the following fortune reading into natural, fluent Khmer (ភាសាខ្មែរ). "
-            f"CRITICAL RULES:\n"
-            f"1. Keep ALL English Saju terms (Four Pillars, Day Master, Wood, Fire, etc.) "
-            f"and add the Khmer meaning in parentheses right after each term, "
-            f"e.g. 'Wood (ឈើ)', 'Four Pillars (សសរទាំង ៤)', 'Rooster (មាន់)'.\n"
-            f"2. Translate ALL other sentences fully into Khmer.\n"
-            f"3. Maintain the EXACT same length, depth, and structure as the original.\n"
-            f"4. NEVER truncate, summarize, or omit any part.\n"
-            f"5. Keep the warm, encouraging tone.\n\n"
-            f"Text to translate:\n{english_text}"
-        )
-        resp_km = c.chat.completions.create(
-            model=AI_MODEL,
-            messages=[
-                {"role": "system", "content": (
-                    "You are a professional bilingual Khmer-English translator specializing in Saju fortune texts. "
-                    "Your task: translate sentences into Khmer, but KEEP English Saju technical terms "
-                    "(like Four Pillars, Day Master, Wood, Fire, Earth, Metal, Water, Yin, Yang, zodiac animals) "
-                    "and add their Khmer meaning in parentheses immediately after, e.g. 'Wood (ឈើ)'. "
-                    "This bilingual format helps Cambodian readers understand both the English term and its Khmer meaning. "
-                    "NEVER truncate or skip any sentences. Translate every paragraph completely."
-                )},
-                {"role": "user", "content": translate_prompt},
-            ],
-            max_tokens=int(max_tokens * 3.5),  # ★ 병기 형식으로 토큰 증가 → 3.5배 여유
-            temperature=0,   # ★ 결정론적
+            max_tokens=actual_max_tokens,
+            temperature=0,
             seed=42,
         )
-        khmer_text = resp_km.choices[0].message.content.strip()
+        result_text = resp.choices[0].message.content.strip()
 
-        # 크메르어 결과 인메모리 + DB 영구 캐시 저장
-        _FORTUNE_CACHE[cache_key] = khmer_text
-        _db_cache_set(cache_key, language, khmer_text)
-        return khmer_text
+        _FORTUNE_CACHE[cache_key] = result_text
+        _db_cache_set(cache_key, language, result_text)
+        return result_text
 
     except Exception as e:
         return f"[Fortune reading temporarily unavailable: {str(e)[:60]}]"
@@ -385,6 +336,150 @@ def _build_chart_summary(chart: dict, name: str = "", gender: str = "male") -> s
     )
 
 
+# ─── 언어별 섹션 헤더 번역 헬퍼 ────────────────────────────────────
+def _section_headings(lang: str) -> dict:
+    """언어별 섹션 헤더 반환 — 프롬프트에 직접 삽입"""
+    if lang == "ko":
+        return {
+            # lifetime
+            "personality": "성격과 운명",
+            "career_wealth": "직업과 재물",
+            "love": "사랑과 인연",
+            "health": "건강과 활력",
+            "guidance": "인생 조언",
+            # yearly
+            "year_overview": "올해의 운세",
+            "career_finance": "직업과 재정",
+            "love_family": "사랑과 가정",
+            "health_timing": "건강과 길한 시기",
+            # daily
+            "today_energy": "오늘의 기운",
+            "actions": "행동 지침",
+            "lucky": "행운의 요소",
+            # compat
+            "romantic_chemistry": "연애 궁합",
+            "communication": "소통과 이해",
+            "marriage_family": "결혼과 가정",
+            "financial_harmony": "재정적 조화",
+            "love_advice": "연애 조언",
+            "leadership": "리더십과 의사결정",
+            "wealth_revenue": "재물과 수익",
+            "risk_strategy": "위험 감수와 전략",
+            "conflict_work": "갈등과 소통",
+            "business_advice": "비즈니스 조언",
+            "natural_connection": "자연스러운 유대",
+            "shared_activities": "공통 관심사",
+            "support_hard_times": "어려울 때의 지지",
+            "friction": "갈등 요인",
+            "friendship_advice": "우정 조언",
+            "learning_styles": "학습 스타일",
+            "focus_motivation": "집중력과 동기",
+            "academic_strengths": "학업 강점",
+            "study_conflicts": "학습 갈등",
+            "study_advice": "학습 전략 조언",
+            "work_style": "업무 스타일",
+            "team_dynamics": "팀 역학",
+            "stress_responses": "스트레스 반응",
+            "career_growth": "커리어 성장",
+            "workplace_advice": "직장 조언",
+            "family_roles": "가족 역할",
+            "emotional_support": "정서적 지지",
+            "generational_gaps": "세대 차이",
+            "shared_values": "공유 가치관",
+            "harmony_advice": "가족 화합 조언",
+        }
+    elif lang == "km":
+        return {
+            "personality": "បុគ្គលិកលក្ខណៈ និងវាសនា",
+            "career_wealth": "អាជីព និងទ្រព្យសម្បត្តិ",
+            "love": "ស្នេហា និងទំនាក់ទំនង",
+            "health": "សុខភាព និងថាមពល",
+            "guidance": "ការណែនាំជីវិត",
+            "year_overview": "ទិដ្ឋភាពទូទៅឆ្នាំ",
+            "career_finance": "អាជីព និងហិរញ្ញវត្ថុ",
+            "love_family": "ស្នេហា និងគ្រួសារ",
+            "health_timing": "សុខភាព និងពេលវេលាល្អ",
+            "today_energy": "ថាមពលថ្ងៃនេះ",
+            "actions": "សកម្មភាព និងការប្រុងប្រយ័ត្ន",
+            "lucky": "ធាតុមង្គល",
+            "romantic_chemistry": "គីមីស្នេហា",
+            "communication": "ការទំនាក់ទំនង",
+            "marriage_family": "អាពាហ៍ពិពាហ៍ និងគ្រួសារ",
+            "financial_harmony": "ភាពសុខដុមហិរញ្ញវត្ថុ",
+            "love_advice": "ដំបូន្មានស្នេហា",
+            "leadership": "ភាពជាអ្នកដឹកនាំ",
+            "wealth_revenue": "ទ្រព្យ និងចំណូល",
+            "risk_strategy": "យុទ្ធសាស្ត្រ",
+            "conflict_work": "ជម្លោះ និងការទំនាក់ទំនង",
+            "business_advice": "ដំបូន្មានអាជីវកម្ម",
+            "natural_connection": "ទំនាក់ទំនងធម្មជាតិ",
+            "shared_activities": "សកម្មភាពរួម",
+            "support_hard_times": "ការគាំទ្រពេលលំបាក",
+            "friction": "ចំណុចផ្ទុយ",
+            "friendship_advice": "ដំបូន្មានមិត្តភាព",
+            "learning_styles": "រចនាប័ទ្មរៀន",
+            "focus_motivation": "ការផ្តោតអារម្មណ៍",
+            "academic_strengths": "ភាពខ្លាំងសិក្សា",
+            "study_conflicts": "ជម្លោះការសិក្សា",
+            "study_advice": "ដំបូន្មានការសិក្សា",
+            "work_style": "រចនាប័ទ្មការងារ",
+            "team_dynamics": "ថាមពលក្រុម",
+            "stress_responses": "ការឆ្លើយតបស្ត្រេស",
+            "career_growth": "ការលូតលាស់អាជីព",
+            "workplace_advice": "ដំបូន្មានកន្លែងការងារ",
+            "family_roles": "តួនាទីគ្រួសារ",
+            "emotional_support": "ការគាំទ្រអារម្មណ៍",
+            "generational_gaps": "គម្លាតជំនាន់",
+            "shared_values": "តម្លៃរួម",
+            "harmony_advice": "ដំបូន្មានភាពសុខដុមគ្រួសារ",
+        }
+    else:  # en
+        return {
+            "personality": "Personality & Destiny",
+            "career_wealth": "Career & Wealth",
+            "love": "Love & Relationships",
+            "health": "Health & Vitality",
+            "guidance": "Life Guidance",
+            "year_overview": "Year Overview",
+            "career_finance": "Career & Finance",
+            "love_family": "Love & Family",
+            "health_timing": "Health & Lucky Timing",
+            "today_energy": "Today's Energy",
+            "actions": "Best Actions & Cautions",
+            "lucky": "Lucky Elements",
+            "romantic_chemistry": "Romantic Chemistry",
+            "communication": "Communication & Understanding",
+            "marriage_family": "Marriage & Family Life",
+            "financial_harmony": "Financial Harmony",
+            "love_advice": "Love Advice",
+            "leadership": "Leadership & Decision-Making",
+            "wealth_revenue": "Wealth & Revenue Generation",
+            "risk_strategy": "Risk & Strategy Alignment",
+            "conflict_work": "Conflict & Communication at Work",
+            "business_advice": "Business Advice",
+            "natural_connection": "Natural Connection",
+            "shared_activities": "Shared Activities & Interests",
+            "support_hard_times": "Support in Hard Times",
+            "friction": "Friction Points",
+            "friendship_advice": "Friendship Advice",
+            "learning_styles": "Learning Styles",
+            "focus_motivation": "Focus & Motivation Energy",
+            "academic_strengths": "Academic Strengths Together",
+            "study_conflicts": "Study Conflicts",
+            "study_advice": "Study Strategy Advice",
+            "work_style": "Work Style Compatibility",
+            "team_dynamics": "Team Dynamics & Task Division",
+            "stress_responses": "Stress & Pressure Responses",
+            "career_growth": "Career Growth Together",
+            "workplace_advice": "Workplace Advice",
+            "family_roles": "Family Roles & Dynamics",
+            "emotional_support": "Emotional Support Patterns",
+            "generational_gaps": "Generational & Personality Gaps",
+            "shared_values": "Shared Values & Traditions",
+            "harmony_advice": "Family Harmony Advice",
+        }
+
+
 # ─── 1. 기본 사주 차트 ────────────────────────────────────────────
 @router.post("/chart")
 async def get_chart(data: BirthInput):
@@ -419,6 +514,14 @@ async def get_lifetime_fortune(data: BirthInput):
         "Focus on: intuitive strengths, relationship harmony, motherhood timing, "
         "career balance with family, and how she can best express her inner power."
     )
+    h = _section_headings(data.language)
+    lang_note = (
+        "Write the entire reading in natural, fluent Korean (\ud55c\uad6d\uc5b4). Use Saju technical terms with Chinese characters: \uc0ac\uc8fc(\u56db\u67f1), \uc624\ud589(\u4e94\ud589), \uc77c\uac04(\u65e5\u5e72), \ubaa9(\u6728), \ud654(\u706b), \ud1a0(\u571f), \uae08(\u91d1), \uc218(\u6c34). Do NOT use English words in the reading body."
+        if data.language == "ko" else
+        "Write the entire reading in natural Khmer (\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a). Keep technical terms (Four Pillars, Day Master, element names, zodiac animals) in English with Khmer meaning in parentheses."
+        if data.language == "km" else
+        "Write the entire reading in clear, natural English. Every sentence must flow naturally \u2014 no translation-like phrasing."
+    )
     prompt = (
         f"{chart_summary}\n"
         f"Life Stages:\n"
@@ -426,20 +529,20 @@ async def get_lifetime_fortune(data: BirthInput):
         f"  Mid Life (31-60): {life_stages['mid_life']['quality']} ({ELEMENT_EN.get(life_stages['mid_life']['element'],'')} element, score {life_stages['mid_life']['score']}/100)\n"
         f"  Late Life (61+): {life_stages['late_life']['quality']} ({ELEMENT_EN.get(life_stages['late_life']['element'],'')} element, score {life_stages['late_life']['score']}/100)\n\n"
         f"GENDER-SPECIFIC GUIDANCE: {gender_focus}\n\n"
-        f"Please provide a comprehensive lifetime fortune reading for this specific person.\n"
-        f"Make the reading UNIQUE to their exact Four Pillars combination — do NOT give generic advice.\n\n"
+        f"LANGUAGE: {lang_note}\n\n"
+        f"Provide a comprehensive lifetime fortune reading UNIQUE to this person's exact Four Pillars combination.\n\n"
         f"IMPORTANT FORMAT RULES:\n"
-        f"- Structure the reading into exactly 5 sections, each starting with a ## heading\n"
-        f"- Each section: 2-3 sentences only — concise, impactful, no padding\n"
+        f"- Structure into exactly 5 sections, each starting with a ## heading\n"
+        f"- Each section: 2-3 sentences only \u2014 concise, impactful, no padding\n"
         f"- Use these exact section headings:\n"
-        f"  ## Personality & Destiny\n"
-        f"  ## Career & Wealth\n"
-        f"  ## Love & Relationships\n"
-        f"  ## Health & Vitality\n"
-        f"  ## Life Guidance\n\n"
+        f"  ## {h['personality']}\n"
+        f"  ## {h['career_wealth']}\n"
+        f"  ## {h['love']}\n"
+        f"  ## {h['health']}\n"
+        f"  ## {h['guidance']}\n\n"
         f"Reference their specific Day Master element, dominant/weak elements, and zodiac animal in each section.\n"
-        f"Be honest — not all aspects are positive. If weak elements create challenges, say so clearly.\n"
-        f"Warm, direct tone. Practical advice for Cambodians."
+        f"Be honest \u2014 not all aspects are positive. If weak elements create challenges, say so clearly.\n"
+        f"Warm, direct tone. Practical advice."
     )
     ai_text = _ai_fortune(prompt, max_tokens=1200, language=data.language)
 
@@ -474,6 +577,14 @@ async def get_yearly_fortune(data: BirthInput, year: int = None):
         "family wellbeing, and career-life balance in {year}."
     ).format(year=year)
 
+    h = _section_headings(data.language)
+    lang_note_yr = (
+        "Write the entire reading in natural, fluent Korean (\ud55c\uad6d\uc5b4). Use Saju technical terms with Chinese characters. Do NOT use English words in the reading body."
+        if data.language == "ko" else
+        "Write the entire reading in natural Khmer (\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a). Keep technical terms in English with Khmer meaning in parentheses."
+        if data.language == "km" else
+        "Write in clear, natural English. No translation-like phrasing."
+    )
     prompt = (
         f"{chart_summary}\n"
         f"Year {year} Fortune:\n"
@@ -481,18 +592,17 @@ async def get_yearly_fortune(data: BirthInput, year: int = None):
         f"  Interaction with Day Master ({ELEMENT_EN.get(chart['day_master']['element'],'')}): "
         f"{'Supportive' if seun['element'] == chart['day_master']['element'] else 'Challenging'} energy\n\n"
         f"GENDER-SPECIFIC GUIDANCE: {gender_focus_yr}\n\n"
-        f"Please provide a detailed {year} yearly fortune reading UNIQUE to this person's chart.\n"
-        f"Reference their specific Day Master and how the {seun['animal']} year energy interacts with it.\n\n"
+        f"LANGUAGE: {lang_note_yr}\n\n"
+        f"Provide a detailed {year} yearly fortune reading UNIQUE to this person's chart.\n\n"
         f"IMPORTANT FORMAT RULES:\n"
         f"- Structure into exactly 4 sections, each starting with a ## heading\n"
-        f"- Each section: 2-3 sentences only — concise, no padding\n"
+        f"- Each section: 2-3 sentences only \u2014 concise, no padding\n"
         f"- Use these exact section headings:\n"
-        f"  ## Year Overview\n"
-        f"  ## Career & Finance\n"
-        f"  ## Love & Family\n"
-        f"  ## Health & Lucky Timing\n\n"
-        f"Be specific: name the best and worst months. Include Cambodian timing (Khmer New Year, Pchum Ben).\n"
-        f"Be honest — if the year brings challenges, say so and give actionable advice."
+        f"  ## {h['year_overview']}\n"
+        f"  ## {h['career_finance']}\n"
+        f"  ## {h['love_family']}\n"
+        f"  ## {h['health_timing']}\n\n"
+        f"Be specific: name the best and worst months. Be honest \u2014 if the year brings challenges, say so clearly."
     )
     ai_text = _ai_fortune(prompt, max_tokens=1000, language=data.language)
 
@@ -535,17 +645,25 @@ async def get_monthly_fortune(data: BirthInput, year: int = None):
         "For this woman: focus on relationship dynamics, family harmony, and personal growth."
     )
 
+    lang_note_mo = (
+        "Write the entire reading in natural, fluent Korean (\ud55c\uad6d\uc5b4). Use Saju technical terms with Chinese characters. Do NOT use English words in the reading body. Use Korean month names (1\uc6d4, 2\uc6d4 \ub4f1)."
+        if data.language == "ko" else
+        "Write the entire reading in natural Khmer (\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a). Keep technical terms in English with Khmer meaning in parentheses."
+        if data.language == "km" else
+        "Write in clear, natural English."
+    )
     prompt = (
         f"{chart_summary}\n"
         f"Monthly Fortune for {year} (upcoming 3 months, with elemental scores):\n{months_text}\n\n"
         f"GENDER-SPECIFIC GUIDANCE: {gender_focus_mo}\n\n"
+        f"LANGUAGE: {lang_note_mo}\n\n"
         f"Provide a monthly fortune reading UNIQUE to this person's chart for each of these 3 months.\n\n"
         f"IMPORTANT FORMAT RULES:\n"
-        f"- Use ## Month Name as the heading for each month\n"
+        f"- Use ## [Month Name] as the heading for each month\n"
         f"- Under each month, write exactly 3 lines:\n"
         f"  Line 1: Overall energy (how this month's element interacts with their Day Master)\n"
         f"  Line 2: Key opportunity OR key caution this month (be specific, not generic)\n"
-        f"  Line 3: One practical action tip for Cambodians (business, ceremony, travel, etc.)\n"
+        f"  Line 3: One practical action tip\n"
         f"- Be direct and honest. If a month is difficult, say so clearly."
     )
     ai_text = _ai_fortune(prompt, max_tokens=900, language=data.language)
@@ -584,23 +702,32 @@ async def get_daily_fortune(data: DailyFortuneInput):
         "For this woman: give practical advice on relationships, family, and personal wellbeing today."
     )
 
+    h = _section_headings(data.language)
+    lang_note_day = (
+        "Write the entire reading in natural, fluent Korean (\ud55c\uad6d\uc5b4). Use Saju technical terms with Chinese characters. Do NOT use English words in the reading body."
+        if data.language == "ko" else
+        "Write the entire reading in natural Khmer (\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a). Keep technical terms in English with Khmer meaning in parentheses."
+        if data.language == "km" else
+        "Write in clear, natural English."
+    )
     prompt = (
         f"{chart_summary}\n"
         f"Today's Date: {target.strftime('%B %d, %Y')}\n"
         f"Today's Day Pillar: {ilun['stem']}{ilun['branch']} ({ELEMENT_EN.get(ilun['element'],'')} element, {ilun['branch_en']} day)\n"
         f"Lunar Date: {ilun['lunar']['lunar_iso']}\n\n"
         f"GENDER-SPECIFIC GUIDANCE: {gender_focus_day}\n\n"
+        f"LANGUAGE: {lang_note_day}\n\n"
         f"Provide a daily fortune reading UNIQUE to this person's chart for today.\n\n"
         f"IMPORTANT FORMAT RULES:\n"
         f"- Structure into exactly 3 sections, each starting with a ## heading\n"
-        f"- Each section: 2 sentences only — sharp and direct\n"
+        f"- Each section: 2 sentences only \u2014 sharp and direct\n"
         f"- Use these exact section headings:\n"
-        f"  ## Today's Energy\n"
-        f"  ## Best Actions & Cautions\n"
-        f"  ## Lucky Elements\n\n"
-        f"In 'Today's Energy': explain how today's {ELEMENT_EN.get(ilun['element'],'')} energy interacts with their Day Master specifically.\n"
-        f"In 'Best Actions & Cautions': give 1 specific thing to do and 1 specific thing to avoid today.\n"
-        f"In 'Lucky Elements': mention lucky color, direction, and one motivational message in Cambodian spirit."
+        f"  ## {h['today_energy']}\n"
+        f"  ## {h['actions']}\n"
+        f"  ## {h['lucky']}\n\n"
+        f"In the first section: explain how today's {ELEMENT_EN.get(ilun['element'],'')} energy interacts with their Day Master specifically.\n"
+        f"In the second section: give 1 specific thing to do and 1 specific thing to avoid today.\n"
+        f"In the third section: mention lucky color, direction, and one motivational message."
     )
     ai_text = _ai_fortune(prompt, max_tokens=600, language=data.language)
 
@@ -678,15 +805,24 @@ async def get_compatibility(data: CompatibilityInput):
         occ_ctx += f"\nInterests: {data.person_a.name} interests: {int_a or 'not specified'}; {data.person_b.name} interests: {int_b or 'not specified'}."
 
     # 유형별 프롬프트 (섹션 헤더 구조화 + 테마별 차별화)
+    h = _section_headings(data.language)
+    lang_note_compat = (
+        "Write the entire reading in natural, fluent Korean (\ud55c\uad6d\uc5b4). Use Saju technical terms with Chinese characters: \uc0ac\uc8fc(\u56db\u67f1), \uc624\ud589(\u4e94\ud589), \uc77c\uac04(\u65e5\u5e72), \ubaa9(\u6728), \ud654(\u706b), \ud1a0(\u571f), \uae08(\u91d1), \uc218(\u6c34). Do NOT use English words in the reading body."
+        if data.language == "ko" else
+        "Write the entire reading in natural Khmer (\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a). Keep technical terms in English with Khmer meaning in parentheses."
+        if data.language == "km" else
+        "Write in clear, natural English."
+    )
     def _compat_header(type_name: str) -> str:
         return (
             f"Person A ({data.person_a.gender.upper()}, {data.person_a.name or 'Person A'}):\n{summary_a}\n"
             f"Person B ({data.person_b.gender.upper()}, {data.person_b.name or 'Person B'}):\n{summary_b}\n"
             f"Compatibility Score: {type_scores['main']}/100\n"
             f"Elemental Interaction: {elem_interaction}{occ_ctx}\n\n"
+            f"LANGUAGE: {lang_note_compat}\n\n"
             f"IMPORTANT FORMAT RULES:\n"
             f"- Structure into exactly 5 sections, each starting with a ## heading\n"
-            f"- Each section: 2-3 sentences only — concise, specific, no padding\n"
+            f"- Each section: 2-3 sentences only \u2014 concise, specific, no padding\n"
             f"- Every section MUST reference their actual elements ({elem_a} vs {elem_b}) and zodiac animals\n"
             f"- Be honest: if compatibility is low in a specific area, say so clearly and give actionable advice\n"
             f"- Do NOT repeat the same advice across sections\n\n"
@@ -697,90 +833,90 @@ async def get_compatibility(data: CompatibilityInput):
             f"This is a LOVE & MARRIAGE compatibility reading.\n"
             + _compat_header('love') +
             f"Use these exact section headings:\n"
-            f"## Romantic Chemistry\n"
+            f"## {h['romantic_chemistry']}\n"
             f"(How their {elem_a} and {elem_b} elements create or block romantic spark. Name the specific attraction or tension.)\n\n"
-            f"## Communication & Understanding\n"
+            f"## {h['communication']}\n"
             f"(How they express love differently based on their Day Masters. Where misunderstandings arise and how to bridge them.)\n\n"
-            f"## Marriage & Family Life\n"
+            f"## {h['marriage_family']}\n"
             f"(Long-term compatibility: who takes which role, children timing based on elements, home harmony.)\n\n"
-            f"## Financial Harmony\n"
+            f"## {h['financial_harmony']}\n"
             f"(How their elemental energies align or clash around money, spending habits, and shared financial goals.)\n\n"
-            f"## Love Advice\n"
+            f"## {h['love_advice']}\n"
             f"(If score below 65: 3 specific actions to overcome elemental clashes. If above 65: 3 tips to deepen the bond. Be direct.)"
         ),
         'business': (
             f"This is a BUSINESS PARTNERSHIP compatibility reading.\n"
             + _compat_header('business') +
             f"Use these exact section headings:\n"
-            f"## Leadership & Decision-Making\n"
+            f"## {h['leadership']}\n"
             f"(Who naturally leads vs. supports based on their {elem_a}/{elem_b} elements. How they make decisions together.)\n\n"
-            f"## Wealth & Revenue Generation\n"
+            f"## {h['wealth_revenue']}\n"
             f"(Their combined elemental energy for attracting money. Which business sectors suit their combined chart.)\n\n"
-            f"## Risk & Strategy Alignment\n"
+            f"## {h['risk_strategy']}\n"
             f"(Do they take risks similarly or clash? How their zodiac animals affect business strategy and timing.)\n\n"
-            f"## Conflict & Communication at Work\n"
+            f"## {h['conflict_work']}\n"
             f"(Specific professional friction points from their elemental clash. How to resolve business disagreements.)\n\n"
-            f"## Business Advice\n"
+            f"## {h['business_advice']}\n"
             f"(If score below 65: 3 concrete risk mitigation strategies for this partnership. If above 65: 3 ways to maximize their combined business power. Reference specific industries or roles.)"
         ),
         'friendship': (
             f"This is a FRIENDSHIP compatibility reading.\n"
             + _compat_header('friendship') +
             f"Use these exact section headings:\n"
-            f"## Natural Connection\n"
+            f"## {h['natural_connection']}\n"
             f"(The immediate vibe between their {elem_a} and {elem_b} elements. Do they click instantly or need time to warm up?)\n\n"
-            f"## Shared Activities & Interests\n"
+            f"## {h['shared_activities']}\n"
             f"(Based on their dominant elements, what activities, hobbies, or social settings they genuinely enjoy together.)\n\n"
-            f"## Support in Hard Times\n"
+            f"## {h['support_hard_times']}\n"
             f"(How each person shows up for the other during stress. Who gives emotional support vs. practical help based on their elements.)\n\n"
-            f"## Friction Points\n"
+            f"## {h['friction']}\n"
             f"(Specific personality clashes from their elemental interaction. What topics or situations cause tension between them.)\n\n"
-            f"## Friendship Advice\n"
+            f"## {h['friendship_advice']}\n"
             f"(If score below 60: honest assessment of whether this friendship can thrive and what specific effort is needed. If above 60: 3 ways to deepen this bond.)"
         ),
         'study': (
             f"This is a STUDY PARTNER compatibility reading.\n"
             + _compat_header('study') +
             f"Use these exact section headings:\n"
-            f"## Learning Styles\n"
+            f"## {h['learning_styles']}\n"
             f"(How their {elem_a} and {elem_b} elements shape how each person learns: visual vs. analytical, fast vs. methodical, etc.)\n\n"
-            f"## Focus & Motivation Energy\n"
+            f"## {h['focus_motivation']}\n"
             f"(Does studying together energize or drain them? Which element dominates the study dynamic and how it affects concentration.)\n\n"
-            f"## Academic Strengths Together\n"
+            f"## {h['academic_strengths']}\n"
             f"(What each person uniquely contributes to collaborative study: one may excel at memorization, the other at problem-solving.)\n\n"
-            f"## Study Conflicts\n"
+            f"## {h['study_conflicts']}\n"
             f"(Specific incompatibilities: pace differences, subject preferences, or distraction patterns from their elemental clash.)\n\n"
-            f"## Study Strategy Advice\n"
+            f"## {h['study_advice']}\n"
             f"(If score below 60: honest advice on whether to study together or separately, and how to compensate. If above 60: specific study methods that leverage their elemental synergy.)"
         ),
         'work': (
             f"This is a WORK COLLEAGUE compatibility reading.\n"
             + _compat_header('work') +
             f"Use these exact section headings:\n"
-            f"## Work Style Compatibility\n"
+            f"## {h['work_style']}\n"
             f"(How their {elem_a} and {elem_b} elements shape their professional approach: one may be detail-oriented, the other big-picture.)\n\n"
-            f"## Team Dynamics & Task Division\n"
+            f"## {h['team_dynamics']}\n"
             f"(Natural role division based on their elements: who leads projects, who executes, who mediates. Specific task types each excels at.)\n\n"
-            f"## Stress & Pressure Responses\n"
+            f"## {h['stress_responses']}\n"
             f"(How each person reacts under deadline pressure based on their Day Master. Do their stress responses complement or clash?)\n\n"
-            f"## Career Growth Together\n"
+            f"## {h['career_growth']}\n"
             f"(Can they help each other advance? Which career paths or industries benefit from their combined elemental energy.)\n\n"
-            f"## Workplace Advice\n"
+            f"## {h['workplace_advice']}\n"
             f"(If score below 60: 3 specific strategies to prevent professional conflicts and maintain productivity. If above 60: 3 ways to leverage their elemental synergy for career advancement.)"
         ),
         'family': (
             f"This is a FAMILY BOND compatibility reading.\n"
             + _compat_header('family') +
             f"Use these exact section headings:\n"
-            f"## Family Roles & Dynamics\n"
-            f"(How their {elem_a} and {elem_b} elements define natural family roles: who nurtures, who disciplines, who mediates. Specific to Cambodian family structure.)\n\n"
-            f"## Emotional Support Patterns\n"
+            f"## {h['family_roles']}\n"
+            f"(How their {elem_a} and {elem_b} elements define natural family roles: who nurtures, who disciplines, who mediates.)\n\n"
+            f"## {h['emotional_support']}\n"
             f"(How each person expresses care and support within the family. Where emotional mismatches occur based on their Day Masters.)\n\n"
-            f"## Generational & Personality Gaps\n"
+            f"## {h['generational_gaps']}\n"
             f"(Specific personality differences explained by their elemental clash. How age or life stage differences affect their bond.)\n\n"
-            f"## Shared Values & Traditions\n"
-            f"(How their combined elements align with Cambodian family values: respect for elders, ceremonies, shared meals, financial support.)\n\n"
-            f"## Family Harmony Advice\n"
+            f"## {h['shared_values']}\n"
+            f"(How their combined elements align with family values: respect for elders, shared responsibilities, financial support.)\n\n"
+            f"## {h['harmony_advice']}\n"
             f"(If score below 60: specific actions to heal elemental conflicts and restore harmony. If above 60: 3 ways to strengthen and celebrate this family bond.)"
         ),
     }
