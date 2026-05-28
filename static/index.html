@@ -1706,7 +1706,7 @@ function applyLang() {
   const occTexts = lang === 'km'
     ? {select:'ជ្រើសរើស...',student:'🎓 និស្សិត',office:'🏢 បុគ្គលិការិយាល័យ',business:'💼 ម្ចាសអាជីវកម្ម',seller:'🛒 អ្នកលក់',teacher:'📚 គ្រូបង្រើន',beauty:'💆 សម្រស់ / ស្បា',driver:'🚗 អ្នកបើកបរ',farmer:'🌾 កសិករ',freelance:'🖥️ ឣករាជ្យ',government:'🏗️ មន្ត្រីរាជការ',overseas:'✈️ កម្មករក្រ៉ួប្រតើស',other:'📌 ផ្សើងំ'}
     : lang === 'ko'
-    ? {select:'선택...',student:'🎓 학생',office:'🏢 직장인',business:'💼 사업주',seller:'🛒 판매원',teacher:'📚 교사/강사',beauty:'💆 미용/스파',driver:'🚗 운전기사',farmer:'🌾 농업인',freelance:'🖥️ 프리랜서러',government:'🏗️ 공무원',overseas:'✈️ 해외근로자',other:'📌 기타'}
+    ? {select:'선택...',student:'🎓 학생',office:'🏢 직장인',business:'💼 사업주',seller:'🛒 판매원',teacher:'📚 교사/강사',beauty:'💆 미용/스파',driver:'🚗 운전기사',farmer:'🌾 농업인',freelance:'🖥️ 프리랜서',government:'🏗️ 공무원',overseas:'✈️ 해외근로자',other:'📌 기타'}
     : {select:'Select...',student:'🎓 Student',office:'🏢 Office Worker',business:'💼 Business Owner',seller:'🛒 Seller',teacher:'📚 Teacher',beauty:'💆 Beauty / Spa',driver:'🚗 Driver',farmer:'🌾 Farmer',freelance:'🖥️ Freelancer',government:'🏗️ Government Officer',overseas:'✈️ Overseas Worker',other:'📌 Other'};
   // occupation: data-key 속성 기반으로 교체 (ID 의존 제거)
   document.querySelectorAll('#rOccupation option[data-key]').forEach(opt => {

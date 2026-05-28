@@ -137,7 +137,7 @@ class DailyFortuneInput(BaseModel):
 
 # ─── 운세 텍스트 생성 (결정론적 캐싱) ──────────────────────────────────
 # 캐시 버전: v3 (네이티브 언어 직접 생성으로 전환)
-_CACHE_VERSION = "v3-native"
+_CACHE_VERSION = "v4-rich"
 
 def _make_cache_key(prompt: str, language: str) -> str:
     """입력값 기반 캐시 키 생성 (동일 입력 = 동일 키)"""
@@ -524,27 +524,33 @@ async def get_lifetime_fortune(data: BirthInput):
     )
     prompt = (
         f"{chart_summary}\n"
-        f"Life Stages:\n"
+        f"Life Stages (use these scores to calibrate the depth of each life period):\n"
         f"  Early Life (0-30): {life_stages['early_life']['quality']} ({ELEMENT_EN.get(life_stages['early_life']['element'],'')} element, score {life_stages['early_life']['score']}/100)\n"
         f"  Mid Life (31-60): {life_stages['mid_life']['quality']} ({ELEMENT_EN.get(life_stages['mid_life']['element'],'')} element, score {life_stages['mid_life']['score']}/100)\n"
         f"  Late Life (61+): {life_stages['late_life']['quality']} ({ELEMENT_EN.get(life_stages['late_life']['element'],'')} element, score {life_stages['late_life']['score']}/100)\n\n"
         f"GENDER-SPECIFIC GUIDANCE: {gender_focus}\n\n"
         f"LANGUAGE: {lang_note}\n\n"
-        f"Provide a comprehensive lifetime fortune reading UNIQUE to this person's exact Four Pillars combination.\n\n"
+        f"Provide a RICH, DETAILED lifetime fortune reading UNIQUE to this person's exact Four Pillars combination.\n"
+        f"This reading must feel like a personal consultation from a master fortune teller — not a generic horoscope.\n\n"
         f"IMPORTANT FORMAT RULES:\n"
         f"- Structure into exactly 5 sections, each starting with a ## heading\n"
-        f"- Each section: 2-3 sentences only \u2014 concise, impactful, no padding\n"
+        f"- Each section: 4-6 sentences — substantive, specific, insightful, no filler\n"
         f"- Use these exact section headings:\n"
         f"  ## {h['personality']}\n"
         f"  ## {h['career_wealth']}\n"
         f"  ## {h['love']}\n"
         f"  ## {h['health']}\n"
         f"  ## {h['guidance']}\n\n"
-        f"Reference their specific Day Master element, dominant/weak elements, and zodiac animal in each section.\n"
-        f"Be honest \u2014 not all aspects are positive. If weak elements create challenges, say so clearly.\n"
-        f"Warm, direct tone. Practical advice."
+        f"DEPTH REQUIREMENTS per section:\n"
+        f"  {h['personality']}: Describe the core character shaped by their Day Master and dominant element. Explain how their zodiac animal reinforces or contradicts this. Mention how their Yin/Yang polarity affects their approach to life. Describe early life (0-30) tendencies based on the Early Life score.\n"
+        f"  {h['career_wealth']}: Name specific career fields that suit their elemental combination. Explain the wealth-building pattern across three life stages using the scores above. Identify the peak earning period and the biggest financial risk period. Give one concrete strategy to maximize their wealth potential.\n"
+        f"  {h['love']}: Describe their love personality based on Day Master and gender. Explain what type of partner complements their weak element. Identify the best marriage timing based on elemental cycles. Be honest if their chart shows relationship challenges — and explain how to overcome them.\n"
+        f"  {h['health']}: Identify the body systems most vulnerable based on their weak element. Explain how their dominant element can create health excesses if unchecked. Give specific lifestyle recommendations (diet, exercise, rest) aligned with their elemental balance.\n"
+        f"  {h['guidance']}: Synthesize the three life stages into a life narrative arc. Give 3 specific, actionable life principles this person should follow based on their chart. End with a motivating statement about their unique destiny potential.\n\n"
+        f"Be honest — not all aspects are positive. If weak elements create challenges, name them specifically.\n"
+        f"Every insight must be traceable to their actual chart data — no generic statements."
     )
-    ai_text = _ai_fortune(prompt, max_tokens=1200, language=data.language)
+    ai_text = _ai_fortune(prompt, max_tokens=2500, language=data.language)
 
     return {
         "success": True,
@@ -585,26 +591,38 @@ async def get_yearly_fortune(data: BirthInput, year: int = None):
         if data.language == "km" else
         "Write in clear, natural English. No translation-like phrasing."
     )
+    # 세운과 일간의 오행 관계 분석
+    elem_interaction_yr = (
+        f"The {year} year's {ELEMENT_EN.get(seun['element'],'')} energy "
+        f"{'supports and strengthens' if seun['element'] == chart['day_master']['element'] else 'challenges and pressures'} "
+        f"their {ELEMENT_EN.get(chart['day_master']['element'],'')} Day Master."
+    )
     prompt = (
         f"{chart_summary}\n"
         f"Year {year} Fortune:\n"
         f"  Year Pillar: {seun['stem']}{seun['branch']} ({seun['animal']} year, {ELEMENT_EN.get(seun['element'],'')} element)\n"
-        f"  Interaction with Day Master ({ELEMENT_EN.get(chart['day_master']['element'],'')}): "
-        f"{'Supportive' if seun['element'] == chart['day_master']['element'] else 'Challenging'} energy\n\n"
+        f"  Elemental Interaction: {elem_interaction_yr}\n"
+        f"  Dominant personal element: {ELEMENT_EN.get(chart.get('dominant_element',''),'')} | Weak element: {ELEMENT_EN.get(chart.get('weak_element',''),'')}\n\n"
         f"GENDER-SPECIFIC GUIDANCE: {gender_focus_yr}\n\n"
         f"LANGUAGE: {lang_note_yr}\n\n"
-        f"Provide a detailed {year} yearly fortune reading UNIQUE to this person's chart.\n\n"
+        f"Provide a RICH, DETAILED {year} yearly fortune reading UNIQUE to this person's chart.\n"
+        f"This must feel like a personalized annual consultation — not a generic yearly horoscope.\n\n"
         f"IMPORTANT FORMAT RULES:\n"
         f"- Structure into exactly 4 sections, each starting with a ## heading\n"
-        f"- Each section: 2-3 sentences only \u2014 concise, no padding\n"
+        f"- Each section: 4-6 sentences — substantive, specific, insightful\n"
         f"- Use these exact section headings:\n"
         f"  ## {h['year_overview']}\n"
         f"  ## {h['career_finance']}\n"
         f"  ## {h['love_family']}\n"
         f"  ## {h['health_timing']}\n\n"
-        f"Be specific: name the best and worst months. Be honest \u2014 if the year brings challenges, say so clearly."
+        f"DEPTH REQUIREMENTS per section:\n"
+        f"  {h['year_overview']}: Explain how the {seun['animal']} year's {ELEMENT_EN.get(seun['element'],'')} energy specifically interacts with this person's chart. Describe the overall tone of the year (expansive, challenging, transitional, etc.). Name the single biggest opportunity and the single biggest risk this year. Describe how their zodiac animal interacts with the year's animal.\n"
+        f"  {h['career_finance']}: Identify the 2-3 best months for career moves or financial decisions in {year}. Explain which specific career actions will be rewarded by the year's elemental energy. Warn about the 1-2 months when financial caution is critical. Give a concrete financial strategy for this year based on their chart.\n"
+        f"  {h['love_family']}: Describe how the year's energy affects their romantic life or marriage. Identify the best months for relationship milestones (meeting someone, engagement, reconciliation). Explain family dynamics this year — are there tensions or harmony periods? Give specific advice for their relationship situation based on their Day Master.\n"
+        f"  {h['health_timing']}: Identify which months carry higher health risk based on elemental clashes. Explain which body systems need attention this year based on their weak element. Give 2 specific health habits to adopt in {year}. Name the luckiest months of the year for overall vitality.\n\n"
+        f"Be specific: name actual months (January, March, etc.). Be honest — if the year brings hardship, describe it clearly with constructive guidance."
     )
-    ai_text = _ai_fortune(prompt, max_tokens=1000, language=data.language)
+    ai_text = _ai_fortune(prompt, max_tokens=2000, language=data.language)
 
     return {
         "success": True,
@@ -654,19 +672,22 @@ async def get_monthly_fortune(data: BirthInput, year: int = None):
     )
     prompt = (
         f"{chart_summary}\n"
-        f"Monthly Fortune for {year} (upcoming 3 months, with elemental scores):\n{months_text}\n\n"
+        f"Monthly Fortune for {year} (upcoming 3 months):\n{months_text}\n\n"
         f"GENDER-SPECIFIC GUIDANCE: {gender_focus_mo}\n\n"
         f"LANGUAGE: {lang_note_mo}\n\n"
-        f"Provide a monthly fortune reading UNIQUE to this person's chart for each of these 3 months.\n\n"
+        f"Provide a RICH, DETAILED monthly fortune reading UNIQUE to this person's chart for each of these 3 months.\n"
+        f"Each month must feel like a personalized monthly consultation — not a generic forecast.\n\n"
         f"IMPORTANT FORMAT RULES:\n"
         f"- Use ## [Month Name] as the heading for each month\n"
-        f"- Under each month, write exactly 3 lines:\n"
-        f"  Line 1: Overall energy (how this month's element interacts with their Day Master)\n"
-        f"  Line 2: Key opportunity OR key caution this month (be specific, not generic)\n"
-        f"  Line 3: One practical action tip\n"
-        f"- Be direct and honest. If a month is difficult, say so clearly."
+        f"- Under each month, write 4 substantive paragraphs (not bullet points):\n"
+        f"  Paragraph 1 (Overall Energy): Explain how this month's elemental energy interacts with their Day Master and dominant element. Describe the general mood and energy level of the month.\n"
+        f"  Paragraph 2 (Career & Finance): Give specific career and financial guidance for this month. Name the best week for action and the week requiring caution. Reference their actual elemental strengths.\n"
+        f"  Paragraph 3 (Love & Relationships): Describe the romantic and social energy of the month. Give specific relationship advice based on their Day Master and gender.\n"
+        f"  Paragraph 4 (Health & Action): Identify health vulnerabilities this month based on elemental interaction. Give 2 concrete action tips for this specific month.\n"
+        f"- Be honest: if a month scores below 55, describe the challenges clearly and give constructive guidance.\n"
+        f"- Each month's reading must be clearly different from the others — no repetitive phrasing."
     )
-    ai_text = _ai_fortune(prompt, max_tokens=900, language=data.language)
+    ai_text = _ai_fortune(prompt, max_tokens=1800, language=data.language)
 
     return {
         "success": True,
@@ -714,22 +735,26 @@ async def get_daily_fortune(data: DailyFortuneInput):
         f"{chart_summary}\n"
         f"Today's Date: {target.strftime('%B %d, %Y')}\n"
         f"Today's Day Pillar: {ilun['stem']}{ilun['branch']} ({ELEMENT_EN.get(ilun['element'],'')} element, {ilun['branch_en']} day)\n"
-        f"Lunar Date: {ilun['lunar']['lunar_iso']}\n\n"
+        f"Lunar Date: {ilun['lunar']['lunar_iso']}\n"
+        f"Dominant personal element: {ELEMENT_EN.get(chart.get('dominant_element',''),'')} | Weak element: {ELEMENT_EN.get(chart.get('weak_element',''),'')}"
+        f"\n\n"
         f"GENDER-SPECIFIC GUIDANCE: {gender_focus_day}\n\n"
         f"LANGUAGE: {lang_note_day}\n\n"
-        f"Provide a daily fortune reading UNIQUE to this person's chart for today.\n\n"
+        f"Provide a DETAILED daily fortune reading UNIQUE to this person's chart for today.\n"
+        f"This must feel like a personalized daily briefing from a master fortune teller.\n\n"
         f"IMPORTANT FORMAT RULES:\n"
         f"- Structure into exactly 3 sections, each starting with a ## heading\n"
-        f"- Each section: 2 sentences only \u2014 sharp and direct\n"
+        f"- Each section: 3-4 sentences — specific, actionable, insightful\n"
         f"- Use these exact section headings:\n"
         f"  ## {h['today_energy']}\n"
         f"  ## {h['actions']}\n"
         f"  ## {h['lucky']}\n\n"
-        f"In the first section: explain how today's {ELEMENT_EN.get(ilun['element'],'')} energy interacts with their Day Master specifically.\n"
-        f"In the second section: give 1 specific thing to do and 1 specific thing to avoid today.\n"
-        f"In the third section: mention lucky color, direction, and one motivational message."
+        f"DEPTH REQUIREMENTS per section:\n"
+        f"  {h['today_energy']}: Explain precisely how today's {ELEMENT_EN.get(ilun['element'],'')} energy interacts with their {ELEMENT_EN.get(chart['day_master']['element'],'')} Day Master. Describe whether this creates harmony, tension, or neutrality. Explain how this affects their mental state and energy level today. Reference their zodiac animal's relationship with today's branch ({ilun['branch_en']}).\n"
+        f"  {h['actions']}: Give 2 specific things to DO today that align with the elemental energy. Give 2 specific things to AVOID today. Make these practical and relevant to their gender and life context — not generic advice.\n"
+        f"  {h['lucky']}: State their lucky color(s) today and why (elemental reasoning). Give their lucky direction and best time window today. End with one personalized motivational insight based on their Day Master and today's energy."
     )
-    ai_text = _ai_fortune(prompt, max_tokens=600, language=data.language)
+    ai_text = _ai_fortune(prompt, max_tokens=1200, language=data.language)
 
     # 레이더 차트용 5가지 운세 점수 계산 (30~100, 오행 상생상극 기반)
     from app.services.saju_engine_v2 import _element_score
@@ -822,10 +847,12 @@ async def get_compatibility(data: CompatibilityInput):
             f"LANGUAGE: {lang_note_compat}\n\n"
             f"IMPORTANT FORMAT RULES:\n"
             f"- Structure into exactly 5 sections, each starting with a ## heading\n"
-            f"- Each section: 2-3 sentences only \u2014 concise, specific, no padding\n"
+            f"- Each section: 4-6 sentences — rich, specific, insightful, no filler\n"
             f"- Every section MUST reference their actual elements ({elem_a} vs {elem_b}) and zodiac animals\n"
-            f"- Be honest: if compatibility is low in a specific area, say so clearly and give actionable advice\n"
-            f"- Do NOT repeat the same advice across sections\n\n"
+            f"- Be honest: if compatibility is low in a specific area, describe the challenge clearly and give 2-3 concrete actionable steps\n"
+            f"- If compatibility is high, explain WHY specifically and give 2-3 tips to maximize the synergy\n"
+            f"- Do NOT repeat the same advice across sections — each section must offer unique insights\n"
+            f"- This reading must feel like a personalized compatibility consultation, not a generic horoscope\n\n"
         )
 
     type_prompts = {
@@ -921,7 +948,7 @@ async def get_compatibility(data: CompatibilityInput):
         ),
     }
     prompt = type_prompts.get(compat_type, type_prompts['love'])
-    ai_text = _ai_fortune(prompt, max_tokens=1200, language=data.language)
+    ai_text = _ai_fortune(prompt, max_tokens=2500, language=data.language)
 
     return {
         "success": True,
